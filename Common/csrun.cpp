@@ -1224,66 +1224,59 @@ void ccSetDebugHook(new_line_hook_type jibble)
 
 
 // parm list is backwards (last arg is parms[0])
-int call_function(long addr, int numparm, long *parms, int offset)
-{
-  parms += offset;
-
-  if (numparm == 1) {
-    int (*fparam) (long);
-    fparam = (int (*)(long))addr;
-    return fparam(parms[0]);
-  }
-
-  if (numparm == 2) {
-    int (*fparam) (long, long);
-    fparam = (int (*)(long, long))addr;
-    return fparam(parms[1], parms[0]);
-  }
-
-  if (numparm == 3) {
-    int (*fparam) (long, long, long);
-    fparam = (int (*)(long, long, long))addr;
-    return fparam(parms[2], parms[1], parms[0]);
-  }
-
-  if (numparm == 4) {
-    int (*fparam) (long, long, long, long);
-    fparam = (int (*)(long, long, long, long))addr;
-    return fparam(parms[3], parms[2], parms[1], parms[0]);
-  }
-
-  if (numparm == 5) {
-    int (*fparam) (long, long, long, long, long);
-    fparam = (int (*)(long, long, long, long, long))addr;
-    return fparam(parms[4], parms[3], parms[2], parms[1], parms[0]);
-  }
-
-  if (numparm == 6) {
-    int (*fparam) (long, long, long, long, long, long);
-    fparam = (int (*)(long, long, long, long, long, long))addr;
-    return fparam(parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
-  }
-
-  if (numparm == 7) {
-    int (*fparam) (long, long, long, long, long, long, long);
-    fparam = (int (*)(long, long, long, long, long, long, long))addr;
-    return fparam(parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
-  }
-
-  if (numparm == 8) {
-    int (*fparam) (long, long, long, long, long, long, long, long);
-    fparam = (int (*)(long, long, long, long, long, long, long, long))addr;
-    return fparam(parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
-  }
-
-  if (numparm == 9) {
-    int (*fparam) (long, long, long, long, long, long, long, long, long);
-    fparam = (int (*)(long, long, long, long, long, long, long, long, long))addr;
-    return fparam(parms[8], parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
-  }
-
-  cc_error("too many arguments in call to function");
-  return -1;
+int call_function(long addr, int numparm, long *parms, int offset) {
+	parms += offset;
+	
+	switch(numparm) {
+		case 1: {
+			int (*fparam) (long);
+			fparam = (int (*)(long))addr;
+			return fparam(parms[0]);
+		}
+		case 2: {
+			int (*fparam) (long, long);
+			fparam = (int (*)(long, long))addr;
+			return fparam(parms[1], parms[0]);
+		}
+		case 3: {
+			int (*fparam) (long, long, long);
+			fparam = (int (*)(long, long, long))addr;
+			return fparam(parms[2], parms[1], parms[0]);
+		}
+		case 4: {
+			int (*fparam) (long, long, long, long);
+			fparam = (int (*)(long, long, long, long))addr;
+			return fparam(parms[3], parms[2], parms[1], parms[0]);
+		}
+		case 5: {
+			int (*fparam) (long, long, long, long, long);
+			fparam = (int (*)(long, long, long, long, long))addr;
+			return fparam(parms[4], parms[3], parms[2], parms[1], parms[0]);
+		}
+		case 6: {
+			int (*fparam) (long, long, long, long, long, long);
+			fparam = (int (*)(long, long, long, long, long, long))addr;
+			return fparam(parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		}
+		case 7: {
+			int (*fparam) (long, long, long, long, long, long, long);
+			fparam = (int (*)(long, long, long, long, long, long, long))addr;
+			return fparam(parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		}
+		case 8: {
+			int (*fparam) (long, long, long, long, long, long, long, long);
+			fparam = (int (*)(long, long, long, long, long, long, long, long))addr;
+			return fparam(parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		}
+		case 9: {
+			int (*fparam) (long, long, long, long, long, long, long, long, long);
+			fparam = (int (*)(long, long, long, long, long, long, long, long, long))addr;
+			return fparam(parms[8], parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		}
+		default:
+			cc_error("too many arguments in call to function");
+			return -1;
+	}
 }
 
 #define MAX_FUNC_PARAMS 20
