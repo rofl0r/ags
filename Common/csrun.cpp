@@ -6,7 +6,7 @@
 
   There is a problem with importing functions on 16-bit compilers: the
   script system assumes that all parameters are passed as 4 bytes, which
-  ints are not on 16-bit systems. Be sure to define all parameters as longs,
+  ints are not on 16-bit systems. Be sure to define all parameters as ints,
   or join the 21st century and switch to DJGPP or Visual C++.
 
   This is UNPUBLISHED PROPRIETARY SOURCE CODE;
@@ -98,6 +98,7 @@ bool const Spans::IsInSpan(char *value) const
 #endif // AGS_BIG_ENDIAN
 
 #include "bigend.h"
+#include <stdint.h>
 
 #define INSTANCE_ID_SHIFT 24
 #define INSTANCE_ID_MASK  0x00000ff
@@ -116,7 +117,7 @@ static int maxWhileLoops = 0;
 extern void quit(char *);
 extern void write_log(char *);
 
-void dump_instruction(unsigned long *codeptr, int cps, int spp)
+void dump_instruction(unsigned int *codeptr, int cps, int spp)
 {
   static int line_num = 0;
 
@@ -219,7 +220,7 @@ struct CCDynamicArray : ICCDynamicObject
     ccRegisterUnserializedObject(index, &newArray[8], this);
   }
 
-  long Create(int numElements, int elementSize, bool isManagedType)
+  int Create(int numElements, int elementSize, bool isManagedType)
   {
     char *newArray = new char[numElements * elementSize + 8];
     memset(newArray, 0, numElements * elementSize + 8);
@@ -243,12 +244,12 @@ const int GARBAGE_COLLECTION_INTERVAL = 100;
 
 struct ManagedObjectPool {
   struct ManagedObject {
-    long handle;
+    int handle;
     const char *addr;
     ICCDynamicObject * callback;
     int  refCount;
 
-    void init(long theHandle, const char *theAddress, ICCDynamicObject *theCallback) {
+    void init(int theHandle, const char *theAddress, ICCDynamicObject *theCallback) {
       handle = theHandle;
       addr = theAddress;
       callback = theCallback;
@@ -329,15 +330,15 @@ private:
 
 public:
 
-  long AddRef(long handle) {
+  int AddRef(int handle) {
     return objects[handle].AddRef();
   }
 
-  int CheckDispose(long handle) {
+  int CheckDispose(int handle) {
     return objects[handle].CheckDispose();
   }
 
-  long SubRef(long handle) {
+  int SubRef(int handle) {
     if ((disableDisposeForObject != NULL) && 
         (objects[handle].addr == disableDisposeForObject))
       objects[handle].SubRefNoDispose();
@@ -346,7 +347,7 @@ public:
     return objects[handle].refCount;
   }
 
-  long AddressToHandle(const char *addr) {
+  int AddressToHandle(const char *addr) {
     // this function is only called when a pointer is set
     // SLOW LOOP ALERT, improve at some point
     for (int kk = 1; kk < arrayAllocLimit; kk++) {
@@ -356,7 +357,7 @@ public:
     return 0;
   }
 
-  const char* HandleToAddress(long handle) {
+  const char* HandleToAddress(int handle) {
     // this function is called often (whenever a pointer is used)
     if ((handle < 1) || (handle >= arrayAllocLimit))
       return NULL;
@@ -366,7 +367,7 @@ public:
   }
 
   int RemoveObject(const char *address) {
-    long handl = AddressToHandle(address);
+    int handl = AddressToHandle(address);
     if (handl == 0)
       return 0;
 
@@ -414,7 +415,7 @@ public:
       if (useSlot == numObjects) {
         // if adding new (not un-serializing) check for empty slot
         // check backwards, since newer objects don't tend to last
-        // long
+        // int
         for (int i = arrayAllocLimit - 1; i >= 1; i--) {
           if (objects[i].handle == 0) {
             objects[i].init(i, address, callback);
@@ -559,7 +560,7 @@ public:
   char *get_addr_of(char *);
   int  get_index_of(char *);
   ccInstance* is_script_import(char *);
-  void remove_range(char *, unsigned long);
+  void remove_range(char *, unsigned int);
   void clear() {
     numimports = 0;
     btree.clear();
@@ -710,14 +711,14 @@ ccInstance* SystemImports::is_script_import(char *namw)
 }
 
 // Remove all symbols whose addresses are in the supplied range
-void SystemImports::remove_range(char *from, unsigned long dist)
+void SystemImports::remove_range(char *from, unsigned int dist)
 {
-  unsigned long startaddr = (unsigned long)from;
+  uintptr_t startaddr = (uintptr_t)from;
   for (int o = 0; o < numimports; o++) {
     if (name[o] == NULL)
       continue;
 
-    unsigned long thisaddr = (unsigned long)addr[o];
+    uintptr_t thisaddr = (uintptr_t)addr[o];
     if ((thisaddr >= startaddr) && (thisaddr < startaddr + dist)) {
       btree.removeEntry(name[o]);
       name[o] = NULL;
@@ -822,8 +823,8 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
   cinst->codesize = scri->codesize;
 
   if (cinst->codesize > 0) {
-    cinst->code = (unsigned long *)malloc(cinst->codesize * sizeof(long));
-    memcpy(cinst->code, scri->code, cinst->codesize * sizeof(long));
+    cinst->code = (unsigned int *)malloc(cinst->codesize * sizeof(int));
+    memcpy(cinst->code, scri->code, cinst->codesize * sizeof(int));
   }
   else
     cinst->code = NULL;
@@ -853,10 +854,10 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
   }
 
   // set up the initial registers to zero
-  memset(&cinst->registers[0], 0, sizeof(long) * CC_NUM_REGISTERS);
+  memset(&cinst->registers[0], 0, sizeof(int) * CC_NUM_REGISTERS);
 
   // find the real address of all the imports
-  long *import_addrs = (long *)malloc(scri->numimports * sizeof(long));
+  int *import_addrs = (int *)malloc(scri->numimports * sizeof(int));
   if (scri->numimports == 0)
     import_addrs = NULL;
 
@@ -866,7 +867,7 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
       import_addrs[i] = NULL;
       continue;
     }
-    import_addrs[i] = (long)simp.get_addr_of(scri->imports[i]);
+    import_addrs[i] = (int)simp.get_addr_of(scri->imports[i]);
     if (import_addrs[i] == NULL) {
       nullfree(import_addrs);
       cc_error("unresolved import '%s'", scri->imports[i]);
@@ -877,19 +878,19 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
 
   // perform the fixups
   for (i = 0; i < scri->numfixups; i++) {
-    long fixup = scri->fixups[i];
+    int fixup = scri->fixups[i];
     switch (scri->fixuptypes[i]) {
     case FIXUP_GLOBALDATA:
-      cinst->code[fixup] += (long)&cinst->globaldata[0];
+      cinst->code[fixup] += (int)&cinst->globaldata[0];
       break;
     case FIXUP_FUNCTION:
-//      cinst->code[fixup] += (long)&cinst->code[0];
+//      cinst->code[fixup] += (int)&cinst->code[0];
       break;
     case FIXUP_STRING:
-      cinst->code[fixup] += (long)&cinst->strings[0];
+      cinst->code[fixup] += (int)&cinst->strings[0];
       break;
     case FIXUP_IMPORT: {
-      unsigned long setTo = import_addrs[cinst->code[fixup]];
+      unsigned int setTo = import_addrs[cinst->code[fixup]];
       ccInstance *scriptImp = simp.is_script_import(scri->imports[cinst->code[fixup]]);
       // If the call is to another script function (in a different
       // instance), replace the call with CALLAS so it doesn't do
@@ -898,7 +899,7 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
         if (cinst->code[fixup + 1] == SCMD_CALLEXT) {
           // save the instance ID in the top 4 bits of the instruction
           cinst->code[fixup + 1] = SCMD_CALLAS;
-          cinst->code[fixup + 1] |= ((unsigned long)scriptImp->loadedInstanceId) << INSTANCE_ID_SHIFT;
+          cinst->code[fixup + 1] |= ((unsigned int)scriptImp->loadedInstanceId) << INSTANCE_ID_SHIFT;
         }
       }
       cinst->code[fixup] = setTo;
@@ -909,12 +910,12 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
       {
 #ifdef AGS_BIG_ENDIAN
         // supposedly these are only used for strings...
-        long *dataPtr = (long *)(&cinst->globaldata[fixup]);
+        int *dataPtr = (int *)(&cinst->globaldata[fixup]);
         *dataPtr = __int_swap_endian(*dataPtr);
 #endif
-      long temp;
+      int temp;
       memcpy(&temp, (char*)&(cinst->globaldata[fixup]), 4);
-      temp += (long)cinst->globaldata;
+      temp += (int)cinst->globaldata;
       memcpy(&(cinst->globaldata[fixup]), &temp, 4);
 #ifdef AGS_BIG_ENDIAN
         // leave the address swapped - will be read in and flipped every time
@@ -923,7 +924,7 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
       }
       break;
     case FIXUP_STACK:
-      cinst->code[fixup] += (long)&cinst->stack[0];
+      cinst->code[fixup] += (int)&cinst->stack[0];
       break;
     default:
       nullfree(import_addrs);
@@ -938,10 +939,10 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
 
   // find the real address of the exports
   for (i = 0; i < scri->numexports; i++) {
-    long etype = (scri->export_addr[i] >> 24L) & 0x000ff;
-    long eaddr = (scri->export_addr[i] & 0x00ffffff);
+    int etype = (scri->export_addr[i] >> 24L) & 0x000ff;
+    int eaddr = (scri->export_addr[i] & 0x00ffffff);
     if (etype == EXPORT_FUNCTION)
-      cinst->exportaddr[i] = (char *)(eaddr * sizeof(long) + (long)(&cinst->code[0]));
+      cinst->exportaddr[i] = (char *)(eaddr * sizeof(int) + (int)(&cinst->code[0]));
     else if (etype == EXPORT_DATA)
       cinst->exportaddr[i] = eaddr + (&cinst->globaldata[0]);
     else {
@@ -987,16 +988,16 @@ void ccFlattenGlobalData(ccInstance * cinst)
 
   // perform the fixups
   for (i = 0; i < scri->numfixups; i++) {
-    long fixup = scri->fixups[i];
+    int fixup = scri->fixups[i];
     if (scri->fixuptypes[i] == FIXUP_DATADATA) {
 #ifdef AGS_BIG_ENDIAN
       // supposedly these are only used for strings...
-      long *dataPtr = (long *)(&cinst->globaldata[fixup]);
+      int *dataPtr = (int *)(&cinst->globaldata[fixup]);
       *dataPtr = __int_swap_endian(*dataPtr);
 #endif
-      long temp;
+      int temp;
       memcpy(&temp, (char*)&(cinst->globaldata[fixup]), 4);
-      temp -= (long)cinst->globaldata;
+      temp -= (int)cinst->globaldata;
       memcpy(&(cinst->globaldata[fixup]), &temp, 4);
 #ifdef AGS_BIG_ENDIAN
       // leave the address swapped - will be read in and flipped every time
@@ -1018,16 +1019,16 @@ void ccUnFlattenGlobalData(ccInstance * cinst)
 
   // perform the fixups
   for (i = 0; i < scri->numfixups; i++) {
-    long fixup = scri->fixups[i];
+    int fixup = scri->fixups[i];
     if (scri->fixuptypes[i] == FIXUP_DATADATA) {
 #ifdef AGS_BIG_ENDIAN
       // supposedly these are only used for strings...
-      long *dataPtr = (long *)(&cinst->globaldata[fixup]);
+      int *dataPtr = (int *)(&cinst->globaldata[fixup]);
       *dataPtr = __int_swap_endian(*dataPtr);
 #endif
-      long temp;
+      int temp;
       memcpy(&temp, (char*)&(cinst->globaldata[fixup]), 4);
-      temp += (long)cinst->globaldata;
+      temp += (int)cinst->globaldata;
       memcpy(&(cinst->globaldata[fixup]), &temp, 4);
 #ifdef AGS_BIG_ENDIAN
       // leave the address swapped - will be read in and flipped every time
@@ -1055,7 +1056,7 @@ void ccFreeInstance(ccInstance * cinst)
     cinst->instanceof->instances--;
     if (cinst->instanceof->instances == 0) {
       simp.remove_range((char *)&cinst->globaldata[0], cinst->globaldatasize);
-      simp.remove_range((char *)&cinst->code[0], cinst->codesize * sizeof(long));
+      simp.remove_range((char *)&cinst->code[0], cinst->codesize * sizeof(int));
     }
   }
   
@@ -1098,8 +1099,8 @@ void ccSetStringClassImpl(ICCStringClass *theClass) {
   stringClassImpl = theClass;
 }
 
-long ccRegisterManagedObject(const void *object, ICCDynamicObject *callback) {
-  long handl = pool.AddObject((const char*)object, callback);
+int ccRegisterManagedObject(const void *object, ICCDynamicObject *callback) {
+  int handl = pool.AddObject((const char*)object, callback);
 
 #ifdef DEBUG_MANAGED_OBJECTS
   char bufff[200];
@@ -1110,7 +1111,7 @@ long ccRegisterManagedObject(const void *object, ICCDynamicObject *callback) {
   return handl;
 }
 
-long ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *callback) {
+int ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *callback) {
   return pool.AddObject((const char*)object, callback, index);
 }
 
@@ -1118,7 +1119,7 @@ int ccUnRegisterManagedObject(const void *object) {
   return pool.RemoveObject((const char*)object);
 }
 
-void ccAttemptDisposeObject(long handle) {
+void ccAttemptDisposeObject(int handle) {
   if (pool.HandleToAddress(handle) != NULL)
     pool.CheckDispose(handle);
 }
@@ -1137,12 +1138,12 @@ int ccUnserializeAllObjects(FILE *input, ICCObjectReader *callback) {
   return pool.ReadFromDisk(input, callback);
 }
 
-long ccGetObjectHandleFromAddress(const char *address) {
+int ccGetObjectHandleFromAddress(const char *address) {
   // set to null
   if (address == NULL)
     return 0;
 
-  long handl = pool.AddressToHandle(address);
+  int handl = pool.AddressToHandle(address);
 
 #ifdef DEBUG_MANAGED_OBJECTS
   char bufff[200];
@@ -1157,7 +1158,7 @@ long ccGetObjectHandleFromAddress(const char *address) {
   return handl;
 }
 
-const char *ccGetObjectAddressFromHandle(long handle) {
+const char *ccGetObjectAddressFromHandle(int handle) {
   if (handle == 0) {
     return NULL;
   }
@@ -1176,14 +1177,14 @@ const char *ccGetObjectAddressFromHandle(long handle) {
   return addr;
 }
 
-int ccAddObjectReference(long handle) {
+int ccAddObjectReference(int handle) {
   if (handle == 0)
     return 0;
 
   return pool.AddRef(handle);
 }
 
-int ccReleaseObjectReference(long handle) {
+int ccReleaseObjectReference(int handle) {
   if (handle == 0)
     return 0;
 
@@ -1224,53 +1225,53 @@ void ccSetDebugHook(new_line_hook_type jibble)
 
 
 // parm list is backwards (last arg is parms[0])
-int call_function(long addr, int numparm, long *parms, int offset) {
+int call_function(void* addr, int numparm, int *parms, int offset) {
 	parms += offset;
 	
 	switch(numparm) {
 		case 1: {
-			int (*fparam) (long);
-			fparam = (int (*)(long))addr;
+			int (*fparam) (int);
+			fparam = (int (*)(int))addr;
 			return fparam(parms[0]);
 		}
 		case 2: {
-			int (*fparam) (long, long);
-			fparam = (int (*)(long, long))addr;
+			int (*fparam) (int, int);
+			fparam = (int (*)(int, int))addr;
 			return fparam(parms[1], parms[0]);
 		}
 		case 3: {
-			int (*fparam) (long, long, long);
-			fparam = (int (*)(long, long, long))addr;
+			int (*fparam) (int, int, int);
+			fparam = (int (*)(int, int, int))addr;
 			return fparam(parms[2], parms[1], parms[0]);
 		}
 		case 4: {
-			int (*fparam) (long, long, long, long);
-			fparam = (int (*)(long, long, long, long))addr;
+			int (*fparam) (int, int, int, int);
+			fparam = (int (*)(int, int, int, int))addr;
 			return fparam(parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 5: {
-			int (*fparam) (long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long))addr;
+			int (*fparam) (int, int, int, int, int);
+			fparam = (int (*)(int, int, int, int, int))addr;
 			return fparam(parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 6: {
-			int (*fparam) (long, long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long, long))addr;
+			int (*fparam) (int, int, int, int, int, int);
+			fparam = (int (*)(int, int, int, int, int, int))addr;
 			return fparam(parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 7: {
-			int (*fparam) (long, long, long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long, long, long))addr;
+			int (*fparam) (int, int, int, int, int, int, int);
+			fparam = (int (*)(int, int, int, int, int, int, int))addr;
 			return fparam(parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 8: {
-			int (*fparam) (long, long, long, long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long, long, long, long))addr;
+			int (*fparam) (int, int, int, int, int, int, int, int);
+			fparam = (int (*)(int, int, int, int, int, int, int, int))addr;
 			return fparam(parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 9: {
-			int (*fparam) (long, long, long, long, long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long, long, long, long, long))addr;
+			int (*fparam) (int, int, int, int, int, int, int, int, int);
+			fparam = (int (*)(int, int, int, int, int, int, int, int, int))addr;
 			return fparam(parms[8], parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		default:
@@ -1281,13 +1282,13 @@ int call_function(long addr, int numparm, long *parms, int offset) {
 
 #define MAX_FUNC_PARAMS 20
 #define CHECK_STACK \
-if ((inst->registers[SREG_SP] - ((long)&inst->stack[0])) >= CC_STACK_SIZE) { \
+if ((inst->registers[SREG_SP] - ((int)&inst->stack[0])) >= CC_STACK_SIZE) { \
   cc_error("stack overflow"); \
   return -1; \
 }
 
 #define MAXNEST 50  // number of recursive function calls allowed
-int cc_run_code(ccInstance * inst, long curpc)
+int cc_run_code(ccInstance * inst, int curpc)
 {
   inst->pc = curpc;
   inst->returnValue = -1;
@@ -1303,15 +1304,15 @@ int cc_run_code(ccInstance * inst, long curpc)
   }
 
   // Needed to avoid unaligned variable access.
-  long temp_variable;
+  int temp_variable;
 
-  long arg1, arg2;
+  int arg1, arg2;
   char *mptr;
   unsigned char tbyte;
   short tshort;
   int (*realfunc) ();
-  long callstack[MAX_FUNC_PARAMS + 1];
-  long thisbase[MAXNEST], funcstart[MAXNEST];
+  int callstack[MAX_FUNC_PARAMS + 1];
+  int thisbase[MAXNEST], funcstart[MAXNEST];
   int callstacksize = 0, aa, was_just_callas = -1;
   int curnest = 0;
   int loopIterations = 0;
@@ -1323,7 +1324,7 @@ int cc_run_code(ccInstance * inst, long curpc)
   current_instance = inst;
   float *freg1, *freg2;
   ccInstance *codeInst = inst->runningInst;
-  unsigned long thisInstruction;
+  unsigned int thisInstruction;
   int write_debug_dump = ccGetOption(SCOPT_DEBUGRUN);
 
   while (1) {
@@ -1379,7 +1380,7 @@ int cc_run_code(ccInstance * inst, long curpc)
             if (inst->stackSizes[temp_index - 1] == -1)
             {
               orig_sub -= 4;
-              new_sub += sizeof(long);
+              new_sub += sizeof(int);
             }
             else
             {
@@ -1411,13 +1412,13 @@ int cc_run_code(ccInstance * inst, long curpc)
         if (loopIterationCheckDisabled > 0)
           loopIterationCheckDisabled--;
 
-        inst->registers[SREG_SP] -= sizeof(long);
+        inst->registers[SREG_SP] -= sizeof(int);
 #if defined(AGS_64BIT)
         inst->stackSizeIndex--;
 #endif
 
         curnest--;
-        memcpy(&(inst->pc), (char*)inst->registers[SREG_SP], sizeof(long));
+        memcpy(&(inst->pc), (char*)inst->registers[SREG_SP], sizeof(int));
         if (inst->pc == 0)
         {
           inst->returnValue = (int)inst->registers[SREG_AX];
@@ -1431,7 +1432,7 @@ int cc_run_code(ccInstance * inst, long curpc)
         break;
       case SCMD_MEMREAD:
         // 64 bit: Memory reads are still 32 bit
-        memset(&(inst->registers[arg1]), 0, sizeof(long));
+        memset(&(inst->registers[arg1]), 0, sizeof(int));
         memcpy(&(inst->registers[arg1]), (char*)inst->registers[SREG_MAR], 4);
 #ifdef AGS_BIG_ENDIAN
         {
@@ -1455,7 +1456,7 @@ int cc_run_code(ccInstance * inst, long curpc)
           char *charPtr = (char *)inst->registers[SREG_MAR];
           if (gSpans.IsInSpan(charPtr))
           {
-            long *dataPtr = (long *)charPtr;
+            int *dataPtr = (int *)charPtr;
             *dataPtr = __int_swap_endian(*dataPtr);
           }
         }
@@ -1473,7 +1474,7 @@ int cc_run_code(ccInstance * inst, long curpc)
           if (inst->stackSizes[sp_index] == -1)
           {
            	original_sp_diff -= 4;
-            new_sp_diff += sizeof(long);//inst->stackSizes[sp_index];
+            new_sp_diff += sizeof(int);//inst->stackSizes[sp_index];
             sp_index--;
           }
           else
@@ -1565,9 +1566,9 @@ int cc_run_code(ccInstance * inst, long curpc)
         PUSH_CALL_STACK(inst);
 
         temp_variable = inst->pc + sccmdargs[thisInstruction] + 1;
-        memcpy((char*)inst->registers[SREG_SP], &temp_variable, sizeof(long));
+        memcpy((char*)inst->registers[SREG_SP], &temp_variable, sizeof(int));
 
-        inst->registers[SREG_SP] += sizeof(long);
+        inst->registers[SREG_SP] += sizeof(int);
 
 #if defined(AGS_64BIT)
         inst->stackSizes[inst->stackSizeIndex] = -1;
@@ -1647,8 +1648,8 @@ int cc_run_code(ccInstance * inst, long curpc)
         inst->stackSizeIndex++;
 #endif
 
-        memcpy((char*)inst->registers[SREG_SP], &(inst->registers[arg1]), sizeof(long));
-        inst->registers[SREG_SP] += sizeof(long);
+        memcpy((char*)inst->registers[SREG_SP], &(inst->registers[arg1]), sizeof(int));
+        inst->registers[SREG_SP] += sizeof(int);
         CHECK_STACK
         break;
       case SCMD_POPREG:
@@ -1660,8 +1661,8 @@ int cc_run_code(ccInstance * inst, long curpc)
         inst->stackSizeIndex--;
 #endif
 
-        inst->registers[SREG_SP] -= sizeof(long);
-        memcpy(&(inst->registers[arg1]), (char*)inst->registers[SREG_SP], sizeof(long));
+        inst->registers[SREG_SP] -= sizeof(int);
+        memcpy(&(inst->registers[arg1]), (char*)inst->registers[SREG_SP], sizeof(int));
         break;
       case SCMD_JMP:
         inst->pc += arg1;
@@ -1690,10 +1691,10 @@ int cc_run_code(ccInstance * inst, long curpc)
         break;
       case SCMD_DYNAMICBOUNDS:
         {
-        long upperBoundInBytes = *((long *)(inst->registers[SREG_MAR] - 4));
+        int upperBoundInBytes = *((int *)(inst->registers[SREG_MAR] - 4));
         if ((inst->registers[arg1] < 0) ||
             (inst->registers[arg1] >= upperBoundInBytes)) {
-          long upperBound = *((long *)(inst->registers[SREG_MAR] - 8)) & (~ARRAY_MANAGED_TYPE_FLAG);
+          int upperBound = *((int *)(inst->registers[SREG_MAR] - 8)) & (~ARRAY_MANAGED_TYPE_FLAG);
           int elementSize = (upperBoundInBytes / upperBound);
           cc_error("!Array index out of bounds (index: %d, bounds: 0..%d)", inst->registers[arg1] / elementSize, upperBound - 1);
           return -1;
@@ -1708,7 +1709,7 @@ int cc_run_code(ccInstance * inst, long curpc)
 
         int handle;
         memcpy(&handle, (char*)(inst->registers[SREG_MAR]), 4);
-        inst->registers[arg1] = (long)ccGetObjectAddressFromHandle(handle);
+        inst->registers[arg1] = (int)ccGetObjectAddressFromHandle(handle);
 
         // if error occurred, cc_error will have been set
         if (ccError)
@@ -1794,24 +1795,24 @@ int cc_run_code(ccInstance * inst, long curpc)
 
         for (aa = startArg; aa < callstacksize; aa++) {
           // 64 bit: Arguments are pushed as 64 bit values
-          memcpy((char*)inst->registers[SREG_SP], &(callstack[aa]), sizeof(long));
-          inst->registers[SREG_SP] += sizeof(long);
+          memcpy((char*)inst->registers[SREG_SP], &(callstack[aa]), sizeof(int));
+          inst->registers[SREG_SP] += sizeof(int);
 
 #if defined(AGS_64BIT)
-          inst->stackSizes[inst->stackSizeIndex] = -1;//sizeof(long);
+          inst->stackSizes[inst->stackSizeIndex] = -1;//sizeof(int);
           inst->stackSizeIndex++;
 #endif
         }
 
         // 0, so that the cc_run_code returns
-        memset((char*)inst->registers[SREG_SP], 0, sizeof(long));
+        memset((char*)inst->registers[SREG_SP], 0, sizeof(int));
 
-        long oldstack = inst->registers[SREG_SP];
-        inst->registers[SREG_SP] += sizeof(long);
+        int oldstack = inst->registers[SREG_SP];
+        inst->registers[SREG_SP] += sizeof(int);
         CHECK_STACK
 
 #if defined(AGS_64BIT)
-        inst->stackSizes[inst->stackSizeIndex] = -1;//sizeof(long);
+        inst->stackSizes[inst->stackSizeIndex] = -1;//sizeof(int);
         inst->stackSizeIndex++;
 #endif
 
@@ -1819,15 +1820,15 @@ int cc_run_code(ccInstance * inst, long curpc)
         ccInstance *wasRunning = inst->runningInst;
 
         // extract the instance ID
-        unsigned long instId = (codeInst->code[inst->pc] >> INSTANCE_ID_SHIFT) & INSTANCE_ID_MASK;
+        unsigned int instId = (codeInst->code[inst->pc] >> INSTANCE_ID_SHIFT) & INSTANCE_ID_MASK;
         // determine the offset into the code of the instance we want
         inst->runningInst = loadedInstances[instId];
-        unsigned long callAddr = inst->registers[arg1] - (unsigned long)(&inst->runningInst->code[0]);
+        unsigned int callAddr = inst->registers[arg1] - (unsigned int)(&inst->runningInst->code[0]);
         if (callAddr % 4 != 0) {
           cc_error("call address not aligned");
           return -1;
         }
-        callAddr /= sizeof(long);
+        callAddr /= sizeof(int);
 
         if (cc_run_code(inst, callAddr))
           return -1;
@@ -1896,7 +1897,7 @@ int cc_run_code(ccInstance * inst, long curpc)
         break;
       case SCMD_SUBREALSTACK:
         if (was_just_callas >= 0) {
-          inst->registers[SREG_SP] -= arg1 * sizeof(long);
+          inst->registers[SREG_SP] -= arg1 * sizeof(int);
 #if defined(AGS_64BIT)
           inst->stackSizeIndex -= arg1;
 #endif
@@ -1931,7 +1932,7 @@ int cc_run_code(ccInstance * inst, long curpc)
           cc_error("invalid size for dynamic array; requested: %d, range: 1..1000000", numElements);
           return -1;
         }
-        inst->registers[arg1] = (long)ccGetObjectAddressFromHandle(globalDynamicArray.Create(numElements, arg2, (arg3 == 1)));
+        inst->registers[arg1] = (int)ccGetObjectAddressFromHandle(globalDynamicArray.Create(numElements, arg2, (arg3 == 1)));
         break;
         }
       case SCMD_FADD:
@@ -1972,7 +1973,7 @@ int cc_run_code(ccInstance * inst, long curpc)
         mptr = (char *)(inst->registers[SREG_MAR]);
         if (inst->registers[SREG_MAR] == inst->registers[SREG_SP]) {
           // creating a local variable -- check the stack to ensure no mem overrun
-          int currentStackSize = inst->registers[SREG_SP] - ((long)&inst->stack[0]);
+          int currentStackSize = inst->registers[SREG_SP] - ((int)&inst->stack[0]);
           if (currentStackSize + arg1 >= CC_STACK_SIZE) {
             cc_error("stack overflow, attempted grow to %d bytes", currentStackSize + arg1);
             return -1;
@@ -1985,7 +1986,7 @@ int cc_run_code(ccInstance * inst, long curpc)
           cc_error("No string class implementation set, but opcode was used");
           return -1;
         }
-        inst->registers[arg1] = (long)stringClassImpl->CreateString((const char *)(inst->registers[arg1]));
+        inst->registers[arg1] = (int)stringClassImpl->CreateString((const char *)(inst->registers[arg1]));
         break;
       case SCMD_STRINGSEQUAL:
         if ((inst->registers[arg1] == 0) || (inst->registers[arg2] == 0)) {
@@ -2023,7 +2024,7 @@ int cc_run_code(ccInstance * inst, long curpc)
   }
 }
 
-int ccCallInstance(ccInstance * inst, char *funcname, long numargs, ...)
+int ccCallInstance(ccInstance * inst, char *funcname, int numargs, ...)
 {
   ccError = 0;
   currentline = 0;
@@ -2038,7 +2039,7 @@ int ccCallInstance(ccInstance * inst, char *funcname, long numargs, ...)
     return -4;
   }
 
-  long startat = -1;
+  int startat = -1;
   int k;
   char mangledName[200];
   sprintf(mangledName, "%s$", funcname);
@@ -2060,7 +2061,7 @@ int ccCallInstance(ccInstance * inst, char *funcname, long numargs, ...)
     // check for an exact match (if the script was compiled with
     // an older version)
     if ((match == 1) || (strcmp(thisExportName, funcname) == 0)) {
-      long etype = (inst->instanceof->export_addr[k] >> 24L) & 0x000ff;
+      int etype = (inst->instanceof->export_addr[k] >> 24L) & 0x000ff;
       if (etype != EXPORT_FUNCTION) {
         cc_error("symbol is not a function");
         return -1;
@@ -2075,14 +2076,14 @@ int ccCallInstance(ccInstance * inst, char *funcname, long numargs, ...)
     return -2;
   }
 
-  long tempstack[20];
+  int tempstack[20];
   int tssize = 1;
   tempstack[0] = 0;             // return address on stack
   if (numargs > 0) {
     va_list ap;
     va_start(ap, numargs);
     while (tssize <= numargs) {
-      tempstack[tssize] = va_arg(ap, long);
+      tempstack[tssize] = va_arg(ap, int);
       tssize++;
     }
     va_end(ap);
@@ -2094,13 +2095,13 @@ int ccCallInstance(ccInstance * inst, char *funcname, long numargs, ...)
   inst->registers[SREG_OP] = 0;
 
   ccInstance* currentInstanceWas = current_instance;
-  long stoffs = 0;
+  int stoffs = 0;
   for (tssize = numargs - 1; tssize >= 0; tssize--) {
-    memcpy(&inst->stack[stoffs], &tempstack[tssize], sizeof(long));
-    stoffs += sizeof(long);
+    memcpy(&inst->stack[stoffs], &tempstack[tssize], sizeof(int));
+    stoffs += sizeof(int);
   }
-  inst->registers[SREG_SP] = (long)(&inst->stack[0]);
-  inst->registers[SREG_SP] += (numargs * sizeof(long));
+  inst->registers[SREG_SP] = (int)(&inst->stack[0]);
+  inst->registers[SREG_SP] += (numargs * sizeof(int));
   inst->runningInst = inst;
 
 #if defined(AGS_64BIT)
@@ -2115,7 +2116,7 @@ int ccCallInstance(ccInstance * inst, char *funcname, long numargs, ...)
 #endif
 
   int reterr = cc_run_code(inst, startat);
-  inst->registers[SREG_SP] -= (numargs - 1) * sizeof(long);
+  inst->registers[SREG_SP] -= (numargs - 1) * sizeof(int);
   inst->pc = 0;
   current_instance = currentInstanceWas;
 
@@ -2139,7 +2140,7 @@ int ccCallInstance(ccInstance * inst, char *funcname, long numargs, ...)
     return 100;
   }
 
-  if (inst->registers[SREG_SP] != (long)&inst->stack[0]) {
+  if (inst->registers[SREG_SP] != (int)&inst->stack[0]) {
     cc_error("stack pointer was not zero at completion of script");
     return -5;
   }
@@ -2178,7 +2179,7 @@ void freadstring(char **strptr, FILE * iii)
 }
 
 // 64 bit: This is supposed to read a 32 bit value
-int fget_long(FILE * iii)
+int fget_int(FILE * iii)
 {
   int tmpp;
   fread(&tmpp, 4, 1, iii);
@@ -2196,7 +2197,7 @@ ccScript *fread_script(FILE * ooo)
   fread(gotsig, 1, 4, ooo);
   gotsig[4] = 0;
 
-  int fileVer = fget_long(ooo);
+  int fileVer = fget_int(ooo);
 
   if ((strcmp(gotsig, scfilesig) != 0) || (fileVer > SCOM_VERSION)) {
     cc_error("file was not written by fwrite_script or seek position is incorrect");
@@ -2204,9 +2205,9 @@ ccScript *fread_script(FILE * ooo)
     return NULL;
   }
 
-  scri->globaldatasize = fget_long(ooo);
-  scri->codesize = fget_long(ooo);
-  scri->stringssize = fget_long(ooo);
+  scri->globaldatasize = fget_int(ooo);
+  scri->codesize = fget_int(ooo);
+  scri->stringssize = fget_int(ooo);
 
   if (scri->globaldatasize > 0) {
     scri->globaldata = (char *)malloc(scri->globaldatasize);
@@ -2217,14 +2218,14 @@ ccScript *fread_script(FILE * ooo)
     scri->globaldata = NULL;
 
   if (scri->codesize > 0) {
-    scri->code = (long *)malloc(scri->codesize * sizeof(long));
+    scri->code = (int *)malloc(scri->codesize * sizeof(int));
     // MACPORT FIX: swap
 
     // 64 bit: Read code into 8 byte array, necessary for being able to perform
     // relocations on the references.
     int i;
     for (i = 0; i < scri->codesize; i++)
-      scri->code[i] = fget_long(ooo);
+      scri->code[i] = fget_int(ooo);
   }
   else
     scri->code = NULL;
@@ -2237,45 +2238,45 @@ ccScript *fread_script(FILE * ooo)
   else
     scri->strings = NULL;
 
-  scri->numfixups = fget_long(ooo);
+  scri->numfixups = fget_int(ooo);
   if (scri->numfixups > 0) {
     scri->fixuptypes = (char *)malloc(scri->numfixups);
-    scri->fixups = (long *)malloc(scri->numfixups * sizeof(long));
+    scri->fixups = (int *)malloc(scri->numfixups * sizeof(int));
     // MACPORT FIX: swap 'size' and 'nmemb'
     fread(scri->fixuptypes, sizeof(char), scri->numfixups, ooo);
 
     // 64 bit: Read fixups into 8 byte array too
     int i;
     for (i = 0; i < scri->numfixups; i++)
-      scri->fixups[i] = fget_long(ooo);
+      scri->fixups[i] = fget_int(ooo);
   }
   else {
     scri->fixups = NULL;
     scri->fixuptypes = NULL;
   }
 
-  scri->numimports = fget_long(ooo);
+  scri->numimports = fget_int(ooo);
 
   scri->imports = (char**)malloc(sizeof(char*) * scri->numimports);
   for (n = 0; n < scri->numimports; n++)
     freadstring(&scri->imports[n], ooo);
 
-  scri->numexports = fget_long(ooo);
+  scri->numexports = fget_int(ooo);
   scri->exports = (char**)malloc(sizeof(char*) * scri->numexports);
-  scri->export_addr = (long*)malloc(sizeof(long) * scri->numexports);
+  scri->export_addr = (int*)malloc(sizeof(int) * scri->numexports);
   for (n = 0; n < scri->numexports; n++) {
     freadstring(&scri->exports[n], ooo);
-    scri->export_addr[n] = fget_long(ooo);
+    scri->export_addr[n] = fget_int(ooo);
   }
 
   if (fileVer >= 83) {
     // read in the Sections
-    scri->numSections = fget_long(ooo);
+    scri->numSections = fget_int(ooo);
     scri->sectionNames = (char**)malloc(scri->numSections * sizeof(char*));
-    scri->sectionOffsets = (long*)malloc(scri->numSections * sizeof(long));
+    scri->sectionOffsets = (int*)malloc(scri->numSections * sizeof(int));
     for (n = 0; n < scri->numSections; n++) {
       freadstring(&scri->sectionNames[n], ooo);
-      scri->sectionOffsets[n] = fget_long(ooo);
+      scri->sectionOffsets[n] = fget_int(ooo);
     }
   }
   else
@@ -2285,7 +2286,7 @@ ccScript *fread_script(FILE * ooo)
     scri->sectionOffsets = NULL;
   }
 
-  if (fget_long(ooo) != ENDFILESIG) {
+  if (fget_int(ooo) != ENDFILESIG) {
     cc_error("internal error rebuilding script");
     free(scri);
     return NULL;

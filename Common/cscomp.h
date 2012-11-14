@@ -72,7 +72,7 @@ extern void ccFreeInstance(ccInstance *);
 // get the address of an exported variable in the script
 extern char *ccGetSymbolAddr(ccInstance *, char *);
 // call an exported function in the script (3rd arg is number of params)
-extern int ccCallInstance(ccInstance *, char *, long, ...);
+extern int ccCallInstance(ccInstance *, char *, int, ...);
 // specifies that when the current function returns to the script, it
 // will stop and return from CallInstance
 extern void ccAbortInstance(ccInstance *);
@@ -110,9 +110,9 @@ struct ICCStringClass {
 extern void  ccSetStringClassImpl(ICCStringClass *theClass);
 // register a memory handle for the object and allow script
 // pointers to point to it
-extern long  ccRegisterManagedObject(const void *object, ICCDynamicObject *);
+extern int  ccRegisterManagedObject(const void *object, ICCDynamicObject *);
 // register a de-serialized object
-extern long  ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *);
+extern int  ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *);
 // unregister a particular object
 extern int   ccUnRegisterManagedObject(const void *object);
 // remove all registered objects
@@ -122,10 +122,10 @@ extern void  ccSerializeAllObjects(FILE *output);
 // un-serialise all objects (will remove all currently registered ones)
 extern int   ccUnserializeAllObjects(FILE *input, ICCObjectReader *callback);
 // dispose the object if RefCount==0
-extern void  ccAttemptDisposeObject(long handle);
+extern void  ccAttemptDisposeObject(int handle);
 // translate between object handles and memory addresses
-extern long  ccGetObjectHandleFromAddress(const char *address);
-extern const char *ccGetObjectAddressFromHandle(long handle);
+extern int  ccGetObjectHandleFromAddress(const char *address);
+extern const char *ccGetObjectAddressFromHandle(int handle);
 
 // DEBUG HOOK
 typedef void (*new_line_hook_type) (ccInstance *, int);
@@ -166,8 +166,8 @@ extern void cc_preprocess(char *, char *);
 extern void preproc_startup(void);
 extern void preproc_shutdown(void);
 
-extern int ccAddObjectReference(long handle);
-extern int ccReleaseObjectReference(long handle);
+extern int ccAddObjectReference(int handle);
+extern int ccReleaseObjectReference(int handle);
 extern void fputstring(char *sss, FILE *ddd);
 extern void fgetstring_limit(char *sss, FILE *ddd, int bufsize);
 extern void fgetstring(char *sss, FILE *ddd);
@@ -210,26 +210,26 @@ struct ccTreeMap {
 struct ccScript
 {
   char *globaldata;
-  long globaldatasize;
-  long *code;
-  long codesize;
+  int globaldatasize;
+  int *code;
+  int codesize;
   char *strings;
-  long stringssize;
+  int stringssize;
   char *fixuptypes;             // global data/string area/ etc
-  long *fixups;                 // code array index to fixup (in longs)
+  int *fixups;                 // code array index to fixup (in ints)
   int numfixups;
   int importsCapacity;
   char **imports;
   int numimports;
   int exportsCapacity;
   char **exports;   // names of exports
-  long *export_addr;        // high byte is type; low 24-bits are offset
+  int *export_addr;        // high byte is type; low 24-bits are offset
   int numexports;
   int instances;
   // 'sections' allow the interpreter to find out which bit
   // of the code came from header files, and which from the main file
   char **sectionNames;
-  long *sectionOffsets;
+  int *sectionOffsets;
   int numSections;
   int capacitySections;
 };
@@ -246,28 +246,28 @@ struct ccScript
 #define INSTF_ABORTED     2
 #define INSTF_FREE        4
 #define INSTF_RUNNING     8   // set by main code to confirm script isn't stuck
-#define CC_STACK_SIZE     (1000 * sizeof(long))
+#define CC_STACK_SIZE     (1000 * sizeof(int))
 #define MAX_CALL_STACK    100
 
 struct ccInstance
 {
-  long flags;
+  int flags;
   char *globaldata;
-  long globaldatasize;
-  unsigned long *code;
+  int globaldatasize;
+  unsigned int *code;
   ccInstance *runningInst;  // might point to another instance if in far call
-  long codesize;
+  int codesize;
   char *strings;
-  long stringssize;
+  int stringssize;
   char **exportaddr;  // real pointer to export
   char *stack;
-  long stacksize;
-  long registers[CC_NUM_REGISTERS];
-  long pc;                        // program counter
-  long line_number;               // source code line number
+  int stacksize;
+  int registers[CC_NUM_REGISTERS];
+  int pc;                        // program counter
+  int line_number;               // source code line number
   ccScript *instanceof;
-  long callStackLineNumber[MAX_CALL_STACK];
-  long callStackAddr[MAX_CALL_STACK];
+  int callStackLineNumber[MAX_CALL_STACK];
+  int callStackAddr[MAX_CALL_STACK];
   ccInstance *callStackCodeInst[MAX_CALL_STACK];
   int  callStackSize;
   int  loadedInstanceId;
@@ -276,7 +276,7 @@ struct ccInstance
 #if defined(AGS_64BIT)
   // 64 bit: Variables to keep track of the size of the variables on the stack.
   // This is necessary because the compiled code accesses values on the stack with
-  // absolute offsets that don't take into account the 8 byte long pointers on
+  // absolute offsets that don't take into account the 8 byte int pointers on
   // 64 bit systems. These variables help with rewriting the offsets for the
   // modified stack.
   int stackSizes[CC_STACK_SIZE];
