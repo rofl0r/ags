@@ -188,14 +188,14 @@ struct CCDynamicArray : ICCDynamicObject
       elementCount[0] &= ~ARRAY_MANAGED_TYPE_FLAG;
       for (int i = 0; i < elementCount[0]; i++)
       {
-        if (elementCount[2 + i] != NULL)
+        if (elementCount[2 + i] != 0)
         {
           ccReleaseObjectReference(elementCount[2 + i]);
         }
       }
     }
 
-    delete (void*)address;
+    //delete (void*)address;
     return 1;
   }
 
