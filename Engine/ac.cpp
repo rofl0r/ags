@@ -11,6 +11,9 @@
   CLEAR that the code has been altered from the Standard Version.
 
 */
+extern "C" {
+	#include "Clib32.h"
+}
 
 #if !defined(IOS_VERSION) && !defined(PSP_VERSION) && !defined(ANDROID_VERSION)
 int psp_video_framedrop = 1;
@@ -125,17 +128,14 @@ char dataDirectory[512];
 char appDirectory[512];
 extern "C"
 {
+	
    int osx_sys_question(const char *msg, const char *but1, const char *but2);
 }
 #endif
 
 #include "misc.h"
 
-// This is needed by a couple of headers, so it's at the top
-extern "C" {
- extern long cliboffset(char*);
-}
-extern char lib_file_name[];
+
 /*
 extern "C" {
 extern void * memcpy_amd(void *dest, const void *src, size_t n);
@@ -291,8 +291,6 @@ LPWSTR *wArgv;
 
 // ***** EXTERNS ****
 extern "C" {
- extern int  csetlib(char*,char*);
- extern FILE*clibfopen(char*,char*);
  extern int  cfopenpriority;
  }
 extern int  minstalled();
@@ -779,7 +777,7 @@ char editor_debugger_instance_token[100];
 IAGSEditorDebugger *editor_debugger = NULL;
 int break_on_next_script_step = 0;
 volatile int game_paused_in_debugger = 0;
-HWND editor_window_handle = NULL;
+HWND editor_window_handle = 0;
 
 int in_enters_screen=0,done_es_error = 0;
 int in_leaves_screen = -1;
@@ -1926,7 +1924,6 @@ void setpal() {
 // custom CLIB datafiles
 extern "C" {
 PACKFILE*_my_temppack;
-extern char* clibgetdatafile(char*);
 #if ALLEGRO_DATE > 19991010
 #define PFO_PARAM const char *
 #else

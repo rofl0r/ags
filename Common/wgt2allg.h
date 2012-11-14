@@ -128,10 +128,7 @@ extern "C"
 #ifdef USE_CLIB
   extern "C"
   {
-    extern FILE *clibfopen(char *, char *);
-    extern long cliboffset(char *);
-    extern long clibfilesize(char *);
-    extern long last_opened_size;
+#include "Clib32.h"
   }
 #define fopen clibfopen
 #endif

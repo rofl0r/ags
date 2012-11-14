@@ -9,6 +9,7 @@
   CLEAR that the code has been altered from the Standard Version.
 
 */
+#include "Clib32.h"
 #pragma unmanaged
 #define CROOM_NOFUNCTIONS
 #ifndef USE_ALFONT
@@ -39,14 +40,6 @@ off_t _filelength(int fd) {
 #endif
 
 typedef unsigned char* wgtfont;
-
-extern "C"
-{
-  extern FILE *clibfopen(char *, char *);
-  extern long cliboffset(char *);
-  extern long clibfilesize(char *);
-  extern long last_opened_size;
-}
 
 class WFNFontRenderer : public IAGSFontRenderer {
 public:
