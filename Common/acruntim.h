@@ -875,7 +875,7 @@ extern int offsetx,offsety;     // for scumm-type scrolling rooms
 extern int game_paused;
 extern int inside_script;
 extern int numPluginReaders;
-extern int our_eip;
+#include "../Engine/eip.h"
 extern ccInstance *gameinst, *roominst;
 extern RoomStatus *croom;
 extern SpriteCache spriteset;

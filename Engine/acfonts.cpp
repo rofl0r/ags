@@ -69,7 +69,7 @@ public:
 };
 
 extern bool ShouldAntiAliasText();
-extern int our_eip;
+#include "../Engine/eip.h"
 int texttrans = 0;
 int textcol;
 int wtext_multiply = 1;
@@ -305,14 +305,15 @@ int WFNFontRenderer::GetTextHeight(const char *texx, int fontNumber)
 
 void WFNFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour)
 {
-  unsigned int ee;
+  size_t ee;
 
 #ifdef THIS_IS_THE_ENGINE
-  int oldeip = our_eip;
+  long oldeip = our_eip;
   our_eip = 415;
 #endif
+  size_t l = strlen(text);
 
-  for (ee = 0; ee < strlen(text); ee++)
+  for (ee = 0; ee < l; ee++)
     x += printchar(x, y, fonts[fontNumber], text[ee]);
 
 #ifdef THIS_IS_THE_ENGINE

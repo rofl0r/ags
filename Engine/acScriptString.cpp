@@ -76,30 +76,30 @@ const char *ScriptString::GetType() {
 
 size_t ScriptString::Serialize(const char *address, char *buffer, size_t bufsize) {
 	if (text == NULL)
-		text = strdup("");
+		text = "";
 	StartSerialize(buffer);
-	SerializeLong(strlen(text));
+	size_t l = strlen(text);
+	SerializeLong(l);
 	//SerializeInt(strlen(text));
-	strcpy(&serbuffer[bytesSoFar], text);
-	bytesSoFar += strlen(text) + 1;
+	memcpy(serbuffer + bytesSoFar, text, l + 1);
+	bytesSoFar += l + 1;
 	return EndSerialize();
 }
 
 void ScriptString::Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
-  StartUnserialize(serializedData, dataSize);
-  int textsize = UnserializeInt();
-  text = (char*)malloc(textsize + 1);
-  strcpy(text, &serializedData[bytesSoFar]);
-  ccRegisterUnserializedObject(index, text, this);
+	StartUnserialize(serializedData, dataSize);
+	long textsize = UnserializeLong();
+	text = (char*)malloc(textsize + 1);
+	memcpy(text, serializedData + bytesSoFar, textsize + 1);
+	ccRegisterUnserializedObject(index, text, this);
 }
 
 ScriptString::ScriptString() {
-  text = NULL;
+	text = NULL;
 }
 
 ScriptString::ScriptString(const char *fromText) {
-  text = (char*)malloc(strlen(fromText) + 1);
-  strcpy(text, fromText);
+	text = strdup(fromText);
 }
 
 int String_IsNullOrEmpty(const char *thisString) {

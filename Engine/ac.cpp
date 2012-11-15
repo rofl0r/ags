@@ -146,7 +146,7 @@ extern void * memcpy_amd(void *dest, const void *src, size_t n);
 #define USE_CLIB
 
 #define IS_ANTIALIAS_SPRITES usetup.enable_antialiasing && (play.disable_antialiasing == 0)
-extern int our_eip;
+#include "../Engine/eip.h"
 #include "wgt2allg.h"
 #include "sprcache.h"
 
@@ -498,8 +498,8 @@ ExecutingScript::ExecutingScript() {
 }
 
 struct TempEip {
-  int oldval;
-  TempEip (int newval) {
+  long oldval;
+  TempEip (long newval) {
     oldval = our_eip;
     our_eip = newval;
   }
@@ -758,7 +758,7 @@ int said_speech_line; // used while in dialog to track whether screen needs upda
 int restrict_until=0;
 int gs_to_newroom=-1;
 ScreenOverlay screenover[MAX_SCREEN_OVERLAYS];
-int proper_exit=0,our_eip=0;
+int proper_exit=0;
 int numscreenover=0;
 int scaddr;
 int walk_behind_baselines_changed = 0;
@@ -9381,7 +9381,7 @@ const char *get_engine_version() {
 void atexit_handler() {
   if (proper_exit==0) {
     sprintf(pexbuf,"\nError: the program has exited without requesting it.\n"
-      "Program pointer: %+03d  (write this number down), ACI version " ACI_VERSION_TEXT "\n"
+      "Program pointer: %+03ld  (write this number down), ACI version " ACI_VERSION_TEXT "\n"
       "If you see a list of numbers above, please write them down and contact\n"
       "Chris Jones. Otherwise, note down any other information displayed.\n",
       our_eip);
@@ -11540,16 +11540,16 @@ int create_global_script() {
   return 0;
 }
 
-void allocate_memory_for_views(int viewCount)
-{
-  views = (ViewStruct*)calloc(sizeof(ViewStruct) * viewCount, 1);
-  game.viewNames = (char**)malloc(sizeof(char*) * viewCount);
-  game.viewNames[0] = (char*)malloc(MAXVIEWNAMELENGTH * viewCount);
+void allocate_memory_for_views(int viewCount) {
+	views = (ViewStruct*)calloc(viewCount, sizeof(ViewStruct));
+	game.viewNames = (char**)calloc(viewCount, sizeof(char*));
+	game.viewNames[0] = (char*)calloc(viewCount, MAXVIEWNAMELENGTH);
 
-  for (int i = 1; i < viewCount; i++)
-  {
-    game.viewNames[i] = game.viewNames[0] + (MAXVIEWNAMELENGTH * i);
-  }
+	size_t curr = MAXVIEWNAMELENGTH;
+	for (int i = 1; i < viewCount; i++) {
+		game.viewNames[i] = game.viewNames[0] + curr;
+		curr += MAXVIEWNAMELENGTH;
+	}
 }
 
 int adjust_pixel_size_for_loaded_data(int size, int filever)
@@ -12245,7 +12245,7 @@ int load_game_file() {
     return -2;  // old v2.00 version
 
   our_eip=-11;
-  characterScriptObjNames = (char**)malloc(sizeof(char*) * game.numcharacters);
+  characterScriptObjNames = (char**)calloc(game.numcharacters, sizeof(char*));
 
   for (ee=0;ee<game.numcharacters;ee++) {
     game.chars[ee].walking = 0;
@@ -24273,7 +24273,7 @@ int do_game_load(const char *nametouse, int slotNumber, char *descrp, int *wantS
     fclose(ooo);
     return -2; 
   }
-  int oldeip = our_eip;
+  long oldeip = our_eip;
   our_eip = 2050;
 
   fgetstring_limit(rbuffer,ooo, 180);
@@ -26631,7 +26631,7 @@ void initialize_sprite (int ee) {
   }
   else {
     // stretch sprites to correct resolution
-    int oldeip = our_eip;
+    long oldeip = our_eip;
     our_eip = 4300;
 
     if (game.spriteflags[ee] & SPF_HADALPHACHANNEL) {
@@ -26849,7 +26849,7 @@ char tempmsg[100];
 char*printfworkingspace;
 int malloc_fail_handler(size_t amountwanted) {
   free(printfworkingspace);
-  sprintf(tempmsg,"Out of memory: failed to allocate %ld bytes (at PP=%d)",amountwanted, our_eip);
+  sprintf(tempmsg,"Out of memory: failed to allocate %ld bytes (at PP=%ld)",amountwanted, our_eip);
   quit(tempmsg);
   return 0;
 }

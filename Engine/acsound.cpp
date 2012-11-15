@@ -51,7 +51,7 @@ extern "C" {
 
 PACKFILE *mp3in;
 extern int use_extra_sound_offset;
-extern int our_eip;
+#include "eip.h"
 extern void quit(char *);
 extern void write_log(char*msg) ;
 //extern void sample_update_callback(SAMPLE *sample, int voice);
@@ -602,7 +602,7 @@ struct MYSTATICMP3:public SOUNDCLIP
   {
     lockMutex();
 
-    int oldeip = our_eip;
+    long oldeip = our_eip;
       our_eip = 5997;
 
     if ((tune == NULL) || (!ready))
