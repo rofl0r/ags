@@ -287,26 +287,8 @@ struct ScriptObject {
   int __padding;
 };
 
-struct AGSCCDynamicObject : ICCDynamicObject {
-public:
-  // default implementation
-  virtual int Dispose(const char *address, bool force);
-
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) = 0;
-
-protected:
-  int bytesSoFar;
-  int totalBytes;
-  char *serbuffer;
-
-  void StartSerialize(char *sbuffer);
-  void SerializeInt(int val);
-  int  EndSerialize();
-  void StartUnserialize(const char *sbuffer, int pTotalBytes);
-  int  UnserializeInt();
-
-};
-
+#include "../Common/cscomp.h"
+#include "../Engine/acAGSCCDynamicObject.h"
 
 struct ScriptOverlay : AGSCCDynamicObject {
   int overlayId;
@@ -316,8 +298,8 @@ struct ScriptOverlay : AGSCCDynamicObject {
 
   virtual int Dispose(const char *address, bool force);
   virtual const char *GetType();
-  virtual int Serialize(const char *address, char *buffer, int bufsize);
-  virtual void Unserialize(int index, const char *serializedData, int dataSize);
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize);
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize);
   void Remove();
   ScriptOverlay();
 };
@@ -329,8 +311,8 @@ struct ScriptDateTime : AGSCCDynamicObject {
 
   virtual int Dispose(const char *address, bool force);
   virtual const char *GetType();
-  virtual int Serialize(const char *address, char *buffer, int bufsize);
-  virtual void Unserialize(int index, const char *serializedData, int dataSize);
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize);
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize);
 
   ScriptDateTime();
 };
@@ -350,8 +332,8 @@ struct ScriptDrawingSurface : AGSCCDynamicObject {
 
   virtual int Dispose(const char *address, bool force);
   virtual const char *GetType();
-  virtual int Serialize(const char *address, char *buffer, int bufsize);
-  virtual void Unserialize(int index, const char *serializedData, int dataSize);
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize);
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize);
   BITMAP* GetBitmapSurface();
   void StartDrawing();
   void MultiplyThickness(int *adjustValue);
@@ -364,59 +346,44 @@ struct ScriptDrawingSurface : AGSCCDynamicObject {
 };
 
 struct ScriptViewFrame : AGSCCDynamicObject {
-  int view, loop, frame;
+	int view, loop, frame;
 
-  virtual int Dispose(const char *address, bool force);
-  virtual const char *GetType();
-  virtual int Serialize(const char *address, char *buffer, int bufsize);
-  virtual void Unserialize(int index, const char *serializedData, int dataSize);
+	virtual int Dispose(const char *address, bool force);
+	virtual const char *GetType();
+	virtual size_t Serialize(const char *address, char *buffer, size_t bufsize);
+	virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize);
 
-  ScriptViewFrame(int p_view, int p_loop, int p_frame);
-  ScriptViewFrame();
+	ScriptViewFrame(int p_view, int p_loop, int p_frame);
+	ScriptViewFrame();
 };
 
 struct ScriptDynamicSprite : AGSCCDynamicObject {
-  int slot;
+	int slot;
 
-  virtual int Dispose(const char *address, bool force);
-  virtual const char *GetType();
-  virtual int Serialize(const char *address, char *buffer, int bufsize);
-  virtual void Unserialize(int index, const char *serializedData, int dataSize);
+	virtual int Dispose(const char *address, bool force);
+	virtual const char *GetType();
+	virtual size_t Serialize(const char *address, char *buffer, size_t bufsize);
+	virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize);
 
-  ScriptDynamicSprite(int slot);
-  ScriptDynamicSprite();
+	ScriptDynamicSprite(int slot);
+	ScriptDynamicSprite();
 };
 
-struct ScriptAudioChannel
-{
-  int id;
-  int reserved;
+struct ScriptAudioChannel {
+	int id;
+	int reserved;
 };
 
 struct CCAudioChannel : AGSCCDynamicObject {
-  virtual const char *GetType();
-  virtual int Serialize(const char *address, char *buffer, int bufsize);
-  virtual void Unserialize(int index, const char *serializedData, int dataSize);
+	virtual const char *GetType();
+	virtual size_t Serialize(const char *address, char *buffer, size_t bufsize);
+	virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize);
 };
 
 struct CCAudioClip : AGSCCDynamicObject {
-  virtual const char *GetType();
-  virtual int Serialize(const char *address, char *buffer, int bufsize);
-  virtual void Unserialize(int index, const char *serializedData, int dataSize);
-};
-
-struct ScriptString : AGSCCDynamicObject, ICCStringClass {
-  char *text;
-
-  virtual int Dispose(const char *address, bool force);
-  virtual const char *GetType();
-  virtual int Serialize(const char *address, char *buffer, int bufsize);
-  virtual void Unserialize(int index, const char *serializedData, int dataSize);
-
-  virtual void* CreateString(const char *fromText);
-
-  ScriptString();
-  ScriptString(const char *fromText);
+	virtual const char *GetType();
+	virtual size_t Serialize(const char *address, char *buffer, size_t bufsize);
+	virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize);
 };
 
 #define INVALID_X  30000
@@ -639,29 +606,30 @@ struct ScriptDialog {
 extern const char *fopenModes[];
 
 struct sc_File : ICCDynamicObject {
-  FILE *handle;
+	FILE *handle;
 
-  virtual int Dispose(const char *address, bool force) {
-    Close();
-    delete this;
-    return 1;
-  }
+	virtual int Dispose(const char *address, bool force) {
+		Close();
+		delete this;
+		return 1;
+	}
 
-  virtual const char *GetType() {
-    return "File";
-  }
+	virtual const char *GetType() {
+		return "File";
+	}
 
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
-    // we cannot serialize an open file, so it will get closed
-    return 0;
-  }
+	virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
+		// we cannot serialize an open file, so it will get closed
+		return 0;
+	}
 
-  int OpenFile(const char *filename, int mode);
-  void Close();
+	int OpenFile(const char *filename, int mode);
+	
+	void Close();
 
-  sc_File() {
-    handle = NULL;
-  }
+	sc_File() {
+		handle = NULL;
+	}
 };
 
 
@@ -1000,11 +968,10 @@ extern int GetScalingAt (int x, int y) ;
 extern int wgettextwidth_compensate(const char *tex, int font) ;
 extern void add_dynamic_sprite (int gotSlot, block redin, bool hasAlpha = false);
 extern void free_dynamic_sprite (int gotSlot);
-const char* CreateNewScriptString(const char *fromText, bool reAllocate = true);
 extern void convert_move_path_to_high_res(MoveList *ml);
 extern void register_audio_script_objects();
 extern void register_audio_script_functions();
-extern bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize);
+extern bool unserialize_audio_script_object(ptrdiff_t index, const char *objectType, const char *serializedData, ptrdiff_t dataSize);
 extern void audio_update_polled_stuff();
 extern ScriptAudioChannel* play_audio_clip_on_channel(int channel, ScriptAudioClip *clip, int priority, int repeat, int fromOffset, SOUNDCLIP *cachedClip = NULL);
 extern int get_old_style_number_for_sound(int sound_number);

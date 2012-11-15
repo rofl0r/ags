@@ -14,6 +14,7 @@
 #define CROOM_NOFUNCTIONS
 #include "acroom.h"
 #include "acruntim.h"
+#include <stddef.h>
 
 extern int psp_is_old_datafile;
 
@@ -735,35 +736,28 @@ void register_audio_script_functions()
   ccAddExternalSymbol("System::geti_AudioChannels", (void*)System_GetAudioChannels);
 }
 
-bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize)
-{
-  if (strcmp(objectType, "AudioChannel") == 0)
-  {
-    ccDynamicAudio.Unserialize(index, serializedData, dataSize);
-  }
-  else if (strcmp(objectType, "AudioClip") == 0)
-  {
-    ccDynamicAudioClip.Unserialize(index, serializedData, dataSize);
-  }
-  else
-  {
-    return false;
-  }
-  return true;
+bool unserialize_audio_script_object(ptrdiff_t index, const char *objectType, const char *serializedData, ptrdiff_t dataSize) {
+	if (strcmp(objectType, "AudioChannel") == 0)
+		ccDynamicAudio.Unserialize(index, serializedData, dataSize);
+	else if (strcmp(objectType, "AudioClip") == 0)
+		ccDynamicAudioClip.Unserialize(index, serializedData, dataSize);
+	else
+		return false;
+	return true;
 }
 
 const char *CCAudioChannel::GetType() {
   return "AudioChannel";
 }
 
-int CCAudioChannel::Serialize(const char *address, char *buffer, int bufsize) {
+size_t CCAudioChannel::Serialize(const char *address, char *buffer, size_t bufsize) {
   ScriptAudioChannel *ach = (ScriptAudioChannel*)address;
   StartSerialize(buffer);
   SerializeInt(ach->id);
   return EndSerialize();
 }
 
-void CCAudioChannel::Unserialize(int index, const char *serializedData, int dataSize) {
+void CCAudioChannel::Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
   StartUnserialize(serializedData, dataSize);
   int id = UnserializeInt();
   ccRegisterUnserializedObject(index, &scrAudioChannel[id], this);
@@ -773,14 +767,14 @@ const char *CCAudioClip::GetType() {
   return "AudioClip";
 }
 
-int CCAudioClip::Serialize(const char *address, char *buffer, int bufsize) {
+size_t CCAudioClip::Serialize(const char *address, char *buffer, size_t bufsize) {
   ScriptAudioClip *ach = (ScriptAudioClip*)address;
   StartSerialize(buffer);
   SerializeInt(ach->id);
   return EndSerialize();
 }
 
-void CCAudioClip::Unserialize(int index, const char *serializedData, int dataSize) {
+void CCAudioClip::Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
   StartUnserialize(serializedData, dataSize);
   int id = UnserializeInt();
   ccRegisterUnserializedObject(index, &game.audioClips[id], this);

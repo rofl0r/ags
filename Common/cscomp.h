@@ -13,6 +13,8 @@
 #ifndef __CSCOMP_H
 #define __CSCOMP_H
 #include <stdio.h>
+#include <stddef.h>
+#include <string.h>
 #include "fmem.h"
 
 #define SCOM_VERSION 89
@@ -98,10 +100,10 @@ struct ICCDynamicObject {
   virtual const char *GetType() = 0;
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) = 0;
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) = 0;
 };
 struct ICCObjectReader {
-  virtual void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) = 0;
+  virtual void Unserialize(ptrdiff_t index, const char *objectType, const char *serializedData, ptrdiff_t dataSize) = 0;
 };
 struct ICCStringClass {
   virtual void* CreateString(const char *fromText) = 0;
@@ -112,7 +114,7 @@ extern void  ccSetStringClassImpl(ICCStringClass *theClass);
 // pointers to point to it
 extern long  ccRegisterManagedObject(const void *object, ICCDynamicObject *);
 // register a de-serialized object
-extern long  ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *);
+extern long  ccRegisterUnserializedObject(ptrdiff_t index, const void *object, ICCDynamicObject *);
 // unregister a particular object
 extern int   ccUnRegisterManagedObject(const void *object);
 // remove all registered objects

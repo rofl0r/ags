@@ -12,6 +12,7 @@
 
 */
 #include "Clib32.h"
+#include "acScriptString.hpp"
 #include <stdlib.h>
 
 #if !defined(IOS_VERSION) && !defined(PSP_VERSION) && !defined(ANDROID_VERSION)
@@ -9853,46 +9854,6 @@ void setup_player_character(int charid) {
   _sc_PlayerCharPtr = ccGetObjectHandleFromAddress((char*)playerchar);
 }
 
-
-// *** The script serialization routines for built-in types
-
-int AGSCCDynamicObject::Dispose(const char *address, bool force) {
-  // cannot be removed from memory
-  return 0;
-}
-
-void AGSCCDynamicObject::StartSerialize(char *sbuffer) {
-  bytesSoFar = 0;
-  serbuffer = sbuffer;
-}
-
-void AGSCCDynamicObject::SerializeInt(int val) {
-  char *chptr = &serbuffer[bytesSoFar];
-  int *iptr = (int*)chptr;
-  *iptr = val;
-  bytesSoFar += 4;
-}
-
-int AGSCCDynamicObject::EndSerialize() {
-  return bytesSoFar;
-}
-
-void AGSCCDynamicObject::StartUnserialize(const char *sbuffer, int pTotalBytes) {
-  bytesSoFar = 0;
-  totalBytes = pTotalBytes;
-  serbuffer = (char*)sbuffer;
-}
-
-int AGSCCDynamicObject::UnserializeInt() {
-  if (bytesSoFar >= totalBytes)
-    quit("Unserialise: internal error: read past EOF");
-
-  char *chptr = &serbuffer[bytesSoFar];
-  bytesSoFar += 4;
-  int *iptr = (int*)chptr;
-  return *iptr;
-}
-
 struct ScriptDialogOptionsRendering : AGSCCDynamicObject {
   int x, y, width, height;
   int parserTextboxX, parserTextboxY;
@@ -9909,11 +9870,11 @@ struct ScriptDialogOptionsRendering : AGSCCDynamicObject {
 
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
     return 0;
   }
 
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
     ccRegisterUnserializedObject(index, this, this);
   }
 
@@ -9947,7 +9908,7 @@ struct CCGUIObject : AGSCCDynamicObject {
 
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
     GUIObject *guio = (GUIObject*)address;
     StartSerialize(buffer);
     SerializeInt(guio->guin);
@@ -9955,7 +9916,7 @@ struct CCGUIObject : AGSCCDynamicObject {
     return EndSerialize();
   }
 
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
     StartUnserialize(serializedData, dataSize);
     int guinum = UnserializeInt();
     int objnum = UnserializeInt();
@@ -9973,14 +9934,14 @@ struct CCCharacter : AGSCCDynamicObject {
 
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
     CharacterInfo *chaa = (CharacterInfo*)address;
     StartSerialize(buffer);
     SerializeInt(chaa->index_id);
     return EndSerialize();
   }
 
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
     StartUnserialize(serializedData, dataSize);
     int num = UnserializeInt();
     ccRegisterUnserializedObject(index, &game.chars[num], this);
@@ -9997,14 +9958,14 @@ struct CCHotspot : AGSCCDynamicObject {
 
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
     ScriptHotspot *shh = (ScriptHotspot*)address;
     StartSerialize(buffer);
     SerializeInt(shh->id);
     return EndSerialize();
   }
 
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
     StartUnserialize(serializedData, dataSize);
     int num = UnserializeInt();
     ccRegisterUnserializedObject(index, &scrHotspot[num], this);
@@ -10021,14 +9982,14 @@ struct CCRegion : AGSCCDynamicObject {
 
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
     ScriptRegion *shh = (ScriptRegion*)address;
     StartSerialize(buffer);
     SerializeInt(shh->id);
     return EndSerialize();
   }
 
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
     StartUnserialize(serializedData, dataSize);
     int num = UnserializeInt();
     ccRegisterUnserializedObject(index, &scrRegion[num], this);
@@ -10045,14 +10006,14 @@ struct CCInventory : AGSCCDynamicObject {
 
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
     ScriptInvItem *shh = (ScriptInvItem*)address;
     StartSerialize(buffer);
     SerializeInt(shh->id);
     return EndSerialize();
   }
 
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
     StartUnserialize(serializedData, dataSize);
     int num = UnserializeInt();
     ccRegisterUnserializedObject(index, &scrInv[num], this);
@@ -10069,14 +10030,14 @@ struct CCDialog : AGSCCDynamicObject {
 
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
     ScriptDialog *shh = (ScriptDialog*)address;
     StartSerialize(buffer);
     SerializeInt(shh->id);
     return EndSerialize();
   }
 
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
     StartUnserialize(serializedData, dataSize);
     int num = UnserializeInt();
     ccRegisterUnserializedObject(index, &scrDialog[num], this);
@@ -10093,14 +10054,14 @@ struct CCGUI : AGSCCDynamicObject {
 
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
     ScriptGUI *shh = (ScriptGUI*)address;
     StartSerialize(buffer);
     SerializeInt(shh->id);
     return EndSerialize();
   }
 
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
     StartUnserialize(serializedData, dataSize);
     int num = UnserializeInt();
     ccRegisterUnserializedObject(index, &scrGui[num], this);
@@ -10116,14 +10077,14 @@ struct CCObject : AGSCCDynamicObject {
 
   // serialize the object into BUFFER (which is BUFSIZE bytes)
   // return number of bytes used
-  virtual int Serialize(const char *address, char *buffer, int bufsize) {
+  virtual size_t Serialize(const char *address, char *buffer, size_t bufsize) {
     ScriptObject *shh = (ScriptObject*)address;
     StartSerialize(buffer);
     SerializeInt(shh->id);
     return EndSerialize();
   }
 
-  virtual void Unserialize(int index, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
     StartUnserialize(serializedData, dataSize);
     int num = UnserializeInt();
     ccRegisterUnserializedObject(index, &scrObj[num], this);
@@ -10638,7 +10599,7 @@ const char *ScriptDrawingSurface::GetType() {
   return "DrawingSurface";
 }
 
-int ScriptDrawingSurface::Serialize(const char *address, char *buffer, int bufsize) {
+size_t ScriptDrawingSurface::Serialize(const char *address, char *buffer, size_t bufsize) {
   StartSerialize(buffer);
   SerializeInt(roomBackgroundNumber);
   SerializeInt(dynamicSpriteNumber);
@@ -10652,7 +10613,7 @@ int ScriptDrawingSurface::Serialize(const char *address, char *buffer, int bufsi
   return EndSerialize();
 }
 
-void ScriptDrawingSurface::Unserialize(int index, const char *serializedData, int dataSize) {
+void ScriptDrawingSurface::Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
   StartUnserialize(serializedData, dataSize);
   roomBackgroundNumber = UnserializeInt();
   dynamicSpriteNumber = UnserializeInt();
@@ -10666,8 +10627,7 @@ void ScriptDrawingSurface::Unserialize(int index, const char *serializedData, in
   ccRegisterUnserializedObject(index, this, this);
 }
 
-ScriptDrawingSurface::ScriptDrawingSurface() 
-{
+ScriptDrawingSurface::ScriptDrawingSurface() {
   roomBackgroundNumber = -1;
   dynamicSpriteNumber = -1;
   dynamicSurfaceNumber = -1;
@@ -10797,7 +10757,7 @@ const char *ScriptDateTime::GetType() {
   return "DateTime";
 }
 
-int ScriptDateTime::Serialize(const char *address, char *buffer, int bufsize) {
+size_t ScriptDateTime::Serialize(const char *address, char *buffer, size_t bufsize) {
   StartSerialize(buffer);
   SerializeInt(year);
   SerializeInt(month);
@@ -10809,7 +10769,7 @@ int ScriptDateTime::Serialize(const char *address, char *buffer, int bufsize) {
   return EndSerialize();
 }
 
-void ScriptDateTime::Unserialize(int index, const char *serializedData, int dataSize) {
+void ScriptDateTime::Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
   StartUnserialize(serializedData, dataSize);
   year = UnserializeInt();
   month = UnserializeInt();
@@ -10840,7 +10800,7 @@ const char *ScriptViewFrame::GetType() {
   return "ViewFrame";
 }
 
-int ScriptViewFrame::Serialize(const char *address, char *buffer, int bufsize) {
+size_t ScriptViewFrame::Serialize(const char *address, char *buffer, size_t bufsize) {
   StartSerialize(buffer);
   SerializeInt(view);
   SerializeInt(loop);
@@ -10848,7 +10808,7 @@ int ScriptViewFrame::Serialize(const char *address, char *buffer, int bufsize) {
   return EndSerialize();
 }
 
-void ScriptViewFrame::Unserialize(int index, const char *serializedData, int dataSize) {
+void ScriptViewFrame::Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
   StartUnserialize(serializedData, dataSize);
   view = UnserializeInt();
   loop = UnserializeInt();
@@ -10868,247 +10828,6 @@ ScriptViewFrame::ScriptViewFrame() {
   frame = -1;
 }
 
-
-// ** SCRIPT STRING
-
-const char *CreateNewScriptString(const char *fromText, bool reAllocate) {
-  ScriptString *str;
-  if (reAllocate) {
-    str = new ScriptString(fromText);
-  }
-  else {
-    str = new ScriptString();
-    str->text = (char*)fromText;
-  }
-
-  ccRegisterManagedObject(str->text, str);
-
-  /*long handle = ccRegisterManagedObject(str->text, str);
-  char buffer[1000];
-  sprintf(buffer, "String %p (handle %d) allocated: '%s'", str->text, handle, str->text);
-  write_log(buffer);*/
-
-  return str->text;
-}
-
-void* ScriptString::CreateString(const char *fromText) {
-  return (void*)CreateNewScriptString(fromText);
-}
-
-int ScriptString::Dispose(const char *address, bool force) {
-	return 1;
-  // always dispose
-  if (text) {
-/*    char buffer[1000];
-    sprintf(buffer, "String %p deleted: '%s'", text, text);
-    write_log(buffer);*/
-    free(text);
-  }
-  delete this;
-  return 1;
-}
-
-const char *ScriptString::GetType() {
-  return "String";
-}
-
-int ScriptString::Serialize(const char *address, char *buffer, int bufsize) {
-  if (text == NULL)
-    text = strdup("");
-  StartSerialize(buffer);
-  SerializeInt(strlen(text));
-  strcpy(&serbuffer[bytesSoFar], text);
-  bytesSoFar += strlen(text) + 1;
-  return EndSerialize();
-}
-
-void ScriptString::Unserialize(int index, const char *serializedData, int dataSize) {
-  StartUnserialize(serializedData, dataSize);
-  int textsize = UnserializeInt();
-  text = (char*)malloc(textsize + 1);
-  strcpy(text, &serializedData[bytesSoFar]);
-  ccRegisterUnserializedObject(index, text, this);
-}
-
-ScriptString::ScriptString() {
-  text = NULL;
-}
-
-ScriptString::ScriptString(const char *fromText) {
-  text = (char*)malloc(strlen(fromText) + 1);
-  strcpy(text, fromText);
-}
-
-int String_IsNullOrEmpty(const char *thisString) 
-{
-  if ((thisString == NULL) || (thisString[0] == 0))
-    return 1;
-
-  return 0;
-}
-
-const char* String_Copy(const char *srcString) {
-  return CreateNewScriptString(srcString);
-}
-
-const char* String_Append(const char *thisString, const char *extrabit) {
-	size_t l1= strlen(thisString), l2 = strlen(extrabit);
-	char *buffer = (char*)malloc(l1 + l2 + 1);
-	memcpy(buffer, thisString, l1);
-	memcpy(buffer + l1, extrabit, l2);
-	buffer[l1+l2] = 0;
-	return CreateNewScriptString(buffer, false);
-}
-
-const char* String_AppendChar(const char *thisString, char extraOne) {
-	size_t l = thisString? strlen(thisString) : 0;
-	char *buffer = (char*)malloc(l + 2);
-	if(buffer) {
-		if(l) memcpy(buffer, thisString, l);
-		sprintf(buffer + l, "%c", extraOne);
-	}
-	return CreateNewScriptString(buffer, false);
-}
-
-const char* String_ReplaceCharAt(const char *thisString, int index, char newChar) {
-	if(!thisString) return 0;
-	size_t l = strlen(thisString);
-	if ((index < 0) || ((unsigned) index >= l))
-		quit("!String.ReplaceCharAt: index outside range of string");
-
-	char *buffer = (char*)malloc(l + 1);
-	memcpy(buffer, thisString, l+1);
-	strcpy(buffer, thisString);
-	buffer[index] = newChar;
-	return CreateNewScriptString(buffer, false);
-}
-
-const char* String_Truncate(const char *thisString, int length) {
-	if (length < 0)
-		quit("!String.Truncate: invalid length");
-	if(!thisString) return 0;
-	size_t l = strlen(thisString);
-
-	if ((unsigned) length >= l)
-		return thisString;//CreateNewScriptString(strdup(thisString), false);
-
-	char *buffer = (char*)malloc(length + 1);
-	strncpy(buffer, thisString, length);
-	buffer[length] = 0;
-	return CreateNewScriptString(buffer, false);
-}
-
-const char* String_Substring(const char *thisString, int index, int length) {
-	if (length < 0)
-		quit("!String.Substring: invalid length");
-	if(!thisString) return 0;
-	size_t l = strlen(thisString);
-	if ((index < 0) || ((unsigned) index > l))
-	quit("!String.Substring: invalid index");
-	if(index + length > l)
-		length = l - index;
-
-	char *buffer = (char*)malloc(length + 1);
-	if(buffer) {
-		memcpy(buffer, thisString + index, length);
-		buffer[length] = 0;
-	}
-	return CreateNewScriptString(buffer, false);
-}
-
-static int mystreq(const char* cmp1, const char *cmp2, bool caseSensitive) {
-	if (caseSensitive) 
-		return strcmp (cmp1, cmp2) == 0 ? 1 : 0;
-	else
-		return stricmp(cmp1, cmp2) == 0 ? 1 : 0;
-}
-
-int String_CompareTo(const char *thisString, const char *otherString, bool caseSensitive) {
-	const char *cmp1 = thisString ? thisString : "";
-	const char *cmp2 = otherString ? otherString : "";
-	if (caseSensitive) 
-		return strcmp (cmp1, cmp2);
-	else
-		return stricmp(cmp1, cmp2);
-}
-
-int String_StartsWith(const char *thisString, const char *checkForString, bool caseSensitive) {
-	const char *cmp1 = thisString ? thisString : "";
-	const char *cmp2 = checkForString ? checkForString : "";
-	size_t l = strlen(cmp2);
-	return mystreq(cmp1, cmp2, l);
-}
-
-int String_EndsWith(const char *thisString, const char *checkForString, bool caseSensitive) {
-	if (!thisString || !checkForString) return 0;
-	
-	ptrdiff_t checkAtOffset = strlen(thisString) - strlen(checkForString);
-	if (checkAtOffset < 0) return 0;
-	return mystreq(thisString + checkAtOffset, checkForString, caseSensitive);
-}
-
-const char* String_Replace(const char *thisString, const char *lookForText, 
-			   const char *replaceWithText, bool caseSensitive) {
-	char resultBuffer[STD_BUFFER_SIZE] = "";
-	size_t i, thisStringLen = strlen(thisString), 
-	       l = strlen(lookForText), r = strlen(replaceWithText),
-	       outputSize = 0;
-	       
-	for (i = 0; i < thisStringLen; i++) {
-		bool matchHere = false;
-		if (caseSensitive)
-			matchHere = (strncmp(thisString + i, lookForText, l) == 0);
-		else
-			matchHere = (strnicmp(thisString + i, lookForText, l) == 0);
-
-		if (matchHere) {
-			snprintf(resultBuffer + outputSize, sizeof(resultBuffer) - outputSize, "%s", replaceWithText);
-			outputSize += r;
-			i += l - 1;
-		} else {
-			resultBuffer[outputSize] = thisString[i];
-			outputSize++;
-		}
-	}
-
-	resultBuffer[outputSize] = 0;
-
-	return CreateNewScriptString(resultBuffer, true);
-}
-
-const char* String_LowerCase(const char *thisString) {
-	if(!thisString) return 0;
-	char *buffer = strdup(thisString);
-	strlwr(buffer);
-	return CreateNewScriptString(buffer, false);
-}
-
-const char* String_UpperCase(const char *thisString) {
-	if(!thisString) return 0;
-	char *buffer = strdup(thisString);
-	strupr(buffer);
-	return CreateNewScriptString(buffer, false);
-}
-
-const char* String_Format(const char *texx, ...) {
-	char displbuf[STD_BUFFER_SIZE];
-
-	va_list ap;
-	va_start(ap,texx);
-	my_sprintf(displbuf, get_translation(texx), ap);
-	va_end(ap);
-
-	return CreateNewScriptString(displbuf);
-}
-
-int String_GetChars(const char *texx, int index) {
-	if ((index < 0) || ((unsigned) index >= strlen(texx)))
-		return 0;
-	return texx[index];
-}
-
-
-
 // ** SCRIPT DYNAMIC SPRITE
 
 int ScriptDynamicSprite::Dispose(const char *address, bool force) {
@@ -11124,13 +10843,13 @@ const char *ScriptDynamicSprite::GetType() {
   return "DynamicSprite";
 }
 
-int ScriptDynamicSprite::Serialize(const char *address, char *buffer, int bufsize) {
+size_t ScriptDynamicSprite::Serialize(const char *address, char *buffer, size_t bufsize) {
   StartSerialize(buffer);
   SerializeInt(slot);
   return EndSerialize();
 }
 
-void ScriptDynamicSprite::Unserialize(int index, const char *serializedData, int dataSize) {
+void ScriptDynamicSprite::Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
   StartUnserialize(serializedData, dataSize);
   slot = UnserializeInt();
   ccRegisterUnserializedObject(index, this, this);
@@ -11635,7 +11354,7 @@ const char *ScriptOverlay::GetType() {
   return "Overlay";
 }
 
-int ScriptOverlay::Serialize(const char *address, char *buffer, int bufsize) {
+size_t ScriptOverlay::Serialize(const char *address, char *buffer, size_t bufsize) {
   StartSerialize(buffer);
   SerializeInt(overlayId);
   SerializeInt(borderWidth);
@@ -11644,7 +11363,7 @@ int ScriptOverlay::Serialize(const char *address, char *buffer, int bufsize) {
   return EndSerialize();
 }
 
-void ScriptOverlay::Unserialize(int index, const char *serializedData, int dataSize) {
+void ScriptOverlay::Unserialize(ptrdiff_t index, const char *serializedData, ptrdiff_t dataSize) {
   StartUnserialize(serializedData, dataSize);
   overlayId = UnserializeInt();
   borderWidth = UnserializeInt();
@@ -11687,7 +11406,7 @@ ScriptDrawingSurface* dialogOptionsRenderingSurface;
 
 struct AGSDeSerializer : ICCObjectReader {
 
-  virtual void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) {
+  virtual void Unserialize(ptrdiff_t index, const char *objectType, const char *serializedData, ptrdiff_t dataSize) {
     if (strcmp(objectType, "GUIObject") == 0) {
       ccDynamicGUIObject.Unserialize(index, serializedData, dataSize);
     }
@@ -12422,7 +12141,7 @@ int load_game_file() {
     if (game.propSchema.UnSerialize(iii))
       quit("load room: unable to deserialize prop schema");
 
-    int errors = 0;
+    ptrdiff_t errors = 0;
 
     for (bb = 0; bb < game.numcharacters; bb++)
       errors += game.charProps[bb].UnSerialize (iii);
@@ -21968,109 +21687,6 @@ void _sc_strupper (char *desbuf) {
 int _sc_stricmp (char *s1, char *s2) {
   return stricmp (get_translation (s1), get_translation(s2));
 }*/
-
-
-// 64 bit: Not sure if this function is 64 bit ready
-// Custom printf, needed because floats are pushed as 8 bytes
-// WTF
-// WTF
-// WTF
-// WTF
-// WTF
-// WTF
-// this is the biggest crap i've ever seen
-void my_sprintf(char *buffer, const char *fmt, va_list ap) {
-	int bufidx = 0;
-	const char *curptr = fmt;
-	const char *endptr;
-	char spfbuffer[STD_BUFFER_SIZE];
-	char fmtstring[100];
-	int numargs = -1;
-
-	while (1) {
-		// copy across everything until the next % (or end of string)
-		endptr = strchr(curptr, '%');
-		if (endptr == NULL)
-		endptr = &curptr[strlen(curptr)];
-		while (curptr < endptr) {
-			buffer[bufidx] = *curptr;
-			curptr++;
-			bufidx++;
-		}
-		// at this point, curptr and endptr should be equal and pointing
-		// to the % or \0
-		if (*curptr == 0)
-			break;
-		if (curptr[1] == '%') {
-			// "%%", so just write a % to the output
-			buffer[bufidx] = '%';
-			bufidx++;
-			curptr += 2;
-			continue;
-		}
-		// find the end of the % clause
-		while ((*endptr != 'd') && (*endptr != 'f') && (*endptr != 'c') &&
-			(*endptr != 0) && (*endptr != 's') && (*endptr != 'x') &&
-			(*endptr != 'X'))
-		endptr++;
-
-		if (numargs >= 0) {
-		numargs--;
-		// if there are not enough arguments, just copy the %d
-		// to the output string rather than trying to format it
-		if (numargs < 0)
-			endptr = &curptr[strlen(curptr)];
-		}
-
-		if (*endptr == 0) {
-			// something like %p which we don't support, so just write
-			// the % to the output
-			buffer[bufidx] = '%';
-			bufidx++;
-			curptr++;
-			continue;
-		}
-		// move endptr to 1 after the end character
-		endptr++;
-
-		// copy the %d or whatever
-		strncpy(fmtstring, curptr, (endptr - curptr));
-		fmtstring[endptr - curptr] = 0;
-		
-		union FOOLZ {
-			unsigned long l;
-			float f;
-		} theArg = va_arg(ap, union FOOLZ);
-
-		// use sprintf to parse the actual %02d type thing
-		if (endptr[-1] == 'f') {
-			// floats are pushed as 8-bytes, so ensure that it knows this is a float
-			float floatArg = theArg.f;
-			sprintf(spfbuffer, fmtstring, floatArg);
-		}
-		else if ((theArg.l == (size_t) buffer) && (endptr[-1] == 's'))
-			quit("Cannot use destination as argument to StrFormat");
-		else if ((theArg.l < 0x10000) && (endptr[-1] == 's'))
-			quit("!One of the string arguments supplied was not a string");
-		else if (endptr[-1] == 's') {
-			strncpy(spfbuffer, (const char*)theArg.l, STD_BUFFER_SIZE);
-			spfbuffer[STD_BUFFER_SIZE - 1] = 0;
-		}
-		else 
-			sprintf(spfbuffer, fmtstring, theArg.l);
-
-		// use the formatted text
-		buffer[bufidx] = 0;
-
-		if (bufidx + strlen(spfbuffer) >= STD_BUFFER_SIZE)
-			quitprintf("!String.Format: buffer overrun: maximum formatted string length %d chars, this string: %d chars", STD_BUFFER_SIZE, bufidx + strlen(spfbuffer));
-
-		strcat(buffer, spfbuffer);
-		bufidx += strlen(spfbuffer);
-		curptr = endptr;
-	}
-	buffer[bufidx] = 0;
-}
 
 void _sc_AbortGame(char*texx, ...) {
   char displbuf[STD_BUFFER_SIZE] = "!?";

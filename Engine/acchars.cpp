@@ -11,7 +11,7 @@
   CLEAR that the code has been altered from the Standard Version.
 
 */
-
+#include "acScriptString.hpp"
 #define WGT2ALLEGRO_NOFUNCTIONS
 #include "wgt2allg.h"
 #define CROOM_NOFUNCTIONS

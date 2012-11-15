@@ -11,6 +11,7 @@
   CLEAR that the code has been altered from the Standard Version.
 
 */
+#include "acScriptString.hpp"
 #include "acplatfm.h"
 #if defined(LINUX_VERSION) || defined(MAC_VERSION)
 #define strnicmp strncasecmp

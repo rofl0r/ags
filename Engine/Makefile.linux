@@ -1,6 +1,8 @@
 
 BASE = acaudio.o acchars.o acdebug.o acdialog.o acfonts.o acgfx.o acgui.o acplatfm.o \
-       acsound.o bigend.o misc.o routefnd.o scrptrt.o ac.o alogg.o almp3.o ali3dsw.o
+       acsound.o bigend.o misc.o routefnd.o scrptrt.o ac.o alogg.o almp3.o ali3dsw.o \
+       acScriptString.o acAGSCCDynamicObject.o
+
 COMMON = ../Common/csrun.o ../Common/Clib32.o ../Common/mousew32.o ../Common/sprcache.o \
 	 ../Common/cscommon.o ../Common/compress.o ../Common/lzw.o \
 	 ../Common/ByteArray.o
