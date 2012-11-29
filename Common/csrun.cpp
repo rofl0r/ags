@@ -834,7 +834,7 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
         long *dataPtr = (long *)(&cinst->globaldata[fixup]);
         *dataPtr = __int_swap_endian(*dataPtr);
 #endif
-      long temp;
+      long temp = 0;
       memcpy(&temp, (char*)&(cinst->globaldata[fixup]), 4);
       temp += (long)cinst->globaldata;
       memcpy(&(cinst->globaldata[fixup]), &temp, 4);
@@ -916,7 +916,7 @@ void ccFlattenGlobalData(ccInstance * cinst)
       long *dataPtr = (long *)(&cinst->globaldata[fixup]);
       *dataPtr = __int_swap_endian(*dataPtr);
 #endif
-      long temp;
+      long temp = 0;
       memcpy(&temp, (char*)&(cinst->globaldata[fixup]), 4);
       temp -= (long)cinst->globaldata;
       memcpy(&(cinst->globaldata[fixup]), &temp, 4);
@@ -947,7 +947,7 @@ void ccUnFlattenGlobalData(ccInstance * cinst)
       long *dataPtr = (long *)(&cinst->globaldata[fixup]);
       *dataPtr = __int_swap_endian(*dataPtr);
 #endif
-      long temp;
+      long temp = 0;
       memcpy(&temp, (char*)&(cinst->globaldata[fixup]), 4);
       temp += (long)cinst->globaldata;
       memcpy(&(cinst->globaldata[fixup]), &temp, 4);
@@ -1228,9 +1228,9 @@ int cc_run_code(ccInstance * inst, long curpc) {
   }
 
   // Needed to avoid unaligned variable access.
-  long temp_variable;
+  long temp_variable = 0;
 
-  long arg1, arg2;
+  long arg1 = 0, arg2 = 0;
   char *mptr;
   unsigned char tbyte;
   short tshort;
@@ -1248,7 +1248,7 @@ int cc_run_code(ccInstance * inst, long curpc) {
   current_instance = inst;
   float *freg1, *freg2;
   ccInstance *codeInst = inst->runningInst;
-  unsigned long thisInstruction;
+  unsigned long thisInstruction = 0;
   int write_debug_dump = ccGetOption(SCOPT_DEBUGRUN);
 
   while (1) {
