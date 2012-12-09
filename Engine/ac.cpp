@@ -28802,7 +28802,7 @@ int initialize_engine(int argc,char*argv[])
   else if (final_col_dep < 16) {
     // ensure that any 32-bit graphics displayed are converted
     // properly to the current depth
-#if defined(IOS_VERSION) || defined(ANDROID_VERSION) || defined(PSP_VERSION)
+#ifndef WINDOWS_VERSION
     _rgb_r_shift_32 = 0;
     _rgb_g_shift_32 = 8;
     _rgb_b_shift_32 = 16;
