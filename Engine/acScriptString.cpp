@@ -262,7 +262,7 @@ const char* String_Format(const char *texx, ...) {
 	return CreateNewScriptString(displbuf);
 }
 
-unsigned String_Len(const char* texx) {
+int String_Len(const char* texx) {
 	return strlen(texx);
 }
 
