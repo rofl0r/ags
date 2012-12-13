@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <assert.h>
 
 #ifdef _MANAGED
 // ensure this doesn't get compiled to .NET IL
@@ -1330,6 +1331,8 @@ int cc_run_code(ccInstance * inst, long curpc) {
       case SCMD_WRITELIT:
         // poss something dodgy about this routine
         mptr = (char *)(inst->registers[SREG_MAR]);
+	*((long*) mptr) = 0;
+	assert(arg1 <= sizeof(long));
         memcpy(&mptr[0], &arg2, arg1);
         break;
       case SCMD_RET:
