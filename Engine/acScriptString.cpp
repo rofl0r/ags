@@ -108,6 +108,15 @@ long String_IsNullOrEmpty(const char *thisString) {
 	return 0;
 }
 
+long String_CaseComp(char* a, char* b) {
+	return stricmp(a, b);
+}
+
+long String_Comp(char* a, char* b) {
+	return strcmp(a, b);
+}
+
+
 const char* String_Copy(const char *srcString) {
 	return CreateNewScriptString(srcString);
 }

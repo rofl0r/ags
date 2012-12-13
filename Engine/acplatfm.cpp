@@ -335,7 +335,8 @@ int IAGSEngine::FRead (void *buffer, int32 len, int32 handle) {
 int IAGSEngine::FWrite (void *buffer, int32 len, int32 handle) {
   return fwrite (buffer, 1, len, (FILE*)handle);
 }
-void IAGSEngine::DrawTextWrapped (int32 xx, int32 yy, int32 wid, int32 font, int32 color, const char*text) {
+void IAGSEngine::DrawTextWrapped (int32 axx, int32 ayy, int32 wid, int32 font, int32 color, const char*text) {
+	long xx = axx, yy = ayy;
   int texthit = wgetfontheight(font);
 
   break_up_text_into_lines (wid, font, (char*)text);

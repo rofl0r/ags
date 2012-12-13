@@ -1422,7 +1422,7 @@ int cc_run_code(ccInstance * inst, long curpc) {
   char *mptr;
   unsigned char tbyte;
   short tshort;
-  int (*realfunc) ();
+  
   long callstack[MAX_FUNC_PARAMS + 1];
   long thisbase[MAXNEST], funcstart[MAXNEST];
   int callstacksize = 0, aa, was_just_callas = -1;
@@ -1926,21 +1926,63 @@ int cc_run_code(ccInstance * inst, long curpc) {
           call_uses_object = 1;
           next_call_needs_object = 0;
           callstack[callstacksize] = inst->registers[SREG_OP];
-	  dprintf(2, "calling obj func: %s with %d args\n", funcname, num_args_to_func);
-	  if(!strcmp("Character::Say^101", funcname) || !strcmp("Character::Think^101", funcname)) {
-		  dprintf(2, "sayorthink\n");
-		call_variadic_function_2args(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
-		inst->registers[SREG_AX] = 0;
-	  } else {
-		inst->registers[SREG_AX] = call_function(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
-	  }
-        }
-        else if (num_args_to_func == 0) {
+	  dprintf(2, "calling obj func: %s with %d args\n", funcname, num_args_to_func+1);
+		if(!strcmp("Character::Say^101", funcname) || !strcmp("Character::Think^101", funcname)) {
+			dprintf(2, "sayorthink\n");
+			call_variadic_function_2args(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
+			inst->registers[SREG_AX] = 0;
+			
+		} else if(!strcmp("String::Format^101", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("StrFormat", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("RawPrint", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_3args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("Overlay::CreateTextual^106", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_6args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("Overlay::SetText^104", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("DrawingSurface::DrawString^104", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("AbortGame", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("CreateTextOverlay", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_6args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("SetTextOverlay", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_7args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("Display", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("DisplayAt", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_4args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("DisplaySpeech", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("DisplayThought", funcname)) {
+			//inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else if(!strcmp("DisplayTopBar", funcname)) {		
+			//inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			assert(0);
+		} else {
+			inst->registers[SREG_AX] = call_function(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
+		}
+        } else if (num_args_to_func == 0) {
 		dprintf(2, "calling no-arg func: %s\n", funcname);
-          realfunc = (int (*)())inst->registers[arg1];
-          inst->registers[SREG_AX] = realfunc();
-        } 
-        else {
+		long (*realfunc) ();
+		realfunc = (long (*)())inst->registers[arg1];
+		inst->registers[SREG_AX] = realfunc();
+        } else {
 		dprintf(2, "calling regular func: %s with %d args\n", funcname, num_args_to_func);
 		if(!strcmp("String::Format^101", funcname)) {
 			inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);

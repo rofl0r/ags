@@ -32,6 +32,7 @@ void fix_player_sprite(MoveList*cmls,CharacterInfo*chinf);
 long StopMoving(long chaa) {
 
   Character_StopMoving(&game.chars[chaa]);
+  return 0;
 }
 
 long ReleaseCharacterView(long chat) {
@@ -39,6 +40,7 @@ long ReleaseCharacterView(long chat) {
     quit("!ReleaseCahracterView: invalid character supplied");
 
   Character_UnlockView(&game.chars[chat]);
+  return 0;
 }
 
 void walk_character(int chac,int tox,int toy,int ignwal, bool autoWalkAnims) {
@@ -452,6 +454,7 @@ long MoveToWalkableArea(long charid) {
     quit("!MoveToWalkableArea: invalid character specified");
   
   Character_PlaceOnWalkableArea(&game.chars[charid]);
+  return 0;
 }
 
 long FaceLocation(long cha,long xx,long yy) {
@@ -459,6 +462,7 @@ long FaceLocation(long cha,long xx,long yy) {
     quit("!FaceLocation: Invalid character specified");
 
   Character_FaceLocation(&game.chars[cha], xx, yy, BLOCKING);
+  return 0;
 }
 
 long FaceCharacter(long cha,long toface) {
@@ -468,6 +472,7 @@ long FaceCharacter(long cha,long toface) {
     quit("!FaceCharacter: invalid character specified");
 
   Character_FaceCharacter(&game.chars[cha], &game.chars[toface], BLOCKING);
+  return 0;
 }
 
 
@@ -498,7 +503,7 @@ long Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi,long addInd
         // They already have the item, so don't add it to the list
         if (chaa == playerchar)
           run_on_event (GE_ADD_INV, inum);
-        return;
+        return 0;
       }
     }
   }
@@ -522,7 +527,7 @@ long Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi,long addInd
   guis_need_update = 1;
   if (chaa == playerchar)
     run_on_event (GE_ADD_INV, inum);
-
+	return 0;
 }
 
 long Character_AddWaypoint(CharacterInfo *chaa,long x,long y) {
@@ -533,7 +538,7 @@ long Character_AddWaypoint(CharacterInfo *chaa,long x,long y) {
   // not already walking, so just do a normal move
   if (chaa->walking <= 0) {
     Character_Walk(chaa, x, y, IN_BACKGROUND, ANYWHERE);
-    return;
+    return 0;
   }
 
   MoveList *cmls = &mls[chaa->walking % TURNING_AROUND];
@@ -543,11 +548,11 @@ long Character_AddWaypoint(CharacterInfo *chaa,long x,long y) {
   cmls->pos[cmls->numstage] = (x << 16) + y;
   // They're already walking there anyway
   if (cmls->pos[cmls->numstage] == cmls->pos[cmls->numstage - 1])
-    return;
+    return 0;
 
   calculate_move_stage (cmls, cmls->numstage-1);
   cmls->numstage ++;
-
+return 0;
 }
 
 long Character_Animate(CharacterInfo *chaa,long loop,long delay,long repeat,long blocking,long direction) {
@@ -565,6 +570,7 @@ long Character_Animate(CharacterInfo *chaa,long loop,long delay,long repeat,long
     do_main_cycle(UNTIL_SHORTIS0,(long)&chaa->animating);
   else if ((blocking != IN_BACKGROUND) && (blocking != 0))
     quit("!Character.Animate: Invalid BLOCKING parameter");
+  return 0;
 }
 
 long Character_ChangeRoomAutoPosition(CharacterInfo *chaa,long room,long newPos) {
@@ -592,6 +598,7 @@ long Character_ChangeRoomAutoPosition(CharacterInfo *chaa,long room,long newPos)
       new_room_pos += chaa->x;
   }
   NewRoom(room);
+  return 0;
 }
 
 long Character_ChangeRoom(CharacterInfo *chaa,long room,long x,long y) {
@@ -608,7 +615,7 @@ long Character_ChangeRoom(CharacterInfo *chaa,long room,long x,long y) {
     DEBUG_CONSOLE("%s moved to room %d, location %d,%d",
                   chaa->scrname, room, chaa->x, chaa->y);
 
-    return;
+    return 0;
   }
 
   if ((x != SCR_NO_VALUE) && (y != SCR_NO_VALUE)) {
@@ -630,6 +637,7 @@ long Character_ChangeRoom(CharacterInfo *chaa,long room,long x,long y) {
   }
   
   NewRoom(room);
+  return 0;
 }
 
 void FindReasonableLoopForCharacter(CharacterInfo *chap) {
@@ -672,6 +680,7 @@ long Character_ChangeView(CharacterInfo *chap,long vii) {
   chap->walkwait = 0;
   charextra[chap->index_id].animwait = 0;
   FindReasonableLoopForCharacter(chap);
+  return 0;
 }
 
 long Character_FaceCharacter(CharacterInfo *char1, CharacterInfo *char2,long blockingStyle) {
@@ -682,6 +691,7 @@ long Character_FaceCharacter(CharacterInfo *char1, CharacterInfo *char2,long blo
     quit("!FaceCharacter: characters are in different rooms");
 
   Character_FaceLocation(char1, char2->x, char2->y, blockingStyle);
+  return 0;
 }
 
 long Character_FaceLocation(CharacterInfo *char1,long xx,long yy,long blockingStyle) {
@@ -694,7 +704,7 @@ long Character_FaceLocation(CharacterInfo *char1,long xx,long yy,long blockingSt
 
   if ((diffrx == 0) && (diffry == 0)) {
     // FaceLocation called on their current position - do nothing
-    return;
+    return 0;
   }
 
   no_diagonal = useDiagonal (char1);
@@ -781,6 +791,7 @@ long Character_FaceLocation(CharacterInfo *char1,long xx,long yy,long blockingSt
     char1->loop=useloop;
 
   char1->frame=0;
+  return 0;
 }
 
 long Character_FaceObject(CharacterInfo *char1, ScriptObject *obj,long blockingStyle) {
@@ -789,6 +800,7 @@ long Character_FaceObject(CharacterInfo *char1, ScriptObject *obj,long blockingS
   
 
   Character_FaceLocation(char1, objs[obj->id].x, objs[obj->id].y, blockingStyle);
+  return 0;
 }
 
 long Character_FollowCharacter(CharacterInfo *chaa, CharacterInfo *tofollow,long distaway,long eagerness) {
@@ -832,7 +844,7 @@ long Character_FollowCharacter(CharacterInfo *chaa, CharacterInfo *tofollow,long
 
   if (chaa->animating & CHANIM_REPEAT)
     debug_log("Warning: FollowCharacter called but the sheep is currently animating looped. It may never start to follow.");
-
+	return 0;
 }
 
 long Character_IsCollidingWithChar(CharacterInfo *char1, CharacterInfo *char2) {
@@ -928,6 +940,7 @@ long Character_LockView(CharacterInfo *chap,long vii) {
   chap->flags|=CHF_FIXVIEW;
   chap->pic_xoffs = 0;
   chap->pic_yoffs = 0;
+  return 0;
 }
 
 
@@ -960,6 +973,7 @@ long Character_LockViewAligned(CharacterInfo *chap,long vii,long loop,long align
 
   chap->pic_xoffs = xdiff;
   chap->pic_yoffs = 0;
+  return 0;
 }
 
 long Character_LockViewFrame(CharacterInfo *chaa,long view,long loop,long frame) {
@@ -974,6 +988,7 @@ long Character_LockViewFrame(CharacterInfo *chaa,long view,long loop,long frame)
 
   chaa->loop = loop;
   chaa->frame = frame;
+  return 0;
 }
 
 long Character_LockViewOffset(CharacterInfo *chap,long vii,long xoffs,long yoffs) {
@@ -992,6 +1007,7 @@ long Character_LockViewOffset(CharacterInfo *chap,long vii,long xoffs,long yoffs
 
   chap->pic_xoffs = xoffs;
   chap->pic_yoffs = yoffs;
+  return 0;
 }
 
 long Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
@@ -1027,6 +1043,7 @@ long Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
 
   if (chap == playerchar)
     run_on_event (GE_LOSE_INV, inum);
+  return 0;
 }
 
 long Character_PlaceOnWalkableArea(CharacterInfo *chap) {
@@ -1034,6 +1051,7 @@ long Character_PlaceOnWalkableArea(CharacterInfo *chap) {
     quit("!Character.PlaceOnWalkableArea: no room is currently loaded");
 
   find_nearest_walkable_area(&chap->x, &chap->y);
+  return 0;
 }
 
 long Character_RemoveTint(CharacterInfo *chaa) {
@@ -1045,6 +1063,7 @@ long Character_RemoveTint(CharacterInfo *chaa) {
   else {
     debug_log("Character.RemoveTint called but character was not tinted");
   }
+  return 0;
 }
 
 long Character_GetHasExplicitTint(CharacterInfo *chaa) {
@@ -1064,12 +1083,14 @@ long Character_Say(CharacterInfo *chaa, const char *texx, ...) {
   va_end(ap);
 
   _DisplaySpeechCore(chaa->index_id, displbuf);
+  return 0;
 
 }
 
 long Character_SayAt(CharacterInfo *chaa,long x,long y,long width, const char *texx) {
 
   DisplaySpeechAt(x, y, width, chaa->index_id, (char*)texx);
+  return 0;
 }
 
 ScriptOverlay* Character_SayBackground(CharacterInfo *chaa, const char *texx) {
@@ -1095,7 +1116,7 @@ long Character_SetAsPlayer(CharacterInfo *chaa) {
 
     // set to same character, so ignore
   if (game.playercharacter == chaa->index_id)
-    return;
+    return 0;
 
   setup_player_character(chaa->index_id);
 
@@ -1105,7 +1126,7 @@ long Character_SetAsPlayer(CharacterInfo *chaa) {
 
   // Within game_start, return now
   if (displayed_room < 0)
-    return;
+    return 0;
 
   // Ignore invalid room numbers for the character and just place him in
   // the current room for 2.x. Following script calls to NewRoom() will
@@ -1128,7 +1149,7 @@ long Character_SetAsPlayer(CharacterInfo *chaa) {
     else
       SetActiveInventory (playerchar->activeinv);
   }
-
+	return 0;
 }
 
 
@@ -1165,6 +1186,7 @@ long Character_SetIdleView(CharacterInfo *chaa,long iview,long itime) {
   // if they switch to a swimming animation, kick it off immediately
   if (itime == 0)
     charextra[chaa->index_id].process_idle_this_time = 1;
+  return 0;
 
 }
 
@@ -1182,6 +1204,7 @@ long Character_SetOption(CharacterInfo *chaa,long flag,long yesorno) {
     if (yesorno)
       chaa->flags |= flag;
   }
+  return 0;
 
 }
 
@@ -1198,6 +1221,7 @@ long Character_SetSpeed(CharacterInfo *chaa,long xspeed,long yspeed) {
     chaa->walkspeed_y = UNIFORM_WALK_SPEED;
   else
     chaa->walkspeed_y = yspeed;
+  return 0;
 }
 
 
@@ -1229,6 +1253,7 @@ long Character_StopMoving(CharacterInfo *charp) {
     if ((charp->flags & CHF_MOVENOTWALK) == 0)
       charp->frame = 0;
   }
+  return 0;
 }
 
 long Character_Tint(CharacterInfo *chaa,long red,long green,long blue,long opacity,long luminance) {
@@ -1246,6 +1271,7 @@ long Character_Tint(CharacterInfo *chaa,long red,long green,long blue,long opaci
   charextra[chaa->index_id].tint_level = opacity;
   charextra[chaa->index_id].tint_light = (luminance * 25) / 10;
   chaa->flags |= CHF_HASTINT;
+  return 0;
 }
 
 long Character_Think(CharacterInfo *chaa, const char *texx, ...) {
@@ -1257,6 +1283,7 @@ long Character_Think(CharacterInfo *chaa, const char *texx, ...) {
   va_end(ap);
 
   _DisplayThoughtCore(chaa->index_id, displbuf);
+  return 0;
 }
 
 long Character_UnlockView(CharacterInfo *chaa) {
@@ -1279,7 +1306,7 @@ long Character_UnlockView(CharacterInfo *chaa) {
   chaa->pic_yoffs = 0;
   // restart the idle animation straight away
   charextra[chaa->index_id].process_idle_this_time = 1;
-
+	return 0;
 }
 
 void walk_or_move_character(CharacterInfo *chaa, int x, int y, int blocking, int direct, bool isWalk)
@@ -1303,10 +1330,12 @@ void walk_or_move_character(CharacterInfo *chaa, int x, int y, int blocking, int
 
 long Character_Walk(CharacterInfo *chaa,long x,long y,long blocking,long direct) {
   walk_or_move_character(chaa, x, y, blocking, direct, true);
+  return 0;
 }
 
 long Character_Move(CharacterInfo *chaa,long x,long y,long blocking,long direct) {
   walk_or_move_character(chaa, x, y, blocking, direct, false);
+  return 0;
 }
 
 long Character_WalkStraight(CharacterInfo *chaa,long xx,long yy,long blocking) {
@@ -1335,7 +1364,7 @@ long Character_WalkStraight(CharacterInfo *chaa,long xx,long yy,long blocking) {
     do_main_cycle(UNTIL_MOVEEND,(long)&chaa->walking);
   else if ((blocking != IN_BACKGROUND) && (blocking != 0))
     quit("!Character.Walk: Blocking must be BLOCKING or IN_BACKGRUOND");
-
+	return 0;
 }
 
 
@@ -1361,7 +1390,7 @@ long Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem* iit) {
       if (GetCursorMode()==MODE_USE)
         set_cursor_mode(0);
     }
-    return;
+    return 0;
   }
 
   if (chaa->inv[iit->id] < 1)
@@ -1374,6 +1403,7 @@ long Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem* iit) {
     update_inv_cursor(iit->id);
     set_cursor_mode(MODE_USE);
   }
+  return 0;
 }
 
 long Character_GetAnimating(CharacterInfo *chaa) {
@@ -1389,6 +1419,7 @@ long Character_GetAnimationSpeed(CharacterInfo *chaa) {
 long Character_SetAnimationSpeed(CharacterInfo *chaa,long newval) {
 
   chaa->animspeed = newval;
+  return 0;
 }
 
 long Character_GetBaseline(CharacterInfo *chaa) {
@@ -1400,12 +1431,11 @@ long Character_GetBaseline(CharacterInfo *chaa) {
 }
 
 long Character_SetBaseline(CharacterInfo *chaa,long basel) {
-
   chaa->baseline = basel;
+  return 0;
 }
 
 long Character_GetBlinkInterval(CharacterInfo *chaa) {
-
   return chaa->blinkinterval;
 }
 
@@ -1418,6 +1448,7 @@ long Character_SetBlinkInterval(CharacterInfo *chaa,long interval) {
 
   if (chaa->blinktimer > 0)
     chaa->blinktimer = chaa->blinkinterval;
+  return 0;
 }
 
 long Character_GetBlinkView(CharacterInfo *chaa) {
@@ -1431,6 +1462,7 @@ long Character_SetBlinkView(CharacterInfo *chaa,long vii) {
     quit("!SetCharacterBlinkView: invalid view number");
 
   chaa->blinkview = vii - 1;
+  return 0;
 }
 
 long Character_GetBlinkWhileThinking(CharacterInfo *chaa) {
@@ -1443,61 +1475,55 @@ long Character_SetBlinkWhileThinking(CharacterInfo *chaa,long yesOrNo) {
   chaa->flags &= ~CHF_NOBLINKANDTHINK;
   if (yesOrNo == 0)
     chaa->flags |= CHF_NOBLINKANDTHINK;
+  return 0;
 }
 
 long Character_GetBlockingHeight(CharacterInfo *chaa) {
-
   return chaa->blocking_height;
 }
 
 long Character_SetBlockingHeight(CharacterInfo *chaa,long hit) {
-
   chaa->blocking_height = hit;
+  return 0;
 }
 
 long Character_GetBlockingWidth(CharacterInfo *chaa) {
-
   return chaa->blocking_width;
 }
 
 long Character_SetBlockingWidth(CharacterInfo *chaa,long wid) {
-
   chaa->blocking_width = wid;
+  return 0;
 }
 
 long Character_GetDiagonalWalking(CharacterInfo *chaa) {
-
-  if (chaa->flags & CHF_NODIAGONAL)
-    return 0;
+  if (chaa->flags & CHF_NODIAGONAL) return 0;
   return 1;  
 }
 
 long Character_SetDiagonalWalking(CharacterInfo *chaa,long yesorno) {
-
   chaa->flags &= ~CHF_NODIAGONAL;
   if (!yesorno)
     chaa->flags |= CHF_NODIAGONAL;
+  return 0;
 }
 
 long Character_GetClickable(CharacterInfo *chaa) {
-  
   if (chaa->flags & CHF_NOINTERACT)
     return 0;
   return 1;
 }
 
 long Character_SetClickable(CharacterInfo *chaa,long clik) {
-  
   chaa->flags &= ~CHF_NOINTERACT;
   // if they don't want it clickable, set the relevant bit
   if (clik == 0)
     chaa->flags |= CHF_NOINTERACT;
+  return 0;
 }
 
 long Character_GetID(CharacterInfo *chaa) {
-
   return chaa->index_id;
-
 }
 
 long Character_GetFrame(CharacterInfo *chaa) {
@@ -1506,13 +1532,11 @@ long Character_GetFrame(CharacterInfo *chaa) {
 
 long Character_SetFrame(CharacterInfo *chaa,long newval) {
   chaa->frame = newval;
+  return 0;
 }
 
 long Character_GetIdleView(CharacterInfo *chaa) {
-
-  if (chaa->idleview < 1)
-    return -1;
-
+  if (chaa->idleview < 1) return -1;
   return chaa->idleview + 1;
 }
 
@@ -1538,6 +1562,7 @@ long Character_SetIInventoryQuantity(CharacterInfo *chaa,long index,long quant) 
     quitprintf("!Character.InventoryQuantity: invalid quantity %d", quant);
 
   chaa->inv[index] = quant;
+  return 0;
 }
 
 long Character_GetIgnoreLighting(CharacterInfo *chaa) {
@@ -1552,6 +1577,7 @@ long Character_SetIgnoreLighting(CharacterInfo *chaa,long yesorno) {
   chaa->flags &= ~CHF_NOLIGHTING;
   if (yesorno)
     chaa->flags |= CHF_NOLIGHTING;
+  return 0;
 }
 
 long Character_GetIgnoreScaling(CharacterInfo *chaa) {
@@ -1569,6 +1595,7 @@ long Character_SetIgnoreScaling(CharacterInfo *chaa,long yesorno) {
     charextra[chaa->index_id].zoom = 100;
   }
   Character_SetManualScaling(chaa, yesorno);
+  return 0;
 }
 
 long Character_SetManualScaling(CharacterInfo *chaa,long yesorno) {
@@ -1576,6 +1603,7 @@ long Character_SetManualScaling(CharacterInfo *chaa,long yesorno) {
   chaa->flags &= ~CHF_MANUALSCALING;
   if (yesorno)
     chaa->flags |= CHF_MANUALSCALING;
+  return 0;
 }
 
 long Character_GetIgnoreWalkbehinds(CharacterInfo *chaa) {
@@ -1590,6 +1618,7 @@ long Character_SetIgnoreWalkbehinds(CharacterInfo *chaa,long yesorno) {
   chaa->flags &= ~CHF_NOWALKBEHINDS;
   if (yesorno)
     chaa->flags |= CHF_NOWALKBEHINDS;
+  return 0;
 }
 
 long Character_GetMovementLinkedToAnimation(CharacterInfo *chaa) {
@@ -1604,6 +1633,7 @@ long Character_SetMovementLinkedToAnimation(CharacterInfo *chaa,long yesorno) {
   chaa->flags &= ~CHF_ANTIGLIDE;
   if (yesorno)
     chaa->flags |= CHF_ANTIGLIDE;
+  return 0;
 }
 
 long Character_GetLoop(CharacterInfo *chaa) {
@@ -1618,6 +1648,7 @@ long Character_SetLoop(CharacterInfo *chaa,long newval) {
 
   if (chaa->frame >= views[chaa->view].loops[chaa->loop].numFrames)
     chaa->frame = 0;
+  return 0;
 }
 
 long Character_GetMoving(CharacterInfo *chaa) {
@@ -1633,6 +1664,7 @@ const char* Character_GetName(CharacterInfo *chaa) {
 long Character_SetName(CharacterInfo *chaa, const char *newName) {
   strncpy(chaa->name, newName, 40);
   chaa->name[39] = 0;
+  return 0;
 }
 
 long Character_GetNormalView(CharacterInfo *chaa) {
@@ -1663,6 +1695,7 @@ long Character_SetScaleMoveSpeed(CharacterInfo *chaa,long yesorno) {
   chaa->flags &= ~CHF_SCALEMOVESPEED;
   if (yesorno)
     chaa->flags |= CHF_SCALEMOVESPEED;
+  return 0;
 }
 
 long Character_GetScaleVolume(CharacterInfo *chaa) {
@@ -1680,6 +1713,7 @@ long Character_SetScaleVolume(CharacterInfo *chaa,long yesorno) {
   chaa->flags &= ~CHF_SCALEVOLUME;
   if (yesorno)
     chaa->flags |= CHF_SCALEVOLUME;
+  return 0;
 }
 
 long Character_GetScaling(CharacterInfo *chaa) {
@@ -1694,6 +1728,7 @@ long Character_SetScaling(CharacterInfo *chaa,long zoomlevel) {
     quit("!Character.Scaling: scaling level must be between 5 and 200%");
 
   charextra[chaa->index_id].zoom = zoomlevel;
+  return 0;
 }
 
 long Character_GetSolid(CharacterInfo *chaa) {
@@ -1708,6 +1743,7 @@ long Character_SetSolid(CharacterInfo *chaa,long yesorno) {
   chaa->flags &= ~CHF_NOBLOCKING;
   if (!yesorno)
     chaa->flags |= CHF_NOBLOCKING;
+  return 0;
 }
 
 long Character_GetSpeaking(CharacterInfo *chaa) {
@@ -1718,13 +1754,12 @@ long Character_GetSpeaking(CharacterInfo *chaa) {
 }
 
 long Character_GetSpeechColor(CharacterInfo *chaa) {
-  
   return chaa->talkcolor;
 }
 
 long Character_SetSpeechColor(CharacterInfo *chaa,long ncol) {
-  
   chaa->talkcolor = ncol;
+  return 0;
 }
 
 long GetCharacterSpeechAnimationDelay(CharacterInfo *cha) {
@@ -1746,6 +1781,7 @@ long Character_SetSpeechAnimationDelay(CharacterInfo *chaa,long newDelay) {
     quit("!Character.SpeechAnimationDelay cannot be set when legacy speech animation speed is enabled");
   
   chaa->speech_anim_speed = newDelay;
+  return 0;
 }
 
 long Character_GetSpeechView(CharacterInfo *chaa) {
@@ -1756,13 +1792,14 @@ long Character_GetSpeechView(CharacterInfo *chaa) {
 long Character_SetSpeechView(CharacterInfo *chaa,long vii) {
   if (vii == -1) {
     chaa->talkview = -1;
-    return;
+    return 0;
   }
 
   if ((vii < 1) || (vii > game.numviews))
     quit("!SetCharacterSpeechView: invalid view number");
   
   chaa->talkview = vii - 1;
+  return 0;
 }
 
 long Character_GetThinkView(CharacterInfo *chaa) {
@@ -1775,6 +1812,7 @@ long Character_SetThinkView(CharacterInfo *chaa,long vii) {
     quit("!SetCharacterThinkView: invalid view number");
   
   chaa->thinkview = vii - 1;
+  return 0;
 }
 
 long Character_GetTransparency(CharacterInfo *chaa) {
@@ -1798,6 +1836,7 @@ long Character_SetTransparency(CharacterInfo *chaa,long trans) {
     chaa->transparency = 255;
   else
     chaa->transparency = ((100-trans) * 25) / 10;
+  return 0;
 }
 
 long Character_GetTurnBeforeWalking(CharacterInfo *chaa) {
@@ -1812,6 +1851,7 @@ long Character_SetTurnBeforeWalking(CharacterInfo *chaa,long yesorno) {
   chaa->flags &= ~CHF_NOTURNING;
   if (!yesorno)
     chaa->flags |= CHF_NOTURNING;
+  return 0;
 }
 
 long Character_GetView(CharacterInfo *chaa) {
@@ -1835,6 +1875,7 @@ long Character_GetX(CharacterInfo *chaa) {
 
 long Character_SetX(CharacterInfo *chaa,long newval) {
   chaa->x = newval;
+  return 0;
 }
 
 long Character_GetY(CharacterInfo *chaa) {
@@ -1843,6 +1884,7 @@ long Character_GetY(CharacterInfo *chaa) {
 
 long Character_SetY(CharacterInfo *chaa,long newval) {
   chaa->y = newval;
+  return 0;
 }
 
 long Character_GetZ(CharacterInfo *chaa) {
@@ -1851,5 +1893,6 @@ long Character_GetZ(CharacterInfo *chaa) {
 
 long Character_SetZ(CharacterInfo *chaa,long newval) {
   chaa->z = newval;
+  return 0;
 }
 

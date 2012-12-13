@@ -176,7 +176,7 @@ extern void * memcpy_amd(void *dest, const void *src, size_t n);
 #include <dirent.h>
 #include "../PSP/launcher/pe.h"
 
-long int filelength(int fhandle)
+long filelength(int fhandle)
 {
 	struct stat statbuf;
 	fstat(fhandle, &statbuf);
@@ -908,7 +908,7 @@ bool AmbientSound::IsPlaying () {
   return (channels[channel] != NULL) ? true : false;
 }
 
-int  Overlay_GetValid(ScriptOverlay *scover);
+long Overlay_GetValid(ScriptOverlay *scover);
 void mainloop(bool checkControls = false, IDriverDependantBitmap *extraBitmap = NULL, int extraX = 0, int extraY = 0);
 long set_mouse_cursor(long);
 long set_default_cursor(void);
@@ -928,8 +928,8 @@ void move_object(int,int,int,int,int);
 long StopMoving(long);
 long MoveCharacterToHotspot(long,long);
 
-void GetLocationName(int,int,char*);
-void save_game(int,const char*);
+long GetLocationName(long,long,char*);
+long save_game(long,const char*);
 int  load_game(int,char*, int*);
 void update_music_volume();
 int  invscreen();
@@ -955,11 +955,10 @@ long  play_sound (long);
 int  play_sound_priority (int, int);
 long  __Rand(long);
 long  cd_manager(long,long);
-int  DisplaySpeechBackground(int,char*);
 long MergeObject(long);
 long script_debug(long,long);
-void sc_inputbox(const char*,char*);
-void ParseText(char*);
+long sc_inputbox(const char*,char*);
+long ParseText(char*);
 long FaceLocation(long,long,long);
 void check_debug_keys();
 long  IsInterfaceEnabled(void);
@@ -1776,11 +1775,13 @@ void stop_and_destroy_channel_ex(int chid, bool resetLegacyMusicSettings) {
 
 long stop_and_destroy_channel (long chid) {
 	stop_and_destroy_channel_ex(chid, true);
+	return 0;
 }
 
 long PlayMusicResetQueue(long newmus) {
   play.music_queue_size = 0;
   newmusic(newmus);
+  return 0;
 }
 
 long StopAmbientSound (long channel) {
@@ -1792,6 +1793,7 @@ long StopAmbientSound (long channel) {
 
   stop_and_destroy_channel(channel);
   ambient[channel].channel = 0;
+  return 0;
 }
 
 SOUNDCLIP *load_sound_from_path(int soundNumber, int volume, bool repeat) 
@@ -1846,6 +1848,7 @@ long PlayAmbientSound (long channel,long sndnum,long vol,long x,long y) {
   ambient[channel].y = y;
   ambient[channel].vol = vol;
   update_ambient_sound_vol();
+  return 0;
 }
 
 /*
@@ -1907,6 +1910,7 @@ long restart_game() {
   int errcod;
   if ((errcod = load_game(RESTART_POINT_SAVE_GAME_NUMBER, NULL, NULL))!=0)
     quitprintf("unable to restart game (error:%s)", load_game_errors[-errcod]);
+  return 0;
 
 }
 
@@ -2488,63 +2492,53 @@ block convert_32_to_32bgr(block tempbl) {
 
 // Multiplies up the number of pixels depending on the current 
 // resolution, to give a relatively fixed size at any game res
-AGS_INLINE int get_fixed_pixel_size(int pixels)
-{
+AGS_INLINE int get_fixed_pixel_size(int pixels) {
   return pixels * current_screen_resolution_multiplier;
 }
 
-AGS_INLINE int convert_to_low_res(int coord)
-{
+AGS_INLINE int convert_to_low_res(int coord) {
   if (game.options[OPT_NATIVECOORDINATES] == 0)
     return coord;
   else
     return coord / current_screen_resolution_multiplier;
 }
 
-AGS_INLINE int convert_back_to_high_res(int coord)
-{
+AGS_INLINE int convert_back_to_high_res(int coord) {
   if (game.options[OPT_NATIVECOORDINATES] == 0)
     return coord;
   else
     return coord * current_screen_resolution_multiplier;
 }
 
-AGS_INLINE int multiply_up_coordinate(int coord)
-{
+AGS_INLINE int multiply_up_coordinate(int coord) {
   if (game.options[OPT_NATIVECOORDINATES] == 0)
     return coord * current_screen_resolution_multiplier;
   else
     return coord;
 }
 
-AGS_INLINE void multiply_up_coordinates(int *x, int *y)
-{
-  if (game.options[OPT_NATIVECOORDINATES] == 0)
-  {
+AGS_INLINE void multiply_up_coordinates(long *x, long *y) {
+  if (game.options[OPT_NATIVECOORDINATES] == 0) {
     x[0] *= current_screen_resolution_multiplier;
     y[0] *= current_screen_resolution_multiplier;
   }
 }
 
-AGS_INLINE void multiply_up_coordinates_round_up(int *x, int *y)
-{
-  if (game.options[OPT_NATIVECOORDINATES] == 0)
-  {
+AGS_INLINE void multiply_up_coordinates_round_up(long *x, long *y) {
+  if (game.options[OPT_NATIVECOORDINATES] == 0) {
     x[0] = x[0] * current_screen_resolution_multiplier + (current_screen_resolution_multiplier - 1);
     y[0] = y[0] * current_screen_resolution_multiplier + (current_screen_resolution_multiplier - 1);
   }
 }
 
-AGS_INLINE int divide_down_coordinate(int coord)
-{
+AGS_INLINE int divide_down_coordinate(int coord) {
   if (game.options[OPT_NATIVECOORDINATES] == 0)
     return coord / current_screen_resolution_multiplier;
   else
     return coord;
 }
 
-AGS_INLINE int divide_down_coordinate_round_up(int coord)
-{
+AGS_INLINE int divide_down_coordinate_round_up(int coord) {
   if (game.options[OPT_NATIVECOORDINATES] == 0)
     return (coord / current_screen_resolution_multiplier) + (current_screen_resolution_multiplier - 1);
   else
@@ -2851,6 +2845,7 @@ long SetAmbientTint (long red,long green,long blue,long opacity,long luminance) 
   play.rtint_blue = blue;
   play.rtint_level = opacity;
   play.rtint_light = (luminance * 25) / 10;
+  return 0;
 }
 
 long SetObjectTint(long obj,long red,long green,long blue,long opacity,long luminance) {
@@ -2871,10 +2866,12 @@ long SetObjectTint(long obj,long red,long green,long blue,long opacity,long lumi
   objs[obj].tint_level = opacity;
   objs[obj].tint_light = (luminance * 25) / 10;
   objs[obj].flags |= OBJF_HASTINT;
+  return 0;
 }
 
 long Object_Tint(ScriptObject *objj,long red,long green,long blue,long saturation,long luminance) {
   SetObjectTint(objj->id, red, green, blue, saturation, luminance);
+  return 0;
 }
 
 long RemoveObjectTint(long obj) {
@@ -2888,10 +2885,12 @@ long RemoveObjectTint(long obj) {
   else {
     debug_log("RemoveObjectTint called but object was not tinted");
   }
+  return 0;
 }
 
 long Object_RemoveTint(ScriptObject *objj) {
   RemoveObjectTint(objj->id);
+  return 0;
 }
 
 long TintScreen(long red,long grn,long blu) {
@@ -2908,6 +2907,7 @@ long TintScreen(long red,long grn,long blu) {
   grn = (grn * 25) / 10;
   blu = (blu * 25) / 10;
   play.screen_tint = red + (grn << 8) + (blu << 16);
+  return 0;
 }
 
 int get_screen_y_adjustment(BITMAP *checkFor) {
@@ -3064,6 +3064,7 @@ long RestoreGameSlot(long slnum) {
     return 0;
   }
   load_game(slnum, NULL, NULL);
+  return 0;
 }
 
 void get_save_game_path(int slotNum, char *buffer) {
@@ -3090,6 +3091,7 @@ long DeleteSaveSlot (long slnum) {
     }
 
   }
+  return 0;
 }
 
 long Game_SetSaveGameDirectory(const char *newFolder) {
@@ -3159,9 +3161,8 @@ const char* Game_GetSaveSlotDescription(long slnum) {
   return NULL;
 }
 
-long LoadSaveSlotScreenshot(long slnum,long awidth,long aheight) {
+long LoadSaveSlotScreenshot(long slnum,long width,long height) {
   int gotSlot;
-  int width = awidth, height = aheight;
   multiply_up_coordinates(&width, &height);
 
   if (load_game(slnum, NULL, &gotSlot) != 0)
@@ -3249,6 +3250,7 @@ long restore_game_dialog() {
   if (toload>=0) {
     load_game_and_print_error(toload);
   }
+  return 0;
 }
 
 long save_game_dialog() {
@@ -3265,7 +3267,9 @@ long save_game_dialog() {
   restore_after_dialog();
   if (toload>=0)
     save_game(toload,buffer2);
-  }
+  
+  return 0;
+}
 
 void update_script_mouse_coords() {
   scmouse.x = divide_down_coordinate(mousex);
@@ -3719,6 +3723,7 @@ long my_fade_out(long spdd) {
 
   if (game.color_depth > 1)
     play.screen_is_faded_out = 1;
+  return 0;
 }
 
 void my_fade_in(PALLETE p, int speed) {
@@ -3979,10 +3984,12 @@ long SetAreaLightLevel(long area,long brightness) {
   thisroom.regionTintLevel[area] &= ~TINT_IS_ENABLED;
   generate_light_table();
   DEBUG_CONSOLE("Region %d light level set to %d", area, brightness);
+  return 0;
 }
 
 long Region_SetLightLevel(ScriptRegion *ssr,long brightness) {
   SetAreaLightLevel(ssr->id, brightness);
+  return 0;
 }
 
 long Region_GetLightLevel(ScriptRegion *ssr) {
@@ -4020,6 +4027,7 @@ long SetRegionTint (long area,long red,long green,long blue,long amount) {
   thisroom.regionTintLevel[area] |= (int(rgreen) << 8) & 0x0000ff00;
   thisroom.regionTintLevel[area] |= (int(rblue) << 16) & 0x00ff0000;
   thisroom.regionLightLevel[area] = amount;
+  return 0;
 }
 
 long Region_GetTintEnabled(ScriptRegion *srr) {
@@ -4050,6 +4058,7 @@ long Region_GetTintSaturation(ScriptRegion *srr) {
 
 long Region_Tint(ScriptRegion *srr,long red,long green,long blue,long amount) {
   SetRegionTint(srr->id, red, green, blue, amount);
+  return 0;
 }
 
 int is_valid_character(int newchar) {
@@ -4073,10 +4082,12 @@ int GetBaseWidth () {
 
 long HideMouseCursor () {
   play.mouse_cursor_hidden = 1;
+  return 0;
 }
 
 long ShowMouseCursor () {
   play.mouse_cursor_hidden = 0;
+  return 0;
 }
 
 // The Mouse:: functions are static so the script doesn't pass
@@ -4086,6 +4097,7 @@ long Mouse_SetVisible(long isOn) {
     ShowMouseCursor();
   else
     HideMouseCursor();
+  return 0;
 }
 
 long Mouse_GetVisible() {
@@ -4095,8 +4107,7 @@ long Mouse_GetVisible() {
 }
 
 #define MOUSE_MAX_Y divide_down_coordinate(vesa_yres)
-long SetMouseBounds (long ax1,long ay1,long ax2,long ay2) {
-	int x1 = ax1, y1 = ay1, x2 = ax2, y2 = ay2;
+long SetMouseBounds (long x1,long y1,long x2,long y2) {
   if ((x1 == 0) && (y1 == 0) && (x2 == 0) && (y2 == 0)) {
     x2 = BASEWIDTH-1;
     y2 = MOUSE_MAX_Y - 1;
@@ -4115,6 +4126,7 @@ long SetMouseBounds (long ax1,long ay1,long ax2,long ay2) {
   play.mboundy1 = y1;
   play.mboundy2 = y2;
   filter->SetMouseLimit(x1,y1,x2,y2);
+  return 0;
 }
 
 void update_walk_behind_images()
@@ -5250,11 +5262,13 @@ void update_events() {
 long PauseGame() {
   game_paused++;
   DEBUG_CONSOLE("Game paused");
+  return 0;
 }
 long UnPauseGame() {
   if (game_paused > 0)
     game_paused--;
   DEBUG_CONSOLE("Game UnPaused, pause level now %d", game_paused);
+  return 0;
 }
 
 void update_inv_cursor(int invnum) {
@@ -5387,6 +5401,7 @@ long set_mouse_cursor(long newcurs) {
     mouse_frame=0;
     mouse_delay=0;
   }
+  return 0;
 }
 
 void precache_view(int view) 
@@ -5403,7 +5418,8 @@ void precache_view(int view)
 // set_default_cursor: resets visual appearance to current mode (walk, look, etc)
 long set_default_cursor(void) {
   set_mouse_cursor(cur_mode);
-  }
+  return 0;
+}
 
 // permanently change cursor graphic
 long ChangeCursorGraphic (long curs,long newslot) {
@@ -5417,6 +5433,7 @@ long ChangeCursorGraphic (long curs,long newslot) {
   spriteset.precache (newslot);
   if (curs == cur_mode)
     set_mouse_cursor (curs);
+  return 0;
 }
 
 long Mouse_GetModeGraphic(long curs) {
@@ -5433,6 +5450,7 @@ long ChangeCursorHotspot (long curs,long x,long y) {
   game.mcurs[curs].hoty = multiply_up_coordinate(y);
   if (curs == cur_cursor)
     set_mouse_cursor (cur_cursor);
+  return 0;
 }
 
 long Mouse_ChangeModeView(long curs,long newview) {
@@ -5450,6 +5468,7 @@ long Mouse_ChangeModeView(long curs,long newview) {
 
   if (curs == cur_cursor)
     mouse_delay = 0;  // force update
+    return 0;
 }
 
 int find_next_enabled_cursor(int startwith) {
@@ -5481,6 +5500,7 @@ int find_next_enabled_cursor(int startwith) {
 
 long SetNextCursor () {
   set_cursor_mode (find_next_enabled_cursor(cur_mode + 1));
+  return 0;
 }
 
 // set_cursor_mode: changes mode and appearance
@@ -5503,6 +5523,7 @@ long set_cursor_mode(long newmode) {
   set_default_cursor();
 
   DEBUG_CONSOLE("Cursor mode set to %d", newmode);
+  return 0;
 }
 
 void set_inv_item_cursorpic(int invItemId, int piccy) {
@@ -5517,6 +5538,7 @@ void set_inv_item_cursorpic(int invItemId, int piccy) {
 
 long InventoryItem_SetCursorGraphic(ScriptInvItem *iitem,long newSprite) {
   set_inv_item_cursorpic(iitem->id, newSprite);
+  return 0;
 }
 
 long InventoryItem_GetCursorGraphic(ScriptInvItem *iitem) {
@@ -5539,10 +5561,12 @@ long set_inv_item_pic(long invi,long piccy) {
 
   game.invinfo[invi].pic = piccy;
   guis_need_update = 1;
+  return 0;
 }
 
 long InventoryItem_SetGraphic(ScriptInvItem *iitem,long piccy) {
   set_inv_item_pic(iitem->id, piccy);
+  return 0;
 }
 
 long SetInvItemName(long invi, const char *newName) {
@@ -5555,10 +5579,12 @@ long SetInvItemName(long invi, const char *newName) {
 
   // might need to redraw the GUI if it has the inv item name on it
   guis_need_update = 1;
+  return 0;
 }
 
 long InventoryItem_SetName(ScriptInvItem *scii, const char *newname) {
   SetInvItemName(scii->id, newname);
+  return 0;
 }
 
 long InventoryItem_GetID(ScriptInvItem *scii) {
@@ -5580,7 +5606,8 @@ long enable_cursor_mode(long modd) {
       }
     }
   guis_need_update = 1;
-  }
+  return 0;
+}
 
 long disable_cursor_mode(long modd) {
   game.mcurs[modd].flags|=MCF_DISABLED;
@@ -5598,7 +5625,8 @@ long disable_cursor_mode(long modd) {
     }
   if (cur_mode==modd) find_next_enabled_cursor(modd);
   guis_need_update = 1;
-  }
+  return 0;
+}
 
 void remove_popup_interface(int ifacenum) {
   if (ifacepopped != ifacenum) return;
@@ -5694,12 +5722,13 @@ long SetActiveInventory(long iit) {
     quitprintf("!SetActiveInventory: invalid inventory number %d", iit);
 
   Character_SetActiveInventory(playerchar, tosend);
+  return 0;
 }
 
 long IsGamePaused() {
   if (game_paused>0) return 1;
   return 0;
-  }
+}
 
 long IsButtonDown(long which) {
   if ((which < 1) || (which > 3))
@@ -5714,6 +5743,7 @@ long SetCharacterIdle(long who,long iview,long itime) {
     quit("!SetCharacterIdle: Invalid character specified");
 
   Character_SetIdleView(&game.chars[who], iview, itime);
+  return 0;
 }
 
 long IsKeyPressed (long keycode) {
@@ -5852,6 +5882,7 @@ long IsKeyPressed (long keycode) {
   // old allegro version
   quit("allegro keyboard handler not in use??");
 #endif
+  return 0;
 }
 
 void start_skipping_cutscene () {
@@ -5894,10 +5925,12 @@ long RunInventoryInteraction (long iit,long modd) {
     run_event_block_inv(iit, 2);
   else // other click on invnetory
     run_event_block_inv(iit, 4);
+  return 0;
 }
 
 long InventoryItem_RunInteraction(ScriptInvItem *iitem,long mood) {
   RunInventoryInteraction(iitem->id, mood);
+  return 0;
 }
 
 // check_controls: checks mouse & keyboard interface
@@ -6280,6 +6313,7 @@ long SetFrameSound (long vii,long loop,long frame,long sound) {
 
     views[vii].loops[loop].frames[frame].sound = clip->id + (psp_is_old_datafile ? 0x10000000 : 0);
   }
+  return 0;
 }
 
 // the specified frame has just appeared, see if we need
@@ -7467,6 +7501,7 @@ long update_invorder() {
   play.obsolete_inv_numorder = charextra[game.playercharacter].invorder_count;
 
   guis_need_update = 1;
+  return 0;
 }
 
 int GUIInv::CharToDisplay() {
@@ -8433,6 +8468,7 @@ long SetAreaScaling(long area,long min,long max) {
     thisroom.walk_area_zoom[area] = min;
     thisroom.walk_area_zoom2[area] = max;
   }
+  return 0;
 }
 
 // This is only called from draw_screen_background, but it's seperated
@@ -9226,6 +9262,7 @@ long SeekMIDIPosition (long position) {
     midi_seek(position);
     DEBUG_CONSOLE("Seek MIDI position to %d", position);
   }
+  return 0;
 }
 
 long GetMIDIPosition () {
@@ -9424,7 +9461,8 @@ void start_replay_record () {
 }
 
 long scStartRecording (long keyToStop) {
-  quit("!StartRecording: not et suppotreD");
+  quit("!StartRecording: not yet supported");
+  return 0;
 }
 
 void stop_recording() {
@@ -10141,22 +10179,18 @@ long DrawingSurface_Release(ScriptDrawingSurface* sds) {
     sds->dynamicSurfaceNumber = -1;
   }
   sds->modified = 0;
+  return 0;
 }
 
-void ScriptDrawingSurface::MultiplyCoordinates(int *xcoord, int *ycoord) {
-  if (this->highResCoordinates)
-  {
-    if (current_screen_resolution_multiplier == 1) 
-    {
+void ScriptDrawingSurface::MultiplyCoordinates(long *xcoord, long *ycoord) {
+  if (this->highResCoordinates) {
+    if (current_screen_resolution_multiplier == 1) {
       // using high-res co-ordinates but game running at low-res
       xcoord[0] /= 2;
       ycoord[0] /= 2;
     }
-  }
-  else
-  {
-    if (current_screen_resolution_multiplier > 1) 
-    {
+  }  else  {
+    if (current_screen_resolution_multiplier > 1) {
       // using low-res co-ordinates but game running at high-res
       xcoord[0] *= 2;
       ycoord[0] *= 2;
@@ -10164,38 +10198,28 @@ void ScriptDrawingSurface::MultiplyCoordinates(int *xcoord, int *ycoord) {
   }
 }
 
-void ScriptDrawingSurface::MultiplyThickness(int *valueToAdjust) {
-  if (this->highResCoordinates)
-  {
-    if (current_screen_resolution_multiplier == 1) 
-    {
+void ScriptDrawingSurface::MultiplyThickness(long *valueToAdjust) {
+  if (this->highResCoordinates) {
+    if (current_screen_resolution_multiplier == 1)   {
       valueToAdjust[0] /= 2;
       if (valueToAdjust[0] < 1)
         valueToAdjust[0] = 1;
     }
-  }
-  else
-  {
+  } else {
     if (current_screen_resolution_multiplier > 1) 
-    {
       valueToAdjust[0] *= 2;
-    }
+
   }
 }
 
 // convert actual co-ordinate back to what the script is expecting
-void ScriptDrawingSurface::UnMultiplyThickness(int *valueToAdjust) {
-  if (this->highResCoordinates)
-  {
-    if (current_screen_resolution_multiplier == 1) 
-    {
+void ScriptDrawingSurface::UnMultiplyThickness(long *valueToAdjust) {
+  if (this->highResCoordinates) {
+    if (current_screen_resolution_multiplier == 1) {
       valueToAdjust[0] *= 2;
     }
-  }
-  else
-  {
-    if (current_screen_resolution_multiplier > 1) 
-    {
+  } else {
+    if (current_screen_resolution_multiplier > 1) {
       valueToAdjust[0] /= 2;
       if (valueToAdjust[0] < 1)
         valueToAdjust[0] = 1;
@@ -10238,7 +10262,7 @@ long DrawingSurface_DrawSurface(ScriptDrawingSurface* target, ScriptDrawingSurfa
     // just draw it over the top, no transparency
     blit(surfaceToDraw, abuf, 0, 0, 0, 0, surfaceToDraw->w, surfaceToDraw->h);
     target->FinishedDrawing();
-    return;
+    return 0;
   }
 
   if (bitmap_color_depth(surfaceToDraw) <= 8)
@@ -10248,6 +10272,7 @@ long DrawingSurface_DrawSurface(ScriptDrawingSurface* target, ScriptDrawingSurfa
   trans_mode = ((100-translev) * 25) / 10;
   put_sprite_256(0, 0, surfaceToDraw);
   target->FinishedDrawing();
+  return 0;
 }
 
 long DrawingSurface_DrawImage(ScriptDrawingSurface* sds,long xx,long yy,long slot,long trans,long width,long height) {
@@ -10259,7 +10284,7 @@ long DrawingSurface_DrawImage(ScriptDrawingSurface* sds,long xx,long yy,long slo
 
   // 100% transparency, don't draw anything
   if (trans == 100)
-    return;
+    return 0;
 
   BITMAP *sourcePic = spriteset[slot];
   bool needToFreeBitmap = false;
@@ -10269,7 +10294,7 @@ long DrawingSurface_DrawImage(ScriptDrawingSurface* sds,long xx,long yy,long slo
     // Resize specified
 
     if ((width < 1) || (height < 1))
-      return;
+      return 0;
 
     sds->MultiplyCoordinates(&width, &height);
 
@@ -10303,6 +10328,7 @@ long DrawingSurface_DrawImage(ScriptDrawingSurface* sds,long xx,long yy,long slo
 
   if (needToFreeBitmap)
     destroy_bitmap(sourcePic);
+  return 0;
 }
 
 long Game_GetColorFromRGB(long red,long grn,long blu) {
@@ -10335,6 +10361,7 @@ long DrawingSurface_SetDrawingColor(ScriptDrawingSurface *sds,long newColour) {
     sds->currentColour = get_col8_lookup(newColour);
   }
   sds->FinishedDrawingReadOnly();
+  return 0;
 }
 
 long DrawingSurface_GetDrawingColor(ScriptDrawingSurface *sds) {
@@ -10343,6 +10370,7 @@ long DrawingSurface_GetDrawingColor(ScriptDrawingSurface *sds) {
 
 long DrawingSurface_SetUseHighResCoordinates(ScriptDrawingSurface *sds,long highRes) {
   sds->highResCoordinates = (highRes) ? 1 : 0;
+  return 0;
 }
 
 long DrawingSurface_GetUseHighResCoordinates(ScriptDrawingSurface *sds) {
@@ -10351,7 +10379,7 @@ long DrawingSurface_GetUseHighResCoordinates(ScriptDrawingSurface *sds) {
 
 long DrawingSurface_GetHeight(ScriptDrawingSurface *sds) {
   sds->StartDrawing();
-  int height = abuf->h;
+  long height = abuf->h;
   sds->FinishedDrawingReadOnly();
   sds->UnMultiplyThickness(&height);
   return height;
@@ -10359,7 +10387,7 @@ long DrawingSurface_GetHeight(ScriptDrawingSurface *sds) {
 
 long DrawingSurface_GetWidth(ScriptDrawingSurface *sds) {
   sds->StartDrawing();
-  int width = abuf->w;
+  long width = abuf->w;
   sds->FinishedDrawingReadOnly();
   sds->UnMultiplyThickness(&width);
   return width;
@@ -10368,16 +10396,14 @@ long DrawingSurface_GetWidth(ScriptDrawingSurface *sds) {
 long DrawingSurface_Clear(ScriptDrawingSurface *sds,long colour) {
   sds->StartDrawing();
   int allegroColor;
-  if ((colour == -SCR_NO_VALUE) || (colour == SCR_COLOR_TRANSPARENT))
-  {
+  if ((colour == -SCR_NO_VALUE) || (colour == SCR_COLOR_TRANSPARENT))  {
     allegroColor = bitmap_mask_color(abuf);
-  }
-  else
-  {
+  }  else  {
     allegroColor = get_col8_lookup(colour);
   }
   clear_to_color(abuf, allegroColor);
   sds->FinishedDrawing();
+  return 0;
 }
 
 long DrawingSurface_DrawCircle(ScriptDrawingSurface *sds,long x,long y,long radius) {
@@ -10387,6 +10413,7 @@ long DrawingSurface_DrawCircle(ScriptDrawingSurface *sds,long x,long y,long radi
   sds->StartDrawing();
   circlefill(abuf, x, y, radius, sds->currentColour);
   sds->FinishedDrawing();
+  return 0;
 }
 
 long DrawingSurface_DrawRectangle(ScriptDrawingSurface *sds,long x1,long y1,long x2,long y2) {
@@ -10396,6 +10423,7 @@ long DrawingSurface_DrawRectangle(ScriptDrawingSurface *sds,long x1,long y1,long
   sds->StartDrawing();
   rectfill(abuf, x1,y1,x2,y2, sds->currentColour);
   sds->FinishedDrawing();
+  return 0;
 }
 
 long DrawingSurface_DrawTriangle(ScriptDrawingSurface *sds,long x1,long y1,long x2,long y2,long x3,long y3) {
@@ -10406,10 +10434,11 @@ long DrawingSurface_DrawTriangle(ScriptDrawingSurface *sds,long x1,long y1,long 
   sds->StartDrawing();
   triangle(abuf, x1,y1,x2,y2,x3,y3, sds->currentColour);
   sds->FinishedDrawing();
+  return 0;
 }
 
-long DrawingSurface_DrawString(ScriptDrawingSurface *sds, long axx, long ayy, long font, const char* texx, ...) {
-	int xx = axx, yy = ayy;
+long DrawingSurface_DrawString(ScriptDrawingSurface *sds, long xx, long yy, long font, const char* texx, ...) {
+
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -10427,6 +10456,7 @@ long DrawingSurface_DrawString(ScriptDrawingSurface *sds, long axx, long ayy, lo
   }
   wouttext_outline(xx, yy, font, displbuf);
   sds->FinishedDrawing();
+  return 0;
 }
 
 long DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds,long xx,long yy,long wid,long font,long alignment, const char *msg) {
@@ -10457,6 +10487,7 @@ long DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds,long xx,long yy,
   }
 
   sds->FinishedDrawing();
+  return 0;
 }
 
 long DrawingSurface_DrawMessageWrapped(ScriptDrawingSurface *sds,long xx,long yy,long wid,long font,long msgm) {
@@ -10467,6 +10498,7 @@ long DrawingSurface_DrawMessageWrapped(ScriptDrawingSurface *sds,long xx,long yy
     quit("!RawPrintMessageWrapped: message too long");
 
   DrawingSurface_DrawStringWrapped(sds, xx, yy, wid, font, SCALIGN_LEFT, displbuf);
+  return 0;
 }
 
 long DrawingSurface_DrawLine(ScriptDrawingSurface *sds,long fromx,long fromy,long tox,long toy,long thickness) {
@@ -10486,11 +10518,12 @@ long DrawingSurface_DrawLine(ScriptDrawingSurface *sds,long fromx,long fromy,lon
     }
   }
   sds->FinishedDrawing();
+  return 0;
 }
 
 long DrawingSurface_DrawPixel(ScriptDrawingSurface *sds,long x,long y) {
   sds->MultiplyCoordinates(&x, &y);
-  int thickness = 1;
+  long thickness = 1;
   sds->MultiplyThickness(&thickness);
   int ii,jj;
   sds->StartDrawing();
@@ -10503,6 +10536,7 @@ long DrawingSurface_DrawPixel(ScriptDrawingSurface *sds,long x,long y) {
     }
   }
   sds->FinishedDrawing();
+  return 0;
 }
 
 long DrawingSurface_GetPixel(ScriptDrawingSurface *sds,long x,long y) {
@@ -10627,6 +10661,7 @@ long DialogOptionsRendering_GetX(ScriptDialogOptionsRendering *dlgOptRender) {
 
 long DialogOptionsRendering_SetX(ScriptDialogOptionsRendering *dlgOptRender,long newX) {
   dlgOptRender->x = newX;
+  return 0;
 }
 
 long DialogOptionsRendering_GetY(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -10635,6 +10670,7 @@ long DialogOptionsRendering_GetY(ScriptDialogOptionsRendering *dlgOptRender) {
 
 long DialogOptionsRendering_SetY(ScriptDialogOptionsRendering *dlgOptRender,long newY) {
   dlgOptRender->y = newY;
+  return 0;
 }
 
 long DialogOptionsRendering_GetWidth(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -10643,6 +10679,7 @@ long DialogOptionsRendering_GetWidth(ScriptDialogOptionsRendering *dlgOptRender)
 
 long DialogOptionsRendering_SetWidth(ScriptDialogOptionsRendering *dlgOptRender,long newWidth) {
   dlgOptRender->width = newWidth;
+  return 0;
 }
 
 long DialogOptionsRendering_GetHeight(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -10651,6 +10688,7 @@ long DialogOptionsRendering_GetHeight(ScriptDialogOptionsRendering *dlgOptRender
 
 long DialogOptionsRendering_SetHeight(ScriptDialogOptionsRendering *dlgOptRender,long newHeight) {
   dlgOptRender->height = newHeight;
+  return 0;
 }
 
 long DialogOptionsRendering_GetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -10659,6 +10697,7 @@ long DialogOptionsRendering_GetParserTextboxX(ScriptDialogOptionsRendering *dlgO
 
 long DialogOptionsRendering_SetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender,long newX) {
   dlgOptRender->parserTextboxX = newX;
+  return 0;
 }
 
 long DialogOptionsRendering_GetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -10667,6 +10706,7 @@ long DialogOptionsRendering_GetParserTextboxY(ScriptDialogOptionsRendering *dlgO
 
 long DialogOptionsRendering_SetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender,long newY) {
   dlgOptRender->parserTextboxY = newY;
+  return 0;
 }
 
 long DialogOptionsRendering_GetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -10675,6 +10715,7 @@ long DialogOptionsRendering_GetParserTextboxWidth(ScriptDialogOptionsRendering *
 
 long DialogOptionsRendering_SetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender,long newWidth) {
   dlgOptRender->parserTextboxWidth = newWidth;
+  return 0;
 }
 
 ScriptDialog* DialogOptionsRendering_GetDialogToRender(ScriptDialogOptionsRendering *dlgOptRender) {
@@ -10696,6 +10737,7 @@ long DialogOptionsRendering_SetActiveOptionID(ScriptDialogOptionsRendering *dlgO
     quitprintf("DialogOptionsRenderingInfo.ActiveOptionID: invalid ID specified for this dialog (specified %d, valid range: 1..%d)", activeOptionID, optionCount);
 
   dlgOptRender->activeOptionID = activeOptionID - 1;
+  return 0;
 }
 
 
@@ -10823,6 +10865,7 @@ long DynamicSprite_Delete(ScriptDynamicSprite *sds) {
     free_dynamic_sprite(sds->slot);
     sds->slot = 0;
   }
+  return 0;
 }
 
 ScriptDrawingSurface* DynamicSprite_GetDrawingSurface(ScriptDynamicSprite *dss) {
@@ -10881,6 +10924,7 @@ long DynamicSprite_Resize(ScriptDynamicSprite *sds,long width,long height) {
 
   // replace the bitmap in the sprite set
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
+  return 0;
 }
 
 long DynamicSprite_Flip(ScriptDynamicSprite *sds,long direction) {
@@ -10904,6 +10948,7 @@ long DynamicSprite_Flip(ScriptDynamicSprite *sds,long direction) {
 
   // replace the bitmap in the sprite set
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
+  return 0;
 }
 
 long DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds,long sourceSprite) {
@@ -10978,6 +11023,7 @@ long DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds,long sourceSpri
       targetPixel += bytesPerPixel;
     }
   }
+  return 0;
 }
 
 long DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds,long width,long height,long x,long y) {
@@ -10998,6 +11044,7 @@ long DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds,long width,long hei
 
   // replace the bitmap in the sprite set
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
+  return 0;
 }
 
 long DynamicSprite_Crop(ScriptDynamicSprite *sds,long x1,long y1,long width,long height) {
@@ -11020,6 +11067,7 @@ long DynamicSprite_Crop(ScriptDynamicSprite *sds,long x1,long y1,long width,long
 
   // replace the bitmap in the sprite set
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
+  return 0;
 }
 
 long DynamicSprite_Rotate(ScriptDynamicSprite *sds,long angle,long width,long height) {
@@ -11063,6 +11111,7 @@ long DynamicSprite_Rotate(ScriptDynamicSprite *sds,long angle,long width,long he
 
   // replace the bitmap in the sprite set
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
+  return 0;
 }
 
 long DynamicSprite_Tint(ScriptDynamicSprite *sds,long red,long green,long blue,long saturation,long luminance) {
@@ -11074,6 +11123,7 @@ long DynamicSprite_Tint(ScriptDynamicSprite *sds,long red,long green,long blue,l
   destroy_bitmap(source);
   // replace the bitmap in the sprite set
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
+  return 0;
 }
 
 long DynamicSprite_SaveToFile(ScriptDynamicSprite *sds, const char* namm) {
@@ -12746,6 +12796,7 @@ long ClaimEvent() {
     quit("!ClaimEvent: no event to claim");
 
   eventClaimed = EVENT_CLAIMED;
+  return 0;
 }
 
 void draw_button_background(int xx1,int yy1,int xx2,int yy2,GUIMain*iep) {
@@ -13449,6 +13500,7 @@ long SetTextWindowGUI (long guinum) {
   if (play.speech_textwindow_gui == game.options[OPT_TWCUSTOM])
     play.speech_textwindow_gui = guinum;
   game.options[OPT_TWCUSTOM] = guinum;
+  return 0;
 }
 
 // *** OVERLAY SCRIPT FUNCTINS
@@ -13458,14 +13510,15 @@ long SetTextWindowGUI (long guinum) {
 long RemoveOverlay(long ovrid) {
   if (find_overlay_of_type(ovrid) < 0) quit("!RemoveOverlay: invalid overlay id passed");
   remove_screen_overlay(ovrid);
+  return 0;
 }
 
 long Overlay_Remove(ScriptOverlay *sco) {
   sco->Remove();
+  return 0;
 }
 
-long CreateGraphicOverlay(long axx,long ayy,long slott,long trans) {
-	int xx = axx, yy = ayy;
+long CreateGraphicOverlay(long xx,long yy,long slott,long trans) {
   multiply_up_coordinates(&xx, &yy);
 
   block screeno=create_bitmap_ex(final_col_dep, spritewidth[slott],spriteheight[slott]);
@@ -13490,8 +13543,7 @@ long CreateTextOverlayCore(long xx, long yy, long wii, long fontid, long clr, co
   return _display_main(xx,yy,wii, (char*)tex, blcode,fontid,-clr, 0, allowShrink, false);
 }
 
-long CreateTextOverlay(long axx,long ayy,long wii,long fontid,long clr,char*texx, ...) {
-	int xx = axx, yy = ayy;
+long CreateTextOverlay(long xx,long yy,long wii,long fontid,long clr,char*texx, ...) {
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -13520,7 +13572,8 @@ long SetTextOverlay(long ovrid,long xx,long yy,long wii,long fontid,long clr,cha
   crovr_id=ovrid;
   if (CreateTextOverlay(xx,yy,wii,fontid,clr,displbuf)!=ovrid)
     quit("SetTextOverlay internal error: inconsistent type ids");
-  }
+  return 0;
+}
 
 long Overlay_SetText(ScriptOverlay *scover, long wii, long fontid, long clr, char*texx, ...) {
   char displbuf[STD_BUFFER_SIZE];
@@ -13540,6 +13593,7 @@ long Overlay_SetText(ScriptOverlay *scover, long wii, long fontid, long clr, cha
 
   if (CreateTextOverlay(xx,yy,wii,fontid,clr,displbuf) != scover->overlayId)
     quit("SetTextOverlay internal error: inconsistent type ids");
+  return 0;
 }
 
 long Overlay_GetX(ScriptOverlay *scover) {
@@ -13559,6 +13613,7 @@ long Overlay_SetX(ScriptOverlay *scover,long newx) {
     quit("!invalid overlay ID specified");
 
   screenover[ovri].x = multiply_up_coordinate(newx);
+  return 0;
 }
 
 long Overlay_GetY(ScriptOverlay *scover) {
@@ -13578,16 +13633,17 @@ long Overlay_SetY(ScriptOverlay *scover,long newy) {
     quit("!invalid overlay ID specified");
 
   screenover[ovri].y = multiply_up_coordinate(newy);
+  return 0;
 }
 
-long MoveOverlay(long ovrid,long anewx,long anewy) {
-	int newx=anewx, newy=anewy;
+long MoveOverlay(long ovrid,long newx,long newy) {
   multiply_up_coordinates(&newx, &newy);
   
   int ovri=find_overlay_of_type(ovrid);
   if (ovri<0) quit("!MoveOverlay: invalid overlay ID specified");
   screenover[ovri].x=newx;
   screenover[ovri].y=newy;
+  return 0;
 }
 
 long IsOverlayValid(long ovrid) {
@@ -13621,8 +13677,7 @@ ScriptOverlay* Overlay_CreateGraphical(long x,long y,long slot,long transparent)
   return sco;
 }
 
-ScriptOverlay* Overlay_CreateTextual(long ax, long ay, long width, long font, long colour, const char* text, ...) {
-	int x = ax, y = ay;
+ScriptOverlay* Overlay_CreateTextual(long x, long y, long width, long font, long colour, const char* text, ...) {
   ScriptOverlay *sco = new ScriptOverlay();
 
   char displbuf[STD_BUFFER_SIZE];
@@ -13665,8 +13720,7 @@ long DisplaySpeechBackground(long charid,char*speel) {
   return ovrl;
 }
 
-long DisplayAt(long x,long y,long widd,char*texx, ...) {
-	int xxp = x, yyp = y;
+long DisplayAt(long xxp,long yyp,long widd,char*texx, ...) {
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -13679,6 +13733,7 @@ long DisplayAt(long x,long y,long widd,char*texx, ...) {
   if (widd<1) widd=scrnwid/2;
   if (xxp<0) xxp=scrnwid/2-widd/2;
   _display_at(xxp,yyp,widd,displbuf,1,0, 0, 0, false);
+  return 0;
 }
 
 int play_speech(int charid,int sndid) {
@@ -13805,18 +13860,22 @@ long SetSpeechVolume(long newvol) {
     channels[SCHAN_SPEECH]->set_volume (newvol);
 
   play.speech_volume = newvol;
-  }
+  return 0;
+}
 
 long SetSpeechFont (long fontnum) {
   if ((fontnum < 0) || (fontnum >= game.numfonts))
     quit("!SetSpeechFont: invalid font number.");
   play.speech_font = fontnum;
-  }
+  return 0;
+}
+
 long SetNormalFont (long fontnum) {
   if ((fontnum < 0) || (fontnum >= game.numfonts))
     quit("!SetNormalFont: invalid font number.");
   play.normal_font = fontnum;
-  }
+  return 0;
+}
 long Game_GetSpeechFont() {
   return play.speech_font;
 }
@@ -13828,12 +13887,14 @@ long SetSpeechStyle (long newstyle) {
   if ((newstyle < 0) || (newstyle > 3))
     quit("!SetSpeechStyle: must use a SPEECH_* constant as parameter");
   game.options[OPT_SPEECHTYPE] = newstyle;
+  return 0;
 }
 
 long __scr_play_speech(long who,long which) {
   // *** implement this - needs to call stop_speech as well
   // to reset the volume
   quit("PlaySpeech not yet implemented");
+  return 0;
 }
 
 // 0 = text only
@@ -14324,6 +14385,7 @@ long DisplaySpeechAt (long xx,long yy,long wii,long aschar, char*spch) {
   multiply_up_coordinates(&xx, &yy);
   wii = multiply_up_coordinate(wii);
   _displayspeech (get_translation(spch), aschar, xx, yy, wii, 0);
+  return 0;
 }
 
 long SetGlobalInt(long index,long valu) {
@@ -14335,7 +14397,9 @@ long SetGlobalInt(long index,long valu) {
   }
 
   play.globalscriptvars[index]=valu;
+  return 0;
 }
+
 long GetGlobalInt(long index) {
   if ((index<0) | (index>=MAXGSVALUES))
     quit("!GetGlobalInt: invalid index");
@@ -14349,12 +14413,14 @@ long SetGlobalString (long index, char *newval) {
   strncpy(play.globalstrings[index], newval, MAX_MAXSTRLEN);
   // truncate it to 200 chars, to be sure
   play.globalstrings[index][MAX_MAXSTRLEN - 1] = 0;
+  return 0;
 }
 
 long GetGlobalString (long index, char *strval) {
   if ((index<0) | (index >= MAXGLOBALSTRINGS))
     quit("!GetGlobalString: invalid index");
   strcpy (strval, play.globalstrings[index]);
+  return 0;
 }
 
 const char* Game_GetGlobalStrings(long index);
@@ -14374,6 +14440,7 @@ long SetScreenTransition(long newtrans) {
   play.fade_effect = newtrans;
 
   DEBUG_CONSOLE("Screen transition changed");
+  return 0;
 }
 
 long SetNextScreenTransition(long newtrans) {
@@ -14383,6 +14450,7 @@ long SetNextScreenTransition(long newtrans) {
   play.next_screen_transition = newtrans;
 
   DEBUG_CONSOLE("SetNextScreenTransition engaged");
+  return 0;
 }
 
 long SetFadeColor(long red,long green,long blue) {
@@ -14393,6 +14461,7 @@ long SetFadeColor(long red,long green,long blue) {
   play.fade_to_red = red;
   play.fade_to_green = green;
   play.fade_to_blue = blue;
+  return 0;
 }
 
 // 0 = click mouse or key to skip
@@ -14406,6 +14475,7 @@ long SetSkipSpeech (long newval) {
 
   DEBUG_CONSOLE("SkipSpeech style set to %d", newval);
   play.cant_skip_speech = user_to_internal_skip_speech(newval);
+  return 0;
 }
 
 long DisplayAtY (long ypos, char *texx) {
@@ -14414,7 +14484,7 @@ long DisplayAtY (long ypos, char *texx) {
 
   // Display("") ... a bit of a stupid thing to do, so ignore it
   if (texx[0] == 0)
-    return;
+    return 0;
 
   if (ypos > 0)
     ypos = multiply_up_coordinate(ypos);
@@ -14433,6 +14503,7 @@ long DisplayAtY (long ypos, char *texx) {
 
     _display_at(-1,ypos,scrnwid/2+scrnwid/4,get_translation(texx),1,0, 0, 0, false);
   }
+  return 0;
 }
 
 long Display(char*texx, ...) {
@@ -14442,6 +14513,7 @@ long Display(char*texx, ...) {
   my_sprintf(displbuf, get_translation(texx), ap);
   va_end(ap);
   DisplayAtY (-1, displbuf);
+  return 0;
 }
 
 void _DisplaySpeechCore(int chid, char *displbuf) {
@@ -14472,7 +14544,7 @@ long __sc_displayspeech(long chid,char*texx, ...) {
   va_end(ap);
 
   _DisplaySpeechCore(chid, displbuf);
-
+	return 0;
 }
 
 long DisplayTopBar(long ypos, long ttexcol, long backcol, char *title, char*texx, ...) {
@@ -14506,6 +14578,7 @@ long DisplayTopBar(long ypos, long ttexcol, long backcol, char *title, char*texx
     play.messagetime = GetTextDisplayTime(texx);
 
   DisplayAtY(play.top_bar_ypos, displbuf);
+  return 0;
 }
 
 // Display a room/global message in the bar
@@ -14513,6 +14586,7 @@ long DisplayMessageBar(long ypos,long ttexcol,long backcol, char *title,long msg
   char msgbufr[3001];
   get_message_text(msgnum, msgbufr);
   DisplayTopBar(ypos, ttexcol, backcol, title, "%s", msgbufr);
+  return 0;
 }
 
 void _DisplayThoughtCore(int chid, const char *displbuf) {
@@ -14535,6 +14609,7 @@ void _DisplayThoughtCore(int chid, const char *displbuf) {
   }
 
   _displayspeech ((char*)displbuf, chid, xpp, ypp, width, 1);
+  return;
 }
 
 long DisplayThought(long chid, const char*texx, ...) {
@@ -14548,6 +14623,7 @@ long DisplayThought(long chid, const char*texx, ...) {
   va_end(ap);
 
   _DisplayThoughtCore(chid, displbuf);
+  return 0;
 }
 
 void replace_tokens(char*srcmes,char*destm, int maxlen = 99999) {
@@ -14632,6 +14708,7 @@ void get_message_text (int msnum, char *buffer, char giveErr) {
 long GetMessageText (long msg, char *buffer) {
   VALIDATE_STRING(buffer);
   get_message_text (msg, buffer, 0);
+  return 0;
 }
 
 const char* Room_GetMessages(long index) {
@@ -14697,11 +14774,13 @@ long DisplayMessageAtY(long msnum,long ypos) {
     else
       repeatloop=0;
   }
+  return 0;
 
 }
 
 long DisplayMessage(long msnum) {
   DisplayMessageAtY (msnum, -1);
+  return 0;
 }
 
 // Raw screen writing routines - similar to old CapturedStuff
@@ -14714,6 +14793,7 @@ long RawSaveScreen () {
   block source = thisroom.ebscene[play.bg_frame];
   raw_saved_screen = wallocblock(source->w, source->h);
   blit(source, raw_saved_screen, 0, 0, 0, 0, source->w, source->h);
+  return 0;
 }
 // RawRestoreScreen: copy backup bitmap back to screen; we
 // deliberately don't free the block cos they can multiple restore
@@ -14727,6 +14807,7 @@ long RawRestoreScreen() {
   blit(raw_saved_screen, deston, 0, 0, 0, 0, deston->w, deston->h);
   invalidate_screen();
   mark_current_background_dirty();
+  return 0;
 }
 // Restores the backup bitmap, but tints it to the specified level
 long RawRestoreScreenTinted(long red,long green,long blue,long opacity) {
@@ -14745,6 +14826,7 @@ long RawRestoreScreenTinted(long red,long green,long blue,long opacity) {
   tint_image(raw_saved_screen, deston, red, green, blue, opacity);
   invalidate_screen();
   mark_current_background_dirty();
+  return 0;
 }
 
 long RawDrawFrameTransparent (long frame,long translev) {
@@ -14771,6 +14853,7 @@ long RawDrawFrameTransparent (long frame,long translev) {
   invalidate_screen();
   mark_current_background_dirty();
   RAW_END();
+  return 0;
 }
 
 long RawClear (long clr) {
@@ -14779,6 +14862,7 @@ long RawClear (long clr) {
   clear_to_color (thisroom.ebscene[play.bg_frame], clr);
   invalidate_screen();
   mark_current_background_dirty();
+  return 0;
 }
 
 long RawSetColor (long clr) {
@@ -14787,6 +14871,7 @@ long RawSetColor (long clr) {
   // set the colour at the appropriate depth for the background
   play.raw_color = get_col8_lookup(clr);
   pop_screen();
+  return 0;
 }
 
 long RawSetColorRGB(long red,long grn,long blu) {
@@ -14795,10 +14880,10 @@ long RawSetColorRGB(long red,long grn,long blu) {
     quit("!RawSetColorRGB: colour values must be 0-255");
 
   play.raw_color = makecol_depth(bitmap_color_depth(thisroom.ebscene[play.bg_frame]), red, grn, blu);
+  return 0;
 }
 
-long RawPrint (long x, long y, char*texx, ...) {
-	int xx = x, yy = y;
+long RawPrint (long xx, long yy, char*texx, ...) {
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -14819,10 +14904,10 @@ long RawPrint (long x, long y, char*texx, ...) {
   invalidate_screen();
   mark_current_background_dirty();
   RAW_END();
+  return 0;
 }
 
-long RawPrintMessageWrapped (long axx,long ayy,long wid,long font,long msgm) {
-	int xx = axx, yy = ayy;
+long RawPrintMessageWrapped (long xx,long yy,long wid,long font,long msgm) {
   char displbuf[3000];
   int texthit = wgetfontheight(font);
   multiply_up_coordinates(&xx, &yy);
@@ -14842,6 +14927,7 @@ long RawPrintMessageWrapped (long axx,long ayy,long wid,long font,long msgm) {
   invalidate_screen();
   mark_current_background_dirty();
   RAW_END();
+  return 0;
 }
 
 void RawDrawImageCore(int xx, int yy, int slot) {
@@ -14859,10 +14945,10 @@ void RawDrawImageCore(int xx, int yy, int slot) {
   RAW_END();
 }
 
-long RawDrawImage(long axx,long ayy,long slot) {
-	int xx = axx, yy = ayy;
+long RawDrawImage(long xx,long yy,long slot) {
   multiply_up_coordinates(&xx, &yy);
   RawDrawImageCore(xx, yy, slot);
+  return 0;
 }
 
 long RawDrawImageOffset(long xx,long yy,long slot) {
@@ -14879,6 +14965,7 @@ long RawDrawImageOffset(long xx,long yy,long slot) {
   }
 
   RawDrawImageCore(xx, yy, slot);
+  return 0;
 }
 
 long RawDrawImageTransparent(long xx,long yy,long slot,long trans) {
@@ -14891,9 +14978,10 @@ long RawDrawImageTransparent(long xx,long yy,long slot,long trans) {
   RawDrawImage(xx, yy, slot);
 
   update_polled_stuff();  // this operation can be slow so stop music skipping
+  return 0;
 }
-long RawDrawImageResized(long axx,long ayy,long gotSlot,long awidth,long aheight) {
-	int xx = axx, yy = ayy, width = awidth, height = aheight;
+
+long RawDrawImageResized(long xx,long yy,long gotSlot,long width,long height) {
 	if ((gotSlot < 0) || (gotSlot >= MAX_SPRITES) || (spriteset[gotSlot] == NULL))
     quit("!RawDrawImageResized: invalid sprite slot number specified");
   // very small, don't draw it
@@ -14920,9 +15008,10 @@ long RawDrawImageResized(long axx,long ayy,long gotSlot,long awidth,long aheight
   mark_current_background_dirty();
   update_polled_stuff();  // this operation can be slow so stop music skipping
   RAW_END();
+  return 0;
 }
-long RawDrawLine (long afromx,long afromy,long atox,long atoy) {
-	int fromx = afromx, fromy = afromy, tox = atox, toy = atoy;
+
+long RawDrawLine (long fromx,long fromy,long tox,long toy) {
 	multiply_up_coordinates(&fromx, &fromy);
   multiply_up_coordinates(&tox, &toy);
 
@@ -14935,9 +15024,10 @@ long RawDrawLine (long afromx,long afromy,long atox,long atoy) {
   }
   invalidate_screen();
   mark_current_background_dirty();
+  return 0;
 }
-long RawDrawCircle (long axx,long ayy,long rad) {
-	int xx = axx, yy = ayy;
+
+long RawDrawCircle (long xx,long yy,long rad) {
   multiply_up_coordinates(&xx, &yy);
   rad = multiply_up_coordinate(rad);
 
@@ -14945,9 +15035,10 @@ long RawDrawCircle (long axx,long ayy,long rad) {
   circlefill (thisroom.ebscene[play.bg_frame], xx, yy, rad, play.raw_color);
   invalidate_screen();
   mark_current_background_dirty();
+  return 0;
 }
-long RawDrawRectangle(long ax1,long ay1,long ax2,long ay2) {
-	int x1 = ax1, y1 = ay1, x2 = ax2, y2 = ay2;
+
+long RawDrawRectangle(long x1,long y1,long x2,long y2) {
 	play.raw_modified[play.bg_frame] = 1;
   multiply_up_coordinates(&x1, &y1);
   multiply_up_coordinates_round_up(&x2, &y2);
@@ -14955,9 +15046,10 @@ long RawDrawRectangle(long ax1,long ay1,long ax2,long ay2) {
   rectfill(thisroom.ebscene[play.bg_frame], x1,y1,x2,y2, play.raw_color);
   invalidate_screen();
   mark_current_background_dirty();
+  return 0;
 }
-long RawDrawTriangle(long ax1,long ay1,long ax2,long ay2,long ax3,long ay3) {
-	int x1 = ax1, y1 = ay1, x2 = ax2, y2 = ay2, x3 = ax3, y3 = ay3;
+
+long RawDrawTriangle(long x1,long y1,long x2,long y2,long x3,long y3) {
   play.raw_modified[play.bg_frame] = 1;
   multiply_up_coordinates(&x1, &y1);
   multiply_up_coordinates(&x2, &y2);
@@ -14966,6 +15058,7 @@ long RawDrawTriangle(long ax1,long ay1,long ax2,long ay2,long ax3,long ay3) {
   triangle (thisroom.ebscene[play.bg_frame], x1,y1,x2,y2,x3,y3, play.raw_color);
   invalidate_screen();
   mark_current_background_dirty();
+  return 0;
 }
 
 long SaveScreenShot(char*namm) {
@@ -15010,7 +15103,8 @@ long SetObjectView(long obn,long vii) {
     objs[obn].loop=0;
   objs[obn].cycling=0;
   objs[obn].num = views[vii].loops[0].frames[0].pic;
-  }
+  return 0;
+}
 
 long SetObjectFrame(long obn,long viw,long lop,long fra) {
   if (!is_valid_object(obn)) quit("!SetObjectFrame: invalid object number specified");
@@ -15037,10 +15131,12 @@ long SetObjectFrame(long obn,long viw,long lop,long fra) {
   objs[obn].cycling=0;
   objs[obn].num = views[viw].loops[objs[obn].loop].frames[objs[obn].frame].pic;
   CheckViewFrame(viw, objs[obn].loop, objs[obn].frame);
+  return 0;
 }
 
 long Object_SetView(ScriptObject *objj,long view,long loop,long frame) {
   SetObjectFrame(objj->id, view, loop, frame);
+  return 0;
 }
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
@@ -15053,10 +15149,12 @@ long SetObjectTransparency(long obn,long trans) {
     objs[obn].transparent = 255;
   else
     objs[obn].transparent=((100-trans) * 25) / 10;
+  return 0;
 }
 
 long Object_SetTransparency(ScriptObject *objj,long trans) {
   SetObjectTransparency(objj->id, trans);
+  return 0;
 }
 
 long Object_GetTransparency(ScriptObject *objj) {
@@ -15079,10 +15177,12 @@ long SetObjectBaseline (long obn,long basel) {
     objcache[obn].ywas = -9999;
     objs[obn].baseline = basel;
   }
+  return 0;
 }
 
 long Object_SetBaseline(ScriptObject *objj,long basel) {
   SetObjectBaseline(objj->id, basel);
+  return 0;
 }
 
 long GetObjectBaseline(long obn) {
@@ -15102,6 +15202,7 @@ long SetCharacterBaseline (long obn,long basel) {
   if (!is_valid_character(obn)) quit("!SetCharacterBaseline: invalid object number specified");
   
   Character_SetBaseline(&game.chars[obn], basel);
+  return 0;
 }
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
@@ -15110,6 +15211,7 @@ long SetCharacterTransparency(long obn,long trans) {
     quit("!SetCharTransparent: invalid character number specified");
   
   Character_SetTransparency(&game.chars[obn], trans);
+  return 0;
 }
 
 long scAnimateCharacter (long chh,long loopn,long sppd,long rept) {
@@ -15117,6 +15219,7 @@ long scAnimateCharacter (long chh,long loopn,long sppd,long rept) {
     quit("AnimateCharacter: invalid character");
 
   animate_character(&game.chars[chh], loopn, sppd, rept);
+  return 0;
 }
 
 long AnimateCharacterEx(long chh,long loopn,long sppd,long rept,long direction,long blocking) {
@@ -15136,6 +15239,7 @@ long AnimateCharacterEx(long chh,long loopn,long sppd,long rept,long direction,l
     blocking = IN_BACKGROUND;
 
   Character_Animate(&game.chars[chh], loopn, sppd, rept, blocking, direction);
+  return 0;
 
 }
 
@@ -15170,6 +15274,7 @@ void animate_character(CharacterInfo *chap, int loopn,int sppd,int rept, int noi
 
   chap->wait = sppd + views[chap->view].loops[loopn].frames[chap->frame].speed;
   CheckViewFrameForCharacter(chap);
+  return;
 }
 
 long AnimateObjectEx(long obn,long loopn,long spdd,long rept,long direction,long blocking) {
@@ -15207,6 +15312,8 @@ long AnimateObjectEx(long obn,long loopn,long spdd,long rept,long direction,long
 
   if (blocking)
     do_main_cycle(UNTIL_CHARIS0,(long)&objs[obn].cycling);
+  
+  return 0;
 }
 
 long Object_Animate(ScriptObject *objj,long loop,long delay,long repeat,long blocking,long direction) {
@@ -15225,6 +15332,7 @@ long Object_Animate(ScriptObject *objj,long loop,long delay,long repeat,long blo
     quit("!Object.Animate: Invalid BLOCKING parameter");
 
   AnimateObjectEx(objj->id, loop, delay, repeat, direction, blocking);
+  return 0;
 }
 
 long Object_StopAnimating(ScriptObject *objj) {
@@ -15235,10 +15343,12 @@ long Object_StopAnimating(ScriptObject *objj) {
     objs[objj->id].cycling = 0;
     objs[objj->id].wait = 0;
   }
+  return 0;
 }
 
 long AnimateObject(long obn,long loopn,long spdd,long rept) {
   AnimateObjectEx (obn, loopn, spdd, rept, 0, 0);
+  return 0;
 }
 
 long MergeObject(long obn) {
@@ -15263,10 +15373,12 @@ long MergeObject(long obn) {
   // mark the sprite as merged
   objs[obn].on = 2;
   DEBUG_CONSOLE("Object %d merged into background", obn);
+  return 0;
 }
 
 long Object_MergeIntoBackground(ScriptObject *objj) {
   MergeObject(objj->id);
+  return 0;
 }
 
 long StopObjectMoving(long objj) {
@@ -15275,10 +15387,12 @@ long StopObjectMoving(long objj) {
   objs[objj].moving = 0;
 
   DEBUG_CONSOLE("Object %d stop moving", objj);
+  return 0;
 }
 
 long Object_StopMoving(ScriptObject *objj) {
   StopObjectMoving(objj->id);
+  return 0;
 }
 
 long ObjectOff(long obn) {
@@ -15289,6 +15403,7 @@ long ObjectOff(long obn) {
     DEBUG_CONSOLE("Object %d turned off", obn);
     StopObjectMoving(obn);
   }
+  return 0;
 }
 
 long ObjectOn(long obn) {
@@ -15297,6 +15412,7 @@ long ObjectOn(long obn) {
     objs[obn].on = 1;
     DEBUG_CONSOLE("Object %d turned on", obn);
   }
+  return 0;
 }
 
 long Object_SetVisible(ScriptObject *objj,long onoroff) {
@@ -15304,6 +15420,7 @@ long Object_SetVisible(ScriptObject *objj,long onoroff) {
     ObjectOn(objj->id);
   else
     ObjectOff(objj->id);
+  return 0;
 }
 
 long IsObjectOn (long objj) {
@@ -15349,10 +15466,12 @@ long SetObjectGraphic(long obn,long slott) {
   objs[obn].frame = 0;
   objs[obn].loop = 0;
   objs[obn].view = -1;
+  return 0;
 }
 
 long Object_SetGraphic(ScriptObject *objj,long slott) {
   SetObjectGraphic(objj->id, slott);
+  return 0;
 }
 
 long GetObjectGraphic(long obn) {
@@ -15501,7 +15620,8 @@ long scrWait(long nloops) {
   play.wait_counter = nloops;
   play.key_skip_wait = 0;
   do_main_cycle(UNTIL_MOVEEND,(long)&play.wait_counter);
-  }
+  return 0;
+}
 
 long WaitKey(long nloops) {
   if (nloops < 1)
@@ -15529,7 +15649,7 @@ long WaitMouseKey(long nloops) {
 
 long StringToInt(char*stino) {
   return atoi(stino);
-  }
+}
 
 long StrGetCharAt (char *strin,long posn) {
   if ((posn < 0) || (posn >= (int)strlen(strin)))
@@ -15544,6 +15664,7 @@ long StrSetCharAt (char *strin,long posn,long nchar) {
   if (posn == (int)strlen(strin))
     strin[posn+1] = 0;
   strin[posn] = nchar;
+  return 0;
 }
 
 ScriptDrawingSurface* Room_GetDrawingSurfaceForBackground(long backgroundNumber) {
@@ -15765,6 +15886,7 @@ long SetMultitasking (long mode) {
     if (set_display_switch_mode (SWITCH_BACKGROUND) == -1)
       set_display_switch_mode(SWITCH_BACKAMNESIA);
   }
+  return 0;
 }
 
 
@@ -15900,6 +16022,7 @@ long play_flc_file(long numb,long playflags) {
 //  wsetscreen(screen); wputblock(0,0,backbuffer,0);
   while (mgetbutton()!=NONE) ;
   invalidate_screen();
+  return 0;
 }
 // FLIC player end
 
@@ -16089,9 +16212,9 @@ long scrPlayVideo(const char* name,long skip,long flags) {
   EndSkippingUntilCharStops();
 
   if (play.fast_forward)
-    return;
+    return 0;
   if (debug_flags & DBG_NOVIDEO)
-    return;
+    return 0;
 
   if ((flags < 10) && (usetup.digicard == DIGI_NONE)) {
     // if game audio is disabled in Setup, then don't
@@ -16100,6 +16223,7 @@ long scrPlayVideo(const char* name,long skip,long flags) {
   }
 
   pause_sound_if_necessary_and_play_video(name, skip, flags);
+  return 0;
 }
 
 // returns -1 on failure, channel number on success
@@ -16159,6 +16283,7 @@ long StopAllSounds(long evenAmbient) {
 
   if (evenAmbient)
     Game_StopAudio(1);
+  return 0;
 }
 
 // the sound will only be played if there is a free channel or
@@ -16210,6 +16335,7 @@ long add_inventory(long inum) {
   Character_AddInventory(playerchar, &scrInv[inum], SCR_NO_VALUE);
 
   play.obsolete_inv_numorder = charextra[game.playercharacter].invorder_count;
+  return 0;
 }
 
 long lose_inventory(long inum) {
@@ -16219,6 +16345,7 @@ long lose_inventory(long inum) {
   Character_LoseInventory(playerchar, &scrInv[inum]);
 
   play.obsolete_inv_numorder = charextra[game.playercharacter].invorder_count;
+  return 0;
 }
 
 long AddInventoryToCharacter(long charid,long inum) {
@@ -16228,6 +16355,7 @@ long AddInventoryToCharacter(long charid,long inum) {
     quit("!AddInventory: invalid inv item specified");
 
   Character_AddInventory(&game.chars[charid], &scrInv[inum], SCR_NO_VALUE);
+  return 0;
 }
 
 long LoseInventoryFromCharacter(long charid,long inum) {
@@ -16237,6 +16365,7 @@ long LoseInventoryFromCharacter(long charid,long inum) {
     quit("!AddInventory: invalid inv item specified");
   
   Character_LoseInventory(&game.chars[charid], &scrInv[inum]);
+  return 0;
 }
 
 long RunDialog(long tum) {
@@ -16257,10 +16386,10 @@ long RunDialog(long tum) {
     curscript->queue_action(ePSARunDialog, tum, "RunDialog");
   else
     do_conversation(tum);
+  return 0;
 }
 
-long GetGUIAt (long axx,long ayy) {
-	int xx = axx, yy = ayy;
+long GetGUIAt (long xx,long yy) {
   multiply_up_coordinates(&xx, &yy);
   
   int aa, ll;
@@ -16332,11 +16461,11 @@ long FindGUIID (const char* GUIName) {
 int isposinbox(int mmx,int mmy,int lf,int tp,int rt,int bt) {
   if ((mmx>=lf) & (mmx<=rt) & (mmy>=tp) & (mmy<=bt)) return TRUE;
   else return FALSE;
-  }
+}
 
 // xx,yy is the position in room co-ordinates that we are checking
 // arx,ary is the sprite x/y co-ordinates
-int is_pos_in_sprite(int xx,int yy,int arx,int ary, block sprit, int spww,int sphh, int flipped = 0) {
+int is_pos_in_sprite(int xx,int yy,int arx,int ary, block sprit, long spww,long sphh, int flipped = 0) {
   if (spww==0) spww = divide_down_coordinate(sprit->w) - 1;
   if (sphh==0) sphh = divide_down_coordinate(sprit->h) - 1;
 
@@ -16448,6 +16577,7 @@ long RunObjectInteraction (long aa,long mood) {
     }
     run_interaction_event(&croom->intrObject[aa],4);  // any click on obj
   }
+  return 0;
 }
 
 long Object_RunInteraction(ScriptObject *objj,long mode) {
@@ -16460,7 +16590,7 @@ int check_click_on_object(int xx,int yy,int mood) {
   if (aa < 0) return 0;
   RunObjectInteraction(aa, mood);
   return 1;
-  }
+}
 
 int is_pos_on_character(int xx,int yy) {
   int cc,sppic,lowestyp=0,lowestwas=-1;
@@ -16545,11 +16675,13 @@ long RunCharacterInteraction (long cc,long mood) {
       run_interaction_event(game.intrChar[cc],passon, 4, (passon == 3));
     run_interaction_event(game.intrChar[cc],4);  // any click on char
   }
+  return 0;
 }
 
 long Character_RunInteraction(CharacterInfo *chaa,long mood) {
 
   RunCharacterInteraction(chaa->index_id, mood);
+  return 0;
 }
 
 
@@ -16686,18 +16818,22 @@ long SetObjectPosition(long objj,long tox,long toy) {
 
   objs[objj].x = tox;
   objs[objj].y = toy;
+  return 0;
 }
 
 long Object_SetPosition(ScriptObject *objj,long xx,long yy) {
   SetObjectPosition(objj->id, xx, yy);
+  return 0;
 }
 
 long Object_SetX(ScriptObject *objj,long xx) {
   SetObjectPosition(objj->id, xx, objs[objj->id].y);
+  return 0;
 }
 
 long Object_SetY(ScriptObject *objj,long yy) {
   SetObjectPosition(objj->id, objs[objj->id].x, yy);
+  return 0;
 }
 
 void convert_move_path_to_high_res(MoveList *ml)
@@ -16783,10 +16919,12 @@ long RunRegionInteraction (long regnum,long mood) {
 
   evblockbasename = oldbasename;
   evblocknum = oldblocknum;
+  return 0;
 }
 
 long Region_RunInteraction(ScriptRegion *ssr,long mood) {
   RunRegionInteraction(ssr->id, mood);
+  return 0;
 }
 
 long RunHotspotInteraction (long hotspothere,long mood) {
@@ -16838,10 +16976,12 @@ long RunHotspotInteraction (long hotspothere,long mood) {
 
   evblockbasename = oldbasename;
   evblocknum = oldblocknum;
+  return 0;
 }
 
 long Hotspot_RunInteraction (ScriptHotspot *hss,long mood) {
   RunHotspotInteraction(hss->id, mood);
+  return 0;
 }
 
 long ProcessClick(long xx,long yy,long mood) {
@@ -16879,6 +17019,8 @@ long ProcessClick(long xx,long yy,long mood) {
   }
   else if (loctype == LOCTYPE_HOTSPOT) 
     RunHotspotInteraction (getloctype_index, mood);
+  
+  return 0;
 }
 
 // ** GetGameParameter replacement functions
@@ -17040,6 +17182,7 @@ long ViewFrame_GetGraphic(ScriptViewFrame *svf) {
 
 long ViewFrame_SetGraphic(ScriptViewFrame *svf,long newPic) {
   views[svf->view].loops[svf->loop].frames[svf->frame].pic = newPic;
+  return 0;
 }
 
 ScriptAudioClip* ViewFrame_GetLinkedAudio(ScriptViewFrame *svf) {
@@ -17056,6 +17199,7 @@ long ViewFrame_SetLinkedAudio(ScriptViewFrame *svf, ScriptAudioClip* clip) {
     newSoundIndex = clip->id;
 
   views[svf->view].loops[svf->loop].frames[svf->frame].sound = newSoundIndex;
+  return 0;
 }
 
 long ViewFrame_GetSound(ScriptViewFrame *svf) {
@@ -17064,12 +17208,9 @@ long ViewFrame_GetSound(ScriptViewFrame *svf) {
 }
 
 long ViewFrame_SetSound(ScriptViewFrame *svf,long newSound) {
-  if (newSound < 1)
-  {
+  if (newSound < 1)  {
     views[svf->view].loops[svf->loop].frames[svf->frame].sound = -1;
-  }
-  else
-  {
+  } else {
     // convert sound number to audio clip
     ScriptAudioClip* clip = get_audio_clip_for_old_style_number(false, newSound);
     if (clip == NULL)
@@ -17077,6 +17218,7 @@ long ViewFrame_SetSound(ScriptViewFrame *svf,long newSound) {
 
     views[svf->view].loops[svf->loop].frames[svf->frame].sound = clip->id + (psp_is_old_datafile ? 0x10000000 : 0);
   }
+  return 0;
 }
 
 long ViewFrame_GetSpeed(ScriptViewFrame *svf) {
@@ -17213,6 +17355,7 @@ long System_SetNumLock(long newValue) {
     ledState |= KB_NUMLOCK_FLAG;
   }
   set_leds(ledState);
+  return 0;
 }
 
 long System_GetVsync() {
@@ -17221,6 +17364,7 @@ long System_GetVsync() {
 
 long System_SetVsync(long newValue) {
   scsystem.vsync = newValue;
+  return 0;
 }
 
 long System_GetWindowed() {
@@ -17249,6 +17393,7 @@ long System_SetGamma(long newValue) {
     if (gfxDriver->SupportsGammaControl())
       gfxDriver->SetGamma(newValue);
   }
+  return 0;
 }
 
 long Game_GetTextReadingSpeed() {
@@ -17260,6 +17405,7 @@ long Game_SetTextReadingSpeed(long newTextSpeed) {
     quitprintf("!Game.TextReadingSpeed: %d is an invalid speed", newTextSpeed);
 
   play.text_speed = newTextSpeed;
+  return 0;
 }
 
 long Game_GetMinimumTextDisplayTimeMs() {
@@ -17268,6 +17414,7 @@ long Game_GetMinimumTextDisplayTimeMs() {
 
 long Game_SetMinimumTextDisplayTimeMs(long newTextMinTime) {
   play.text_min_display_time_ms = newTextMinTime;
+  return 0;
 }
 
 long Game_GetIgnoreUserInputAfterTextTimeoutMs() {
@@ -17276,6 +17423,7 @@ long Game_GetIgnoreUserInputAfterTextTimeoutMs() {
 
 long Game_SetIgnoreUserInputAfterTextTimeoutMs(long newValueMs) {
   play.ignore_user_input_after_text_timeout_ms = newValueMs;
+  return 0;
 }
 
 const char *Game_GetFileName() {
@@ -17293,6 +17441,7 @@ long Game_SetName(const char *newName) {
 #if (ALLEGRO_DATE > 19990103)
   set_window_title(play.game_name);
 #endif
+  return 0;
 }
 
 // begin custom property functions
@@ -17387,42 +17536,51 @@ long GetRoomProperty (const char *property) {
 
 long GetInvPropertyText (long item, const char *property, char *bufer) {
   get_text_property (&game.invProps[item], property, bufer);
+  return 0;
 }
 long InventoryItem_GetPropertyText(ScriptInvItem *scii, const char *property, char *bufer) {
   get_text_property(&game.invProps[scii->id], property, bufer);
+  return 0;
 }
 const char* InventoryItem_GetTextProperty(ScriptInvItem *scii, const char *property) {
   return get_text_property_dynamic_string(&game.invProps[scii->id], property);
 }
 long GetCharacterPropertyText (long item, const char *property, char *bufer) {
   get_text_property (&game.charProps[item], property, bufer);
+  return 0;
 }
 long Character_GetPropertyText(CharacterInfo *chaa, const char *property, char *bufer) {
   get_text_property(&game.charProps[chaa->index_id], property, bufer);
+  return 0;
 }
 const char* Character_GetTextProperty(CharacterInfo *chaa, const char *property) {
   return get_text_property_dynamic_string(&game.charProps[chaa->index_id], property);
 }
 long GetHotspotPropertyText (long item, const char *property, char *bufer) {
   get_text_property (&thisroom.hsProps[item], property, bufer);
+  return 0;
 }
 long Hotspot_GetPropertyText (ScriptHotspot *hss, const char *property, char *bufer) {
   get_text_property (&thisroom.hsProps[hss->id], property, bufer);
+  return 0;
 }
 const char* Hotspot_GetTextProperty(ScriptHotspot *hss, const char *property) {
   return get_text_property_dynamic_string(&thisroom.hsProps[hss->id], property);
 }
 long GetObjectPropertyText (long item, const char *property, char *bufer) {
   get_text_property (&thisroom.objProps[item], property, bufer);
+  return 0;
 }
 long Object_GetPropertyText(ScriptObject *objj, const char *property, char *bufer) {
   GetObjectPropertyText(objj->id, property, bufer);
+  return 0;
 }
 const char* Object_GetTextProperty(ScriptObject *objj, const char *property) {
   return get_text_property_dynamic_string(&thisroom.objProps[objj->id], property);
 }
 long GetRoomPropertyText (const char *property, char *bufer) {
   get_text_property (&thisroom.roomProps, property, bufer);
+  return 0;
 }
 const char* Room_GetTextProperty(const char *property) {
   return get_text_property_dynamic_string(&thisroom.roomProps, property);
@@ -17606,6 +17764,7 @@ long RemoveWalkableArea(long areanum) {
   play.walkable_areas_on[areanum]=0;
   redo_walkable_areas();
   DEBUG_CONSOLE("Walkable area %d removed", areanum);
+  return 0;
 }
 
 long RestoreWalkableArea(long areanum) {
@@ -17614,6 +17773,7 @@ long RestoreWalkableArea(long areanum) {
   play.walkable_areas_on[areanum]=1;
   redo_walkable_areas();
   DEBUG_CONSOLE("Walkable area %d restored", areanum);
+  return 0;
 }
 
 long DisableHotspot(long hsnum) {
@@ -17621,6 +17781,7 @@ long DisableHotspot(long hsnum) {
     quit("!DisableHotspot: invalid hotspot specified");
   croom->hotspot_enabled[hsnum]=0;
   DEBUG_CONSOLE("Hotspot %d disabled", hsnum);
+  return 0;
 }
 
 long EnableHotspot(long hsnum) {
@@ -17628,6 +17789,7 @@ long EnableHotspot(long hsnum) {
     quit("!EnableHotspot: invalid hotspot specified");
   croom->hotspot_enabled[hsnum]=1;
   DEBUG_CONSOLE("Hotspot %d re-enabled", hsnum);
+  return 0;
 }
 
 long Hotspot_SetEnabled(ScriptHotspot *hss,long newval) {
@@ -17635,6 +17797,7 @@ long Hotspot_SetEnabled(ScriptHotspot *hss,long newval) {
     EnableHotspot(hss->id);
   else
     DisableHotspot(hss->id);
+  return 0;
 }
 
 long Hotspot_GetEnabled(ScriptHotspot *hss) {
@@ -17651,6 +17814,7 @@ long DisableRegion(long hsnum) {
 
   croom->region_enabled[hsnum] = 0;
   DEBUG_CONSOLE("Region %d disabled", hsnum);
+  return 0;
 }
 
 long EnableRegion(long hsnum) {
@@ -17659,6 +17823,7 @@ long EnableRegion(long hsnum) {
 
   croom->region_enabled[hsnum] = 1;
   DEBUG_CONSOLE("Region %d enabled", hsnum);
+  return 0;
 }
 
 long Region_SetEnabled(ScriptRegion *ssr,long enable) {
@@ -17666,6 +17831,7 @@ long Region_SetEnabled(ScriptRegion *ssr,long enable) {
     EnableRegion(ssr->id);
   else
     DisableRegion(ssr->id);
+  return 0;
 }
 
 long Region_GetEnabled(ScriptRegion *ssr) {
@@ -17686,12 +17852,14 @@ long DisableGroundLevelAreas(long alsoEffects) {
     play.ground_level_areas_disabled |= GLED_EFFECTS;
 
   DEBUG_CONSOLE("Ground-level areas disabled");
+  return 0;
 }
 
 long EnableGroundLevelAreas() {
   play.ground_level_areas_disabled = 0;
 
   DEBUG_CONSOLE("Ground-level areas re-enabled");
+  return 0;
 }
 
 long SetWalkBehindBase(long wa,long bl) {
@@ -17704,11 +17872,13 @@ long SetWalkBehindBase(long wa,long bl) {
     croom->walkbehind_base[wa] = bl;
     DEBUG_CONSOLE("Walk-behind %d baseline changed to %d", wa, bl);
   }
+  return 0;
 }
 
 long FlipScreen(long amount) {
   if ((amount<0) | (amount>3)) quit("!FlipScreen: invalid argument (0-3)");
   play.screen_flipped=amount;
+  return 0;
 }
 
 void stopmusic() {
@@ -17751,6 +17921,7 @@ void stopmusic() {
 long scr_StopMusic() {
   play.music_queue_size = 0;
   stopmusic();
+  return 0;
 }
 
 long SeekMODPattern(long patnum) {
@@ -17758,6 +17929,7 @@ long SeekMODPattern(long patnum) {
     channels[SCHAN_MUSIC]->seek (patnum);
     DEBUG_CONSOLE("Seek MOD/XM to pattern %d", patnum);
   }
+  return 0;
 }
 
 long Game_GetMODPattern() {
@@ -17775,6 +17947,7 @@ long SeekMP3PosMillis (long posn) {
     else
       channels[SCHAN_MUSIC]->seek (posn);
   }
+  return 0;
 }
 
 long GetMP3PosMillis () {
@@ -17842,14 +18015,16 @@ long SetMusicVolume(long newvol) {
     quit("!SetMusicVolume: invalid volume number. Must be from -3 to 5.");
   thisroom.options[ST_VOLUME]=newvol;
   update_music_volume();
-  }
+  return 0;
+}
 
 long SetMusicMasterVolume(long newvol) {
   if ((newvol<0) | (newvol>100))
     quit("!SetMusicMasterVolume: invalid volume - must be from 0-100");
   play.music_master_volume=newvol+60;
   update_music_volume();
-  }
+  return 0;
+}
 
 long SetSoundVolume(long newvol) {
   if ((newvol<0) | (newvol>255))
@@ -17858,6 +18033,7 @@ long SetSoundVolume(long newvol) {
   Game_SetAudioTypeVolume(AUDIOTYPE_LEGACY_AMBIENT_SOUND, (newvol * 100) / 255, VOL_BOTH);
   Game_SetAudioTypeVolume(AUDIOTYPE_LEGACY_SOUND, (newvol * 100) / 255, VOL_BOTH);
   update_ambient_sound_vol ();
+  return 0;
 }
 
 long SetChannelVolume(long chan,long newvol) {
@@ -17874,6 +18050,7 @@ long SetChannelVolume(long chan,long newvol) {
     else
       channels[chan]->set_volume (newvol);
   }
+  return 0;
 }
 
 long SetDigitalMasterVolume (long newvol) {
@@ -17881,6 +18058,7 @@ long SetDigitalMasterVolume (long newvol) {
     quit("!SetDigitalMasterVolume: invalid volume - must be from 0-100");
   play.digital_master_volume = newvol;
   set_volume ((newvol * 255) / 100, -1);
+  return 0;
 }
 
 long System_GetVolume() {
@@ -17899,13 +18077,11 @@ long System_SetVolume(long newvol) {
 
   // allegro's set_volume can lose the volumes of all the channels
   // if it was previously set low; so restore them
-  for (int i = 0; i <= MAX_SOUND_CHANNELS; i++) 
-  {
+  for (int i = 0; i <= MAX_SOUND_CHANNELS; i++) {
     if ((channels[i] != NULL) && (channels[i]->done == 0)) 
-    {
       channels[i]->set_volume(channels[i]->vol);
-    }
   }
+  return 0;
 }
 
 long GetCurrentMusic() {
@@ -17914,6 +18090,7 @@ long GetCurrentMusic() {
 
 long SetMusicRepeat(long loopflag) {
   play.music_repeat=loopflag;
+  return 0;
 }
 
 // Ensures crossfader is stable after loading (or failing to load)
@@ -18010,6 +18187,7 @@ long PlayMP3File (char *filename) {
   post_new_music_check(useChan);
 
   update_music_volume();
+  return 0;
 }
 
 long PlaySilentMIDI (long mnum) {
@@ -18028,6 +18206,7 @@ long PlaySilentMIDI (long mnum) {
   channels[play.silent_midi_channel]->play();
   channels[play.silent_midi_channel]->set_volume(0);
   channels[play.silent_midi_channel]->volAsPercentage = 0;
+  return 0;
 }
 
 SOUNDCLIP *load_music_from_disk(int mnum, bool doRepeat) {
@@ -18114,6 +18293,7 @@ long SetPlayerCharacter(long newchar) {
     quit("!SetPlayerCharacter: Invalid character specified");
 
   Character_SetAsPlayer(&game.chars[newchar]);
+  return 0;
 }
 
 long FollowCharacterEx(long who,long tofollow,long distaway,long eagerness) {
@@ -18128,17 +18308,20 @@ long FollowCharacterEx(long who,long tofollow,long distaway,long eagerness) {
     chtofollow = &game.chars[tofollow];
 
   Character_FollowCharacter(&game.chars[who], chtofollow, distaway, eagerness);
+  return 0;
 }
 
 long FollowCharacter(long who,long tofollow) {
   FollowCharacterEx(who,tofollow,10,97);
-  }
+  return 0;
+}
 
 long SetCharacterIgnoreLight (long who,long yesorno) {
   if (!is_valid_character(who))
     quit("!SetCharacterIgnoreLight: Invalid character specified");
 
   Character_SetIgnoreLighting(&game.chars[who], yesorno);
+  return 0;
 }
 
 long SetCharacterProperty (long who,long flag,long yesorno) {
@@ -18146,6 +18329,7 @@ long SetCharacterProperty (long who,long flag,long yesorno) {
     quit("!SetCharacterProperty: Invalid character specified");
 
   Character_SetOption(&game.chars[who], flag, yesorno);
+  return 0;
 }
 
 long QuitGame(long dialog) {
@@ -18155,16 +18339,18 @@ long QuitGame(long dialog) {
     rcode=quitdialog();
     restore_after_dialog();
     if (rcode==0) return 0;
-    }
-  quit("|You have exited.");
   }
+  quit("|You have exited.");
+  return 0;
+}
 
 long sc_inputbox(const char*msg,char*bufr) {
   VALIDATE_STRING(bufr);
   setup_for_dialog();
   enterstringwindow(get_translation(msg),bufr);
   restore_after_dialog();
-  }
+  return 0;
+}
 
 const char* Game_InputBox(const char *msg) {
   char buffer[STD_BUFFER_SIZE];
@@ -18421,6 +18607,7 @@ int parse_sentence (char*text, int *numwords, short*wordarray, short*compareto, 
 
 long ParseText (char*text) {
   parse_sentence (text, &play.num_parsed_words, play.parsed_words, NULL, 0);
+  return 0;
 }
 
 long Parser_FindWordID(const char *wordToFind) {
@@ -18539,29 +18726,37 @@ FILE* FileOpen(const char*fnmm, const char* mode) {
 long FileClose(FILE*hha) {
   valid_handles[check_valid_file_handle(hha,"FileClose")] = NULL;
   fclose(hha);
-  }
+  return 0;
+}
+
 long FileWrite(FILE*haa, const char *towrite) {
   check_valid_file_handle(haa,"FileWrite");
   putw(strlen(towrite)+1,haa);
   fwrite(towrite,strlen(towrite)+1,1,haa);
-  }
+  return 0;
+}
+
 long FileWriteRawLine(FILE*haa, const char*towrite) {
   check_valid_file_handle(haa,"FileWriteRawLine");
   fwrite(towrite,strlen(towrite),1,haa);
   fputc (13, haa);
   fputc (10, haa);
-  }
+  return 0;
+}
+
 long FileRead(FILE*haa,char*toread) {
   VALIDATE_STRING(toread);
   check_valid_file_handle(haa,"FileRead");
   if (feof(haa)) {
     toread[0] = 0;
-    return;
+    return 0;
   }
   int lle=getw(haa);
   if ((lle>=200) | (lle<1)) quit("!FileRead: file was not written by FileWrite");
   fread(toread,lle,1,haa);
-  }
+  return 0;
+}
+
 long FileIsEOF (FILE *haa) {
   check_valid_file_handle(haa,"FileIsEOF");
   if (feof(haa))
@@ -18572,17 +18767,21 @@ long FileIsEOF (FILE *haa) {
     return 1;
   return 0;
 }
+
 long FileIsError(FILE *haa) {
   check_valid_file_handle(haa,"FileIsError");
   if (ferror(haa))
     return 1;
   return 0;
 }
+
 long FileWriteInt(FILE*haa,long into) {
   check_valid_file_handle(haa,"FileWriteInt");
   fputc('I',haa);
   putw(into,haa);
-  }
+  return 0;
+}
+
 long FileReadInt(FILE*haa) {
   check_valid_file_handle(haa,"FileReadInt");
   if (feof(haa))
@@ -18590,25 +18789,29 @@ long FileReadInt(FILE*haa) {
   if (fgetc(haa)!='I')
     quit("!FileReadInt: File read back in wrong order");
   return getw(haa);
-  }
+}
+
 long FileReadRawChar(FILE*haa) {
   check_valid_file_handle(haa,"FileReadRawChar");
   if (feof(haa))
     return -1;
   return fgetc(haa);
-  }
+}
+
 long FileReadRawInt(FILE*haa) {
   check_valid_file_handle(haa,"FileReadRawInt");
   if (feof(haa))
     return -1;
   return getw(haa);
 }
+
 long FileWriteRawChar(FILE *haa,long chartoWrite) {
   check_valid_file_handle(haa,"FileWriteRawChar");
   if ((chartoWrite < 0) || (chartoWrite > 255))
     quit("!FileWriteRawChar: can only write values 0-255");
 
   fputc(chartoWrite, haa);
+  return 0;
 }
 
 // object-based File routines
@@ -18670,22 +18873,27 @@ void *sc_OpenFile(const char *fnmm,long mode) {
 
 long File_Close(sc_File *fil) {
   fil->Close();
+  return 0;
 }
 
 long File_WriteString(sc_File *fil, const char *towrite) {
   FileWrite(fil->handle, towrite);
+  return 0;
 }
 
 long File_WriteInt(sc_File *fil,long towrite) {
   FileWriteInt(fil->handle, towrite);
+  return 0;
 }
 
 long File_WriteRawChar(sc_File *fil,long towrite) {
   FileWriteRawChar(fil->handle, towrite);
+  return 0;
 }
 
 long File_WriteRawLine(sc_File *fil, const char *towrite) {
   FileWriteRawLine(fil->handle, towrite);
+  return 0;
 }
 
 long File_ReadRawLine(sc_File *fil, char* buffer) {
@@ -18706,6 +18914,7 @@ long File_ReadRawLine(sc_File *fil, char* buffer) {
     i++;
   }
   buffer[i] = 0;
+  return 0;
 }
 
 const char* File_ReadRawLineBack(sc_File *fil) {
@@ -18716,6 +18925,7 @@ const char* File_ReadRawLineBack(sc_File *fil) {
 
 long File_ReadString(sc_File *fil, char *toread) {
   FileRead(fil->handle, toread);
+  return 0;
 }
 
 const char* File_ReadStringBack(sc_File *fil) {
@@ -18778,6 +18988,7 @@ long InterfaceOn(long ifn) {
   // clear the cached mouse position
   guis[ifn].control_positions_changed();
   guis[ifn].poll();
+  return 0;
 }
 
 long InterfaceOff(long ifn) {
@@ -18805,6 +19016,7 @@ long GUI_SetVisible(ScriptGUI *tehgui,long isvisible) {
     InterfaceOn(tehgui->id);
   else
     InterfaceOff(tehgui->id);
+  return 0;
 }
 
 long GUI_GetVisible(ScriptGUI *tehgui) {
@@ -18821,8 +19033,7 @@ long GUIControl_GetVisible(GUIObject *guio) {
 }
 
 long GUIControl_SetVisible(GUIObject *guio,long visible) {
-  if (visible != guio->IsVisible()) 
-  {
+  if (visible != guio->IsVisible()) {
     if (visible)
       guio->Show();
     else
@@ -18831,6 +19042,7 @@ long GUIControl_SetVisible(GUIObject *guio,long visible) {
     guis[guio->guin].control_positions_changed();
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long GUIControl_GetClickable(GUIObject *guio) {
@@ -18847,6 +19059,7 @@ long GUIControl_SetClickable(GUIObject *guio,long enabled) {
 
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
+  return 0;
 }
 
 long GUIControl_GetEnabled(GUIObject *guio) {
@@ -18863,6 +19076,7 @@ long GUIControl_SetEnabled(GUIObject *guio,long enabled) {
 
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
+  return 0;
 }
 
 long SetGUIObjectEnabled(long guin,long objn,long enabled) {
@@ -18872,6 +19086,7 @@ long SetGUIObjectEnabled(long guin,long objn,long enabled) {
     quit("!SetGUIObjectEnabled: invalid object number");
 
   GUIControl_SetEnabled(guis[guin].objs[objn], enabled);
+  return 0;
 }
 
 long GUIControl_GetID(GUIObject *guio) {
@@ -18932,6 +19147,7 @@ long GUIControl_SetX(GUIObject *guio,long xx) {
   guio->x = multiply_up_coordinate(xx);
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
+  return 0;
 }
 
 long GUIControl_GetY(GUIObject *guio) {
@@ -18942,11 +19158,13 @@ long GUIControl_SetY(GUIObject *guio,long yy) {
   guio->y = multiply_up_coordinate(yy);
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
+  return 0;
 }
 
 long GUIControl_SetPosition(GUIObject *guio,long xx,long yy) {
   GUIControl_SetX(guio, xx);
   GUIControl_SetY(guio, yy);
+  return 0;
 }
 
 long SetGUIObjectPosition(long guin,long objn,long xx,long yy) {
@@ -18956,6 +19174,7 @@ long SetGUIObjectPosition(long guin,long objn,long xx,long yy) {
     quit("!SetGUIObjectPosition: invalid object number");
 
   GUIControl_SetPosition(guis[guin].objs[objn], xx, yy);
+  return 0;
 }
 
 long GUI_GetX(ScriptGUI *tehgui) {
@@ -18967,6 +19186,7 @@ long GUI_SetX(ScriptGUI *tehgui,long xx) {
     quit("!GUI.X: co-ordinates specified are out of range.");
 
   guis[tehgui->id].x = multiply_up_coordinate(xx);
+  return 0;
 }
 
 long GUI_GetY(ScriptGUI *tehgui) {
@@ -18978,11 +19198,13 @@ long GUI_SetY(ScriptGUI *tehgui,long yy) {
     quit("!GUI.Y: co-ordinates specified are out of range.");
 
   guis[tehgui->id].y = multiply_up_coordinate(yy);
+  return 0;
 }
 
 long GUI_SetPosition(ScriptGUI *tehgui,long xx,long yy) {
   GUI_SetX(tehgui, xx);
   GUI_SetY(tehgui, yy);
+  return 0;
 }
 
 long SetGUIPosition(long ifn,long xx,long yy) {
@@ -18990,6 +19212,7 @@ long SetGUIPosition(long ifn,long xx,long yy) {
     quit("!SetGUIPosition: invalid GUI number");
   
   GUI_SetPosition(&scrGui[ifn], xx, yy);
+  return 0;
 }
 
 long GUIControl_GetWidth(GUIObject *guio) {
@@ -19001,6 +19224,7 @@ long GUIControl_SetWidth(GUIObject *guio,long newwid) {
   guio->Resized();
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
+  return 0;
 }
 
 long GUIControl_GetHeight(GUIObject *guio) {
@@ -19012,6 +19236,7 @@ long GUIControl_SetHeight(GUIObject *guio,long newhit) {
   guio->Resized();
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
+  return 0;
 }
 
 long GUIControl_SetSize(GUIObject *guio,long newwid,long newhit) {
@@ -19021,16 +19246,19 @@ long GUIControl_SetSize(GUIObject *guio,long newwid,long newhit) {
   DEBUG_CONSOLE("SetGUIObject %d,%d size %d,%d", guio->guin, guio->objn, newwid, newhit);
   GUIControl_SetWidth(guio, newwid);
   GUIControl_SetHeight(guio, newhit);
+  return 0;
 }
 
 long GUIControl_SendToBack(GUIObject *guio) {
   if (guis[guio->guin].send_to_back(guio->objn))
     guis_need_update = 1;
+  return 0;
 }
 
 long GUIControl_BringToFront(GUIObject *guio) {
   if (guis[guio->guin].bring_to_front(guio->objn))
     guis_need_update = 1;
+  return 0;
 }
 
 long SetGUIObjectSize(long ifn,long objn,long newwid,long newhit) {
@@ -19041,6 +19269,7 @@ long SetGUIObjectSize(long ifn,long objn,long newwid,long newhit) {
     quit("!SetGUIObjectSize: invalid object number");
 
   GUIControl_SetSize(guis[ifn].objs[objn], newwid, newhit);
+  return 0;
 }
 
 void recreate_guibg_image(GUIMain *tehgui)
@@ -19067,7 +19296,7 @@ long GUI_SetSize(ScriptGUI *sgui,long widd,long hitt) {
   multiply_up_coordinates(&widd, &hitt);
 
   if ((tehgui->wid == widd) && (tehgui->hit == hitt))
-    return;
+    return 0;
   
   tehgui->wid = widd;
   tehgui->hit = hitt;
@@ -19075,6 +19304,7 @@ long GUI_SetSize(ScriptGUI *sgui,long widd,long hitt) {
   recreate_guibg_image(tehgui);
 
   guis_need_update = 1;
+  return 0;
 }
 
 long GUI_GetWidth(ScriptGUI *sgui) {
@@ -19087,10 +19317,12 @@ long GUI_GetHeight(ScriptGUI *sgui) {
 
 long GUI_SetWidth(ScriptGUI *sgui,long newwid) {
   GUI_SetSize(sgui, newwid, GUI_GetHeight(sgui));
+  return 0;
 }
 
 long GUI_SetHeight(ScriptGUI *sgui,long newhit) {
   GUI_SetSize(sgui, GUI_GetWidth(sgui), newhit);
+  return 0;
 }
 
 long SetGUISize (long ifn,long widd,long hitt) {
@@ -19098,11 +19330,13 @@ long SetGUISize (long ifn,long widd,long hitt) {
     quit("!SetGUISize: invalid GUI number");
 
   GUI_SetSize(&scrGui[ifn], widd, hitt);
+  return 0;
 }
 
 long GUI_SetZOrder(ScriptGUI *tehgui,long z) {
   guis[tehgui->id].zorder = z;
   update_gui_zorder();
+  return 0;
 }
 
 long GUI_GetZOrder(ScriptGUI *tehgui) {
@@ -19114,12 +19348,14 @@ long SetGUIZOrder(long guin,long z) {
     quit("!SetGUIZOrder: invalid GUI number");
 
   GUI_SetZOrder(&scrGui[guin], z);
+  return 0;
 }
 
 long GUI_SetClickable(ScriptGUI *tehgui,long clickable) {
   guis[tehgui->id].flags &= ~GUIF_NOCLICK;
   if (clickable == 0)
     guis[tehgui->id].flags |= GUIF_NOCLICK;
+  return 0;
 }
 
 long GUI_GetClickable(ScriptGUI *tehgui) {
@@ -19133,6 +19369,7 @@ long SetGUIClickable(long guin,long clickable) {
     quit("!SetGUIClickable: invalid GUI number");
 
   GUI_SetClickable(&scrGui[guin], clickable);
+  return 0;
 }
 
 long GUI_GetID(ScriptGUI *tehgui) {
@@ -19154,6 +19391,7 @@ long GUI_SetTransparency(ScriptGUI *tehgui,long trans) {
     quit("!SetGUITransparency: transparency value must be between 0 and 100");
 
   guis[tehgui->id].SetTransparencyAsPercentage(trans);
+  return 0;
 }
 
 long GUI_GetTransparency(ScriptGUI *tehgui) {
@@ -19171,12 +19409,14 @@ long SetGUITransparency(long ifn,long trans) {
     quit("!SetGUITransparency: invalid GUI number");
 
   GUI_SetTransparency(&scrGui[ifn], trans);
+  return 0;
 }
 
 long GUI_Centre(ScriptGUI *sgui) {
   GUIMain *tehgui = &guis[sgui->id];
   tehgui->x = scrnwid / 2 - tehgui->wid / 2;
   tehgui->y = scrnhit / 2 - tehgui->hit / 2;
+  return 0;
 }
 
 long CentreGUI (long ifn) {
@@ -19184,6 +19424,7 @@ long CentreGUI (long ifn) {
     quit("!CentreGUI: invalid GUI number");
 
   GUI_Centre(&scrGui[ifn]);
+  return 0;
 }
 
 long GetTextWidth(char *text,long fontnum) {
@@ -19215,6 +19456,7 @@ const char* TextBox_GetText_New(GUITextBox *texbox) {
 
 long TextBox_GetText(GUITextBox *texbox, char *buffer) {
   strcpy(buffer, texbox->text);
+  return 0;
 }
 
 long TextBox_SetText(GUITextBox *texbox, const char *newtex) {
@@ -19225,6 +19467,7 @@ long TextBox_SetText(GUITextBox *texbox, const char *newtex) {
     strcpy(texbox->text, newtex);
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long TextBox_GetTextColor(GUITextBox *guit) {
@@ -19232,11 +19475,11 @@ long TextBox_GetTextColor(GUITextBox *guit) {
 }
 
 long TextBox_SetTextColor(GUITextBox *guit,long colr) {
-  if (guit->textcol != colr) 
-  {
+  if (guit->textcol != colr) {
     guit->textcol = colr;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long TextBox_GetFont(GUITextBox *guit) {
@@ -19251,6 +19494,7 @@ long TextBox_SetFont(GUITextBox *guit,long fontnum) {
     guit->font = fontnum;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 
@@ -19263,6 +19507,7 @@ long SetTextBoxFont(long guin,long objn,long fontnum) {
 
   GUITextBox *guit = (GUITextBox*)guis[guin].objs[objn];
   TextBox_SetFont(guit, fontnum);
+  return 0;
 }
 
 long GetTextBoxText(long guin,long objn, char*txbuf) {
@@ -19274,6 +19519,7 @@ long GetTextBoxText(long guin,long objn, char*txbuf) {
 
   GUITextBox*guisl=(GUITextBox*)guis[guin].objs[objn];
   TextBox_GetText(guisl, txbuf);
+  return 0;
 }
 
 long SetTextBoxText(long guin,long objn, char*txbuf) {
@@ -19284,6 +19530,7 @@ long SetTextBoxText(long guin,long objn, char*txbuf) {
 
   GUITextBox*guisl=(GUITextBox*)guis[guin].objs[objn];
   TextBox_SetText(guisl, txbuf);
+  return 0;
 }
 
 
@@ -19295,6 +19542,7 @@ long ListBox_AddItem(GUIListBox *lbb, const char *text) {
 
   guis_need_update = 1;
   return 1;
+  return 0;
 }
 
 long ListBox_InsertItemAt(GUIListBox *lbb,long index, const char *text) {
@@ -19308,6 +19556,7 @@ long ListBox_InsertItemAt(GUIListBox *lbb,long index, const char *text) {
 long ListBox_Clear(GUIListBox *listbox) {
   listbox->Clear();
   guis_need_update = 1;
+  return 0;
 }
 
 long ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
@@ -19323,6 +19572,7 @@ long ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
   }
   al_findclose(&dfb);
   guis_need_update = 1;
+  return 0;
 }
 
 long ListBox_GetSaveGameSlots(GUIListBox *listbox,long index) {
@@ -19433,6 +19683,7 @@ long ListBox_SetItemText(GUIListBox *listbox,long index, const char *newtext) {
     listbox->SetItemText(index, newtext);
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long ListBox_RemoveItem(GUIListBox *listbox,long itemIndex) {
@@ -19442,6 +19693,7 @@ long ListBox_RemoveItem(GUIListBox *listbox,long itemIndex) {
 
   listbox->RemoveItem(itemIndex);
   guis_need_update = 1;
+  return 0;
 }
 
 long ListBox_GetItemCount(GUIListBox *listbox) {
@@ -19461,6 +19713,7 @@ long ListBox_SetFont(GUIListBox *listbox,long newfont) {
     listbox->ChangeFont(newfont);
     guis_need_update = 1;
   }
+  return 0;
 
 }
 
@@ -19473,6 +19726,7 @@ long ListBox_SetHideBorder(GUIListBox *listbox,long newValue) {
   if (newValue)
     listbox->exflags |= GLF_NOBORDER;
   guis_need_update = 1;
+  return 0;
 }
 
 long ListBox_GetHideScrollArrows(GUIListBox *listbox) {
@@ -19484,6 +19738,7 @@ long ListBox_SetHideScrollArrows(GUIListBox *listbox,long newValue) {
   if (newValue)
     listbox->exflags |= GLF_NOARROWS;
   guis_need_update = 1;
+  return 0;
 }
 
 long ListBox_GetSelectedIndex(GUIListBox *listbox) {
@@ -19507,7 +19762,7 @@ long ListBox_SetSelectedIndex(GUIListBox *guisl,long newsel) {
     }
     guis_need_update = 1;
   }
-
+	return 0;
 }
 
 long ListBox_GetTopItem(GUIListBox *listbox) {
@@ -19522,6 +19777,7 @@ long ListBox_SetTopItem(GUIListBox *guisl,long item) {
 
   guisl->topItem = item;
   guis_need_update = 1;
+  return 0;
 }
 
 long ListBox_GetRowCount(GUIListBox *listbox) {
@@ -19533,6 +19789,7 @@ long ListBox_ScrollDown(GUIListBox *listbox) {
     listbox->topItem++;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long ListBox_ScrollUp(GUIListBox *listbox) {
@@ -19540,6 +19797,7 @@ long ListBox_ScrollUp(GUIListBox *listbox) {
     listbox->topItem--;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 
@@ -19555,35 +19813,47 @@ GUIListBox* is_valid_listbox (int guin, int objn) {
 long ListBoxClear(long guin,long objn) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   ListBox_Clear(guisl);
+  return 0;
 }
+
 long ListBoxAdd(long guin,long objn, const char*newitem) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   ListBox_AddItem(guisl, newitem);
+  return 0;
 }
+
 long ListBoxRemove(long guin,long objn,long itemIndex) {
   GUIListBox*guisl = is_valid_listbox(guin,objn);
   ListBox_RemoveItem(guisl, itemIndex);
+  return 0;
 }
+
 long ListBoxGetSelected(long guin,long objn) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   return ListBox_GetSelectedIndex(guisl);
 }
+
 long ListBoxGetNumItems(long guin,long objn) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   return ListBox_GetItemCount(guisl);
 }
+
 char* ListBoxGetItemText(long guin,long objn,long item, char*buffer) {
   VALIDATE_STRING(buffer);
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   return ListBox_GetItemText(guisl, item, buffer);
 }
+
 long ListBoxSetSelected(long guin,long objn,long newsel) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   ListBox_SetSelectedIndex(guisl, newsel);
+  return 0;
 }
+
 long ListBoxSetTopItem (long guin,long objn,long item) {
   GUIListBox*guisl = is_valid_listbox(guin,objn);
   ListBox_SetTopItem(guisl, item);
+  return 0;
 }
 
 long ListBoxSaveGameList (long guin,long objn) {
@@ -19594,6 +19864,7 @@ long ListBoxSaveGameList (long guin,long objn) {
 long ListBoxDirList (long guin,long objn, const char*filemask) {
   GUIListBox *guisl = is_valid_listbox(guin,objn);
   ListBox_FillDirList(guisl, filemask);
+  return 0;
 }
 
 
@@ -19606,6 +19877,7 @@ const char* Label_GetText_New(GUILabel *labl) {
 
 long Label_GetText(GUILabel *labl, char *buffer) {
   strcpy(buffer, labl->GetText());
+  return 0;
 }
 
 long Label_SetText(GUILabel *labl, const char *newtx) {
@@ -19615,6 +19887,7 @@ long Label_SetText(GUILabel *labl, const char *newtx) {
     guis_need_update = 1;
     labl->SetText(newtx);
   }
+  return 0;
 }
 
 long Label_GetColor(GUILabel *labl) {
@@ -19626,6 +19899,7 @@ long Label_SetColor(GUILabel *labl,long colr) {
     labl->textcol = colr;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long Label_GetFont(GUILabel *labl) {
@@ -19640,6 +19914,7 @@ long Label_SetFont(GUILabel *guil,long fontnum) {
     guil->font = fontnum;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 
@@ -19653,6 +19928,7 @@ long SetLabelColor(long guin,long objn,long colr) {
 
   GUILabel*guil=(GUILabel*)guis[guin].objs[objn];
   Label_SetColor(guil, colr);
+  return 0;
 }
 
 long SetLabelText(long guin,long objn,char*newtx) {
@@ -19664,6 +19940,7 @@ long SetLabelText(long guin,long objn,char*newtx) {
 
   GUILabel*guil=(GUILabel*)guis[guin].objs[objn];
   Label_SetText(guil, newtx);
+  return 0;
 }
 
 long SetLabelFont(long guin,long objn,long fontnum) {
@@ -19675,6 +19952,7 @@ long SetLabelFont(long guin,long objn,long fontnum) {
 
   GUILabel*guil=(GUILabel*)guis[guin].objs[objn];
   Label_SetFont(guil, fontnum);
+  return 0;
 }
 
 
@@ -19689,6 +19967,7 @@ long InvWindow_SetCharacterToUse(GUIInv *guii, CharacterInfo *chaa) {
   guii->topIndex = 0;
 
   guis_need_update = 1;
+  return 0;
 }
 
 CharacterInfo* InvWindow_GetCharacterToUse(GUIInv *guii) {
@@ -19701,6 +19980,7 @@ CharacterInfo* InvWindow_GetCharacterToUse(GUIInv *guii) {
 long InvWindow_SetItemWidth(GUIInv *guii,long newwidth) {
   guii->itemWidth = newwidth;
   guii->Resized();
+  return 0;
 }
 
 long InvWindow_GetItemWidth(GUIInv *guii) {
@@ -19710,6 +19990,7 @@ long InvWindow_GetItemWidth(GUIInv *guii) {
 long InvWindow_SetItemHeight(GUIInv *guii,long newhit) {
   guii->itemHeight = newhit;
   guii->Resized();
+  return 0;
 }
 
 long InvWindow_GetItemHeight(GUIInv *guii) {
@@ -19721,6 +20002,7 @@ long InvWindow_SetTopItem(GUIInv *guii,long topitem) {
     guii->topIndex = topitem;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long InvWindow_GetTopItem(GUIInv *guii) {
@@ -19745,6 +20027,7 @@ long InvWindow_ScrollDown(GUIInv *guii) {
     guii->topIndex += guii->itemsPerLine;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long InvWindow_ScrollUp(GUIInv *guii) {
@@ -19755,6 +20038,7 @@ long InvWindow_ScrollUp(GUIInv *guii) {
 
     guis_need_update = 1;
   }
+  return 0;
 }
 
 ScriptInvItem* InvWindow_GetItemAtIndex(GUIInv *guii,long index) {
@@ -19778,6 +20062,7 @@ long Slider_SetMax(GUISlider *guisl,long valn) {
 
     guis_need_update = 1;
   }
+  return 0;
 
 }
 
@@ -19797,6 +20082,7 @@ long Slider_SetMin(GUISlider *guisl,long valn) {
 
     guis_need_update = 1;
   }
+  return 0;
 
 }
 
@@ -19812,6 +20098,7 @@ long Slider_SetValue(GUISlider *guisl,long valn) {
     guisl->value = valn;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long Slider_GetValue(GUISlider *guisl) {
@@ -19825,6 +20112,7 @@ long SetSliderValue(long guin,long objn,long valn) {
 
   GUISlider*guisl=(GUISlider*)guis[guin].objs[objn];
   Slider_SetValue(guisl, valn);
+  return 0;
 }
 
 long GetSliderValue(long guin,long objn) {
@@ -19841,11 +20129,11 @@ long Slider_GetBackgroundGraphic(GUISlider *guisl) {
 }
 
 long Slider_SetBackgroundGraphic(GUISlider *guisl,long newImage) {
-  if (newImage != guisl->bgimage)
-  {
+  if (newImage != guisl->bgimage) {
     guisl->bgimage = newImage;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long Slider_GetHandleGraphic(GUISlider *guisl) {
@@ -19853,11 +20141,11 @@ long Slider_GetHandleGraphic(GUISlider *guisl) {
 }
 
 long Slider_SetHandleGraphic(GUISlider *guisl,long newImage) {
-  if (newImage != guisl->handlepic)
-  {
+  if (newImage != guisl->handlepic) {
     guisl->handlepic = newImage;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long Slider_GetHandleOffset(GUISlider *guisl) {
@@ -19865,11 +20153,11 @@ long Slider_GetHandleOffset(GUISlider *guisl) {
 }
 
 long Slider_SetHandleOffset(GUISlider *guisl,long newOffset) {
-  if (newOffset != guisl->handleoffset)
-  {
+  if (newOffset != guisl->handleoffset) {
     guisl->handleoffset = newOffset;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long GUI_SetBackgroundGraphic(ScriptGUI *tehgui,long slotn) {
@@ -19877,6 +20165,7 @@ long GUI_SetBackgroundGraphic(ScriptGUI *tehgui,long slotn) {
     guis[tehgui->id].bgpic = slotn;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long GUI_GetBackgroundGraphic(ScriptGUI *tehgui) {
@@ -19890,6 +20179,7 @@ long SetGUIBackgroundPic (long guin,long slotn) {
     quit("!SetGUIBackgroundPic: invalid GUI number");
 
   GUI_SetBackgroundGraphic(&scrGui[guin], slotn);
+  return 0;
 }
 
 
@@ -19931,6 +20221,7 @@ long Button_Animate(GUIButton *butt,long view,long loop,long speed,long repeat) 
   // launch into the first frame
   if (UpdateAnimatingButton(numAnimButs - 1))
     quit("!AnimateButton: no frames to animate");
+  return 0;
 }
 
 const char* Button_GetText_New(GUIButton *butt) {
@@ -19939,6 +20230,7 @@ const char* Button_GetText_New(GUIButton *butt) {
 
 long Button_GetText(GUIButton *butt, char *buffer) {
   strcpy(buffer, butt->text);
+  return 0;
 }
 
 long Button_SetText(GUIButton *butt, const char *newtx) {
@@ -19949,6 +20241,7 @@ long Button_SetText(GUIButton *butt, const char *newtx) {
     guis_need_update = 1;
     strcpy(butt->text,newtx);
   }
+  return 0;
 }
 
 long Button_SetFont(GUIButton *butt,long newFont) {
@@ -19959,6 +20252,7 @@ long Button_SetFont(GUIButton *butt,long newFont) {
     butt->font = newFont;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long Button_GetFont(GUIButton *butt) {
@@ -19977,6 +20271,7 @@ long Button_SetClipImage(GUIButton *butt,long newval) {
     butt->flags |= GUIF_CLIP;
 
   guis_need_update = 1;
+  return 0;
 }
 
 long Button_GetGraphic(GUIButton *butt) {
@@ -19999,6 +20294,7 @@ long Button_SetMouseOverGraphic(GUIButton *guil,long slotn) {
 
   guis_need_update = 1;
   FindAndRemoveButtonAnimation(guil->guin, guil->objn);
+  return 0;
 }
 
 long Button_GetNormalGraphic(GUIButton *butt) {
@@ -20017,6 +20313,7 @@ long Button_SetNormalGraphic(GUIButton *guil,long slotn) {
 
   guis_need_update = 1;
   FindAndRemoveButtonAnimation(guil->guin, guil->objn);
+  return 0;
 }
 
 long Button_GetPushedGraphic(GUIButton *butt) {
@@ -20032,6 +20329,7 @@ long Button_SetPushedGraphic(GUIButton *guil,long slotn) {
 
   guis_need_update = 1;
   FindAndRemoveButtonAnimation(guil->guin, guil->objn);
+  return 0;
 }
 
 long Button_GetTextColor(GUIButton *butt) {
@@ -20043,6 +20341,7 @@ long Button_SetTextColor(GUIButton *butt,long newcol) {
     butt->textcol = newcol;
     guis_need_update = 1;
   }
+  return 0;
 }
 
 long SetButtonText(long guin,long objn,char*newtx) {
@@ -20056,6 +20355,7 @@ long SetButtonText(long guin,long objn,char*newtx) {
 
   GUIButton*guil=(GUIButton*)guis[guin].objs[objn];
   Button_SetText(guil, newtx);
+  return 0;
 }
 
 
@@ -20066,6 +20366,7 @@ long AnimateButton(long guin,long objn,long view,long loop,long speed,long repea
     quit("!AnimateButton: specified control is not a button");
 
   Button_Animate((GUIButton*)guis[guin].objs[objn], view, loop, speed, repeat);
+  return 0;
 }
 
 
@@ -20097,6 +20398,7 @@ long GetButtonPic(long guin,long objn,long ptype) {
   }
 
   quit("internal error in getbuttonpic");
+  return 0;
 }
 
 long SetButtonPic(long guin,long objn,long ptype,long slotn) {
@@ -20117,21 +20419,25 @@ long SetButtonPic(long guin,long objn,long ptype,long slotn) {
   else { // pushed pic
     Button_SetPushedGraphic(guil, slotn);
   }
+  return 0;
 }
 
 long DisableInterface() {
   play.disabled_user_interface++;
   guis_need_update = 1;
   set_mouse_cursor(CURS_WAIT);
-  }
+  return 0;
+}
+
 long EnableInterface() {
   guis_need_update = 1;
   play.disabled_user_interface--;
   if (play.disabled_user_interface<1) {
     play.disabled_user_interface=0;
     set_default_cursor();
-    }
   }
+  return 0;
+}
 // Returns 1 if user interface is enabled, 0 if disabled
 long IsInterfaceEnabled() {
   return (play.disabled_user_interface > 0) ? 0 : 1;
@@ -20191,11 +20497,13 @@ long NewRoom(long nrnum) {
   }
   else if (in_graph_script)
     gs_to_newroom = nrnum;
+  return 0;
 }
 
 long NewRoomEx(long nrnum,long newx,long newy) {
 
   Character_ChangeRoom(playerchar, nrnum, newx, newy);
+  return 0;
 
 }
 
@@ -20206,6 +20514,7 @@ long NewRoomNPC(long charid,long nrnum,long newx,long newy) {
     quit("!NewRoomNPC: use NewRoomEx with the player character");
 
   Character_ChangeRoom(&game.chars[charid], nrnum, newx, newy);
+  return 0;
 }
 
 long ResetRoom(long nrnum) {
@@ -20228,6 +20537,7 @@ long ResetRoom(long nrnum) {
   }
 
   DEBUG_CONSOLE("Room %d reset to original state", nrnum);
+  return 0;
 }
 
 long HasPlayerBeenInRoom(long roomnum) {
@@ -20242,6 +20552,7 @@ long HasPlayerBeenInRoom(long roomnum) {
 
 long SetRestartPoint() {
   save_game(RESTART_POINT_SAVE_GAME_NUMBER, "Restart Game Auto-Save");
+  return 0;
 }
 
 long CallRoomScript (long value) {
@@ -20252,6 +20563,7 @@ long CallRoomScript (long value) {
 
   play.roomscript_finished = 0;
   curscript->run_another("$on_call", value, 0);
+  return 0;
 }
 
 long SetGameSpeed(long newspd) {
@@ -20264,6 +20576,7 @@ long SetGameSpeed(long newspd) {
   if (newspd<10) newspd=10;
   set_game_speed(newspd);
   DEBUG_CONSOLE("Game speed set to %d", newspd);
+  return 0;
 }
 
 long GetGameSpeed() {
@@ -20321,6 +20634,7 @@ long StopDialog() {
     return 0;
   }
   play.stop_dialog_at_end = DIALOG_STOP;
+  return 0;
 }
 
 long SetDialogOption(long dlg,long opt,long onoroff) {
@@ -20335,6 +20649,7 @@ long SetDialogOption(long dlg,long opt,long onoroff) {
     dialog[dlg].optionflags[opt]|=DFLG_ON;
   else if (onoroff==2)
     dialog[dlg].optionflags[opt]|=DFLG_OFFPERM;
+  return 0;
 }
 
 long GetDialogOption (long dlg,long opt) {
@@ -20357,6 +20672,7 @@ long Game_GetDialogCount() {
 
 long Dialog_Start(ScriptDialog *sd) {
   RunDialog(sd->id);
+  return 0;
 }
 
 #define CHOSE_TEXTPARSER -3053
@@ -20378,6 +20694,7 @@ long Dialog_DisplayOptions(ScriptDialog *sd,long sayChosenOption) {
 
 long Dialog_SetOptionState(ScriptDialog *sd,long option,long newState) {
   SetDialogOption(sd->id, option, newState);
+  return 0;
 }
 
 long Dialog_GetOptionState(ScriptDialog *sd,long option) {
@@ -20425,8 +20742,7 @@ long ShakeScreen(long severe) {
   block oldsc=abuf;
   severe = multiply_up_coordinate(severe);
 
-  if (gfxDriver->RequiresFullRedrawEachFrame())
-  {
+  if (gfxDriver->RequiresFullRedrawEachFrame()) {
     play.shakesc_length = 10;
     play.shakesc_delay = 2;
     play.shakesc_amount = severe;
@@ -20444,9 +20760,7 @@ long ShakeScreen(long severe) {
     play.mouse_cursor_hidden--;
     clear_letterbox_borders();
     play.shakesc_length = 0;
-  }
-  else
-  {
+  } else {
     block tty = create_bitmap(scrnwid, scrnhit);
     gfxDriver->GetCopyOfScreenIntoBitmap(tty);
     for (hh=0;hh<40;hh++) {
@@ -20465,6 +20779,7 @@ long ShakeScreen(long severe) {
   }
 
   abuf=oldsc;
+  return 0;
 }
 
 long ShakeScreenBackground (long delay,long amount,long length) {
@@ -20472,14 +20787,13 @@ long ShakeScreenBackground (long delay,long amount,long length) {
     quit("!ShakeScreenBackground: invalid delay parameter");
 
   if (amount < play.shakesc_amount)
-  {
     // from a bigger to smaller shake, clear up the borders
     clear_letterbox_borders();
-  }
 
   play.shakesc_amount = amount;
   play.shakesc_delay = delay;
   play.shakesc_length = length;
+  return 0;
 }
 
 long CyclePalette(long strt,long eend) {
@@ -20495,20 +20809,21 @@ long CyclePalette(long strt,long eend) {
     // forwards
     wcolrotate(strt, eend, 0, palette);
     wsetpalette(strt, eend, palette);
-  }
-  else {
+  } else {
     // backwards
     wcolrotate(eend, strt, 1, palette);
     wsetpalette(eend, strt, palette);
   }
-  
+  return 0;
 }
+
 long SetPalRGB(long inndx,long rr,long gg,long bb) {
   if (game.color_depth > 1)
     invalidate_screen();
 
   wsetrgb(inndx,rr,gg,bb,palette);
   wsetpalette(inndx,inndx,palette);
+  return 0;
 }
 /*void scSetPal(color*pptr) {
   wsetpalette(0,255,pptr);
@@ -20523,6 +20838,7 @@ long FadeIn(long sppd) {
     return 0;
 
   my_fade_in(palette,sppd);
+  return 0;
 }
 
 long __Rand(long upto) {
@@ -20530,16 +20846,16 @@ long __Rand(long upto) {
   if (upto < 1)
     quit("!Random: invalid parameter passed -- must be at least 0.");
   return rand()%upto;
-  }
+}
 
 long RefreshMouse() {
   domouse(DOMOUSE_NOCURSOR);
   scmouse.x = divide_down_coordinate(mousex);
   scmouse.y = divide_down_coordinate(mousey);
+  return 0;
 }
 
-long SetMousePosition (long x,long y) {
-	int newx = x, newy = y;
+long SetMousePosition (long newx,long newy) {
   if (newx < 0)
     newx = 0;
   if (newy < 0)
@@ -20552,6 +20868,7 @@ long SetMousePosition (long x,long y) {
   multiply_up_coordinates(&newx, &newy);
   filter->SetMousePosition(newx, newy);
   RefreshMouse();
+  return 0;
 }
 
 long GetCursorMode() {
@@ -20570,6 +20887,7 @@ long GiveScore(long amnt) {
     play_audio_clip_by_index(play.score_sound);
 
   run_on_event (GE_GOT_SCORE, amnt);
+  return 0;
 }
 
 long GetHotspotPointX (long hotspot) {
@@ -20628,7 +20946,8 @@ long GetWalkableAreaAt(long xxx,long yyy) {
 
 // allowHotspot0 defines whether Hotspot 0 returns LOCTYPE_HOTSPOT
 // or whether it returns 0
-int __GetLocationType(int xxx,int yyy, int allowHotspot0) {
+int __GetLocationType(int axxx,int ayyy, int allowHotspot0) {
+	long xxx = axxx, yyy = ayyy;
   getloctype_index = 0;
   // If it's not in ProcessClick, then return 0 when over a GUI
   if ((GetGUIAt(xxx, yyy) >= 0) && (getloctype_throughgui == 0))
@@ -20743,6 +21062,7 @@ long SaveCursorForLocationChange() {
     play.restore_cursor_image_to = GetMouseCursor();
     DEBUG_CONSOLE("Saving mouse: mode %d cursor %d", play.restore_cursor_mode_to, play.restore_cursor_image_to);
   }
+  return 0;
 }
 
 long GetObjectName(long obj, char *buffer) {
@@ -20751,10 +21071,12 @@ long GetObjectName(long obj, char *buffer) {
     quit("!GetObjectName: invalid object number");
 
   strcpy(buffer, get_translation(thisroom.objectnames[obj]));
+  return 0;
 }
 
 long Object_GetName(ScriptObject *objj, char *buffer) {
   GetObjectName(objj->id, buffer);
+  return 0;
 }
 
 const char* Object_GetName_New(ScriptObject *objj) {
@@ -20770,10 +21092,12 @@ long GetHotspotName(long hotspot, char *buffer) {
     quit("!GetHotspotName: invalid hotspot number");
 
   strcpy(buffer, get_translation(thisroom.hotspotnames[hotspot]));
+  return 0;
 }
 
 long Hotspot_GetName(ScriptHotspot *hss, char *buffer) {
   GetHotspotName(hss->id, buffer);
+  return 0;
 }
 
 const char* Hotspot_GetName_New(ScriptHotspot *hss) {
@@ -20800,14 +21124,14 @@ long GetLocationName(long xxx,long yyy,char*tempo) {
       guis_need_update = 1;
       play.get_loc_name_last_time = -1;
     }
-    return;
+    return 0;
   }
   int loctype = GetLocationType (xxx, yyy);
   xxx += divide_down_coordinate(offsetx); 
   yyy += divide_down_coordinate(offsety);
   tempo[0]=0;
   if ((xxx>=thisroom.width) | (xxx<0) | (yyy<0) | (yyy>=thisroom.height))
-    return;
+    return 0;
 
   int onhs,aa;
   if (loctype == 0) {
@@ -20815,7 +21139,7 @@ long GetLocationName(long xxx,long yyy,char*tempo) {
       play.get_loc_name_last_time = 0;
       guis_need_update = 1;
     }
-    return;
+    return 0;
   }
 
   // on character
@@ -20825,7 +21149,7 @@ long GetLocationName(long xxx,long yyy,char*tempo) {
     if (play.get_loc_name_last_time != 2000+onhs)
       guis_need_update = 1;
     play.get_loc_name_last_time = 2000+onhs;
-    return;
+    return 0;
   }
   // on object
   if (loctype == LOCTYPE_OBJ) {
@@ -20834,13 +21158,14 @@ long GetLocationName(long xxx,long yyy,char*tempo) {
     if (play.get_loc_name_last_time != 3000+aa)
       guis_need_update = 1;
     play.get_loc_name_last_time = 3000+aa;
-    return;
+    return 0;
   }
   onhs = getloctype_index;
   if (onhs>0) strcpy(tempo,get_translation(thisroom.hotspotnames[onhs]));
   if (play.get_loc_name_last_time != onhs)
     guis_need_update = 1;
   play.get_loc_name_last_time = onhs;
+  return 0;
 }
 
 const char* Game_GetLocationName(long x,long y) {
@@ -20853,10 +21178,12 @@ long GetInvName(long indx,char*buff) {
   VALIDATE_STRING(buff);
   if ((indx<0) | (indx>=game.numinvitems)) quit("!GetInvName: invalid inventory item specified");
   strcpy(buff,get_translation(game.invinfo[indx].name));
+  return 0;
 }
 
 long InventoryItem_GetName(ScriptInvItem *iitem, char *buff) {
   GetInvName(iitem->id, buff);
+  return 0;
 }
 
 const char* InventoryItem_GetName_New(ScriptInvItem *invitem) {
@@ -20875,15 +21202,20 @@ long InventoryItem_GetGraphic(ScriptInvItem *iitem) {
 
 long MoveCharacter(long cc,long xx,long yy) {
   walk_character(cc,xx,yy,0, true);
+  return 0;
 }
+
 long MoveCharacterDirect(long cc,long xx,long yy) {
   walk_character(cc,xx,yy,1, true);
+  return 0;
 }
+
 long MoveCharacterStraight(long cc,long xx,long yy) {
   if (!is_valid_character(cc))
     quit("!MoveCharacterStraight: invalid character specified");
   
   Character_WalkStraight(&game.chars[cc], xx, yy, IN_BACKGROUND);
+  return 0;
 }
 
 // Append to character path
@@ -20892,15 +21224,18 @@ long MoveCharacterPath (long chac,long tox,long toy) {
     quit("!MoveCharacterPath: invalid character specified");
 
   Character_AddWaypoint(&game.chars[chac], tox, toy);
+  return 0;
 }
 
 
 long MoveObject(long objj,long xx,long yy,long spp) {
   move_object(objj,xx,yy,spp,0);
-  }
+  return 0;
+}
 long MoveObjectDirect(long objj,long xx,long yy,long spp) {
   move_object(objj,xx,yy,spp,1);
-  }
+  return 0;
+}
 
 long Object_Move(ScriptObject *objj,long x,long y,long speed,long blocking,long direct) {
   if ((direct == ANYWHERE) || (direct == 1))
@@ -20916,28 +21251,32 @@ long Object_Move(ScriptObject *objj,long x,long y,long speed,long blocking,long 
     do_main_cycle(UNTIL_SHORTIS0,(long)&objs[objj->id].moving);
   else if ((blocking != IN_BACKGROUND) && (blocking != 0))
     quit("Object.Move: invalid BLOCKING paramter");
+  return 0;
 }
 
 long GetPlayerCharacter() {
   return game.playercharacter;
-  }
+}
 
 long SetCharacterSpeedEx(long chaa,long xspeed,long yspeed) {
   if (!is_valid_character(chaa))
     quit("!SetCharacterSpeedEx: invalid character");
 
   Character_SetSpeed(&game.chars[chaa], xspeed, yspeed);
+  return 0;
 
 }
 
 long SetCharacterSpeed(long chaa,long nspeed) {
   SetCharacterSpeedEx(chaa, nspeed, nspeed);
+  return 0;
 }
 
 long SetTalkingColor(long chaa,long ncol) {
   if (!is_valid_character(chaa)) quit("!SetTalkingColor: invalid character");
   
   Character_SetSpeechColor(&game.chars[chaa], ncol);
+  return 0;
 }
 
 long SetCharacterSpeechView (long chaa,long vii) {
@@ -20945,6 +21284,7 @@ long SetCharacterSpeechView (long chaa,long vii) {
     quit("!SetCharacterSpeechView: invalid character specified");
   
   Character_SetSpeechView(&game.chars[chaa], vii);
+  return 0;
 }
 
 long SetCharacterBlinkView (long chaa,long vii,long intrv) {
@@ -20953,6 +21293,7 @@ long SetCharacterBlinkView (long chaa,long vii,long intrv) {
 
   Character_SetBlinkView(&game.chars[chaa], vii);
   Character_SetBlinkInterval(&game.chars[chaa], intrv);
+  return 0;
 }
 
 long SetCharacterView(long chaa,long vii) {
@@ -20960,22 +21301,26 @@ long SetCharacterView(long chaa,long vii) {
     quit("!SetCharacterView: invalid character specified");
   
   Character_LockView(&game.chars[chaa], vii);
+  return 0;
 }
 
 long SetCharacterFrame(long chaa,long view,long loop,long frame) {
 
   Character_LockViewFrame(&game.chars[chaa], view, loop, frame);
+  return 0;
 }
 
 // similar to SetCharView, but aligns the frame to make it line up
 long SetCharacterViewEx (long chaa,long vii,long loop,long align) {
   
   Character_LockViewAligned(&game.chars[chaa], vii, loop, align);
+  return 0;
 }
 
 long SetCharacterViewOffset (long chaa,long vii,long xoffs,long yoffs) {
 
   Character_LockViewOffset(&game.chars[chaa], vii, xoffs, yoffs);
+  return 0;
 }
 
 
@@ -20984,6 +21329,7 @@ long ChangeCharacterView(long chaa,long vii) {
     quit("!ChangeCharacterView: invalid character specified");
   
   Character_ChangeView(&game.chars[chaa], vii);
+  return 0;
 }
 
 long SetCharacterClickable (long cha,long clik) {
@@ -20994,13 +21340,15 @@ long SetCharacterClickable (long cha,long clik) {
   // if they don't want it clickable, set the relevant bit
   if (clik == 0)
     game.chars[cha].flags|=CHF_NOINTERACT;
-  }
+  return 0;
+}
 
 long SetCharacterIgnoreWalkbehinds (long cha,long clik) {
   if (!is_valid_character(cha))
     quit("!SetCharacterIgnoreWalkbehinds: Invalid character specified");
 
   Character_SetIgnoreWalkbehinds(&game.chars[cha], clik);
+  return 0;
 }
 
 long SetObjectClickable (long cha,long clik) {
@@ -21009,10 +21357,12 @@ long SetObjectClickable (long cha,long clik) {
   objs[cha].flags&=~OBJF_NOINTERACT;
   if (clik == 0)
     objs[cha].flags|=OBJF_NOINTERACT;
-  }
+  return 0;
+}
 
 long Object_SetClickable(ScriptObject *objj,long clik) {
   SetObjectClickable(objj->id, clik);
+  return 0;
 }
 
 long Object_GetClickable(ScriptObject *objj) {
@@ -21034,6 +21384,7 @@ long Object_SetIgnoreScaling(ScriptObject *objj,long newval) {
 
   // clear the cache
   objcache[objj->id].ywas = -9999;
+  return 0;
 }
 
 long Object_GetIgnoreScaling(ScriptObject *objj) {
@@ -21049,6 +21400,7 @@ long Object_SetSolid(ScriptObject *objj,long solid) {
   objs[objj->id].flags &= ~OBJF_SOLID;
   if (solid)
     objs[objj->id].flags |= OBJF_SOLID;
+  return 0;
 }
 
 long Object_GetSolid(ScriptObject *objj) {
@@ -21059,6 +21411,7 @@ long Object_GetSolid(ScriptObject *objj) {
 
 long Object_SetBlockingWidth(ScriptObject *objj,long bwid) {
   objs[objj->id].blocking_width = bwid;
+  return 0;
 }
 
 long Object_GetBlockingWidth(ScriptObject *objj) {
@@ -21067,6 +21420,7 @@ long Object_GetBlockingWidth(ScriptObject *objj) {
 
 long Object_SetBlockingHeight(ScriptObject *objj,long bhit) {
   objs[objj->id].blocking_height = bhit;
+  return 0;
 }
 
 long Object_GetBlockingHeight(ScriptObject *objj) {
@@ -21081,6 +21435,7 @@ long SetObjectIgnoreWalkbehinds (long cha,long clik) {
     objs[cha].flags|=OBJF_NOWALKBEHINDS;
   // clear the cache
   objcache[cha].ywas = -9999;
+  return 0;
 }
 
 long Object_GetID(ScriptObject *objj) {
@@ -21089,6 +21444,7 @@ long Object_GetID(ScriptObject *objj) {
 
 long Object_SetIgnoreWalkbehinds(ScriptObject *chaa,long clik) {
   SetObjectIgnoreWalkbehinds(chaa->id, clik);
+  return 0;
 }
 
 long Object_GetIgnoreWalkbehinds(ScriptObject *chaa) {
@@ -21108,6 +21464,7 @@ long MoveCharacterToObject(long chaa,long obbj) {
 
   walk_character(chaa,objs[obbj].x+5,objs[obbj].y+6,0, true);
   do_main_cycle(UNTIL_MOVEEND,(long)&game.chars[chaa].walking);
+  return 0;
 }
 
 long MoveCharacterToHotspot(long chaa,long hotsp) {
@@ -21116,7 +21473,8 @@ long MoveCharacterToHotspot(long chaa,long hotsp) {
   if (thisroom.hswalkto[hotsp].x<1) return 0;
   walk_character(chaa,thisroom.hswalkto[hotsp].x,thisroom.hswalkto[hotsp].y,0, true);
   do_main_cycle(UNTIL_MOVEEND,(long)&game.chars[chaa].walking);
-  }
+  return 0;
+}
 
 long MoveCharacterBlocking(long chaa,long xx,long yy,long direct) {
   if (!is_valid_character (chaa))
@@ -21132,7 +21490,8 @@ long MoveCharacterBlocking(long chaa,long xx,long yy,long direct) {
   else
     MoveCharacter(chaa,xx,yy);
   do_main_cycle(UNTIL_MOVEEND,(long)&game.chars[chaa].walking);
-  }
+  return 0;
+}
 
 
 /*long GetLanguageString(long indxx,char*buffr) {
@@ -21149,17 +21508,22 @@ long SetViewport(long offsx,long offsy) {
   offsety = multiply_up_coordinate(offsy);
   check_viewport_coords();
   play.offsets_locked = 1;
+  return 0;
 }
+
 long ReleaseViewport() {
   play.offsets_locked = 0;
   DEBUG_CONSOLE("Viewport released back to engine control");
+  return 0;
 }
+
 long GetViewportX () {
   return divide_down_coordinate(offsetx);
-  }
+}
+
 long GetViewportY () {
   return divide_down_coordinate(offsety);
-  }
+}
 
 void on_background_frame_change () {
 
@@ -21186,6 +21550,7 @@ void on_background_frame_change () {
   // close as possible to the screen update to prevent flicker problem)
   if (game.color_depth == 1)
     bg_just_changed = 1;
+  return;
 }
 
 long SetBackgroundFrame(long frnum) {
@@ -21206,6 +21571,7 @@ long SetBackgroundFrame(long frnum) {
 
   play.bg_frame = frnum;
   on_background_frame_change ();
+  return 0;
 }
 
 long GetBackgroundFrame() {
@@ -21313,6 +21679,7 @@ long script_debug(long cmdd,long dataa) {
   else if (cmdd == 99)
     ccSetOption(SCOPT_DEBUGRUN, dataa);
   else quit("!Debug: unknown command code");
+  return 0;
 }
 
 
@@ -21322,8 +21689,7 @@ int init_cd_player() {
 }
 
 long cd_manager(long cmdd,long datt) {
-  if (!triedToUseCdAudioCommand)
-  {
+  if (!triedToUseCdAudioCommand) {
     triedToUseCdAudioCommand = true;
     init_cd_player();
   }
@@ -21337,7 +21703,8 @@ long script_SetTimer(long tnum,long timeout) {
   if ((tnum < 1) || (tnum >= MAX_TIMERS))
     quit("!StartTimer: invalid timer number");
   play.script_timers[tnum] = timeout;
-  }
+  return 0;
+}
 
 long IsTimerExpired(long tnum) {
   if ((tnum < 1) || (tnum >= MAX_TIMERS))
@@ -21345,33 +21712,30 @@ long IsTimerExpired(long tnum) {
   if (play.script_timers[tnum] == 1) {
     play.script_timers[tnum] = 0;
     return 1;
-    }
-  return 0;
   }
+  return 0;
+}
 
 void my_strncpy(char *dest, const char *src, int len) {
   // the normal strncpy pads out the string with zeros up to the
   // max length -- we don't want that
-  if (strlen(src) >= (unsigned)len) {
-    strncpy(dest, src, len);
-    dest[len] = 0;
-  }
-  else
-    strcpy(dest, src);
+  snprintf(dest, len, "%s", src);
 }
 
-long _sc_strcat(char*s1,char*s2) {
+long _sc_strcat(char*s1, char*s2) {
   // make sure they don't try to append a char to the string
   VALIDATE_STRING (s2);
   check_strlen(s1);
   int mosttocopy=(MAXSTRLEN-strlen(s1))-1;
 //  int numbf=game.iface[4].numbuttons;
   my_strncpy(&s1[strlen(s1)], s2, mosttocopy);
+  return 0;
 }
 
-long _sc_strcpy(char*s1,char*s2) {
+long _sc_strcpy(char*s1, char*s2) {
   check_strlen(s1);
   my_strncpy(s1, s2, MAXSTRLEN - 1);
+  return 0;
 }
 
 long StrContains (const char *s1, const char *s2) {
@@ -21403,12 +21767,14 @@ long _sc_strlower (char *desbuf) {
   VALIDATE_STRING(desbuf);
   check_strlen (desbuf);
   strlwr (desbuf);
+  return 0;
 }
 
 long _sc_strupper (char *desbuf) {
   VALIDATE_STRING(desbuf);
   check_strlen (desbuf);
   strupr (desbuf);
+  return 0;
 }
 
 /*int _sc_strcmp (char *s1, char *s2) {
@@ -21427,6 +21793,7 @@ long _sc_AbortGame(char*texx, ...) {
   va_end(ap);
 
   quit(displbuf);
+  return 0;
 }
 
 long _sc_sprintf(char*destt, char*texx, ...) {
@@ -21439,6 +21806,7 @@ long _sc_sprintf(char*destt, char*texx, ...) {
   va_end(ap);
 
   my_strncpy(destt, displbuf, MAXSTRLEN - 1);
+  return 0;
 }
 
 int HasBeenToRoom (int roomnum) {
@@ -21497,6 +21865,7 @@ long SetGraphicalVariable (const char *varName,long p_value) {
   }
   else
     theVar->value = p_value;
+  return 0;
 }
 
 int get_nivalue (NewInteractionCommandList *nic, int idx, int parm) {
@@ -23139,12 +23508,12 @@ long save_game(long slotn, const char*descript) {
 
   if (inside_script) {
     strcpy(curscript->postScriptSaveSlotDescription[curscript->queue_action(ePSASaveGame, slotn, "SaveGameSlot")], descript);
-    return;
+    return 0;
   }
 
   if (platform->GetDiskFreeSpaceMB() < 2) {
     Display("ERROR: There is not enough disk space free to save the game. Clear some disk space and try again.");
-    return;
+    return 0;
   }
 
   VALIDATE_STRING(descript);
@@ -23191,16 +23560,13 @@ long save_game(long slotn, const char*descript) {
     if ((play.screenshot_width < 16) || (play.screenshot_height < 16))
       quit("!Invalid game.screenshot_width/height, must be from 16x16 to screen res");
 
-    if (gfxDriver->UsesMemoryBackBuffer())
-    {
+    if (gfxDriver->UsesMemoryBackBuffer()) {
       screenShot = create_bitmap_ex(bitmap_color_depth(virtual_screen), usewid, usehit);
 
       stretch_blit(virtual_screen, screenShot, 0, 0,
         virtual_screen->w, virtual_screen->h, 0, 0,
         screenShot->w, screenShot->h);
-    }
-    else
-    {
+    } else {
 #if defined(IOS_VERSION) || defined(ANDROID_VERSION) || defined(WINDOWS_VERSION)
       int color_depth = (psp_gfx_renderer > 0) ? 32 : final_col_dep;
 #else
@@ -23241,6 +23607,7 @@ long save_game(long slotn, const char*descript) {
     free(screenShot);
 
   fclose(ooo);
+  return 0;
 }
 
 block read_serialized_bitmap(FILE* ooo) {
@@ -23971,8 +24338,7 @@ long free_dynamic_sprite (long gotSlot) {
   }
 
   // force refresh of any object caches using the sprite
-  if (croom != NULL) 
-  {
+  if (croom != NULL) {
     for (tt = 0; tt < croom->numobj; tt++) 
     {
       if (objs[tt].num == gotSlot)
@@ -23984,10 +24350,10 @@ long free_dynamic_sprite (long gotSlot) {
         objcache[tt].sppic = -1;
     }
   }
+  return 0;
 }
 
-int do_game_load(const char *nametouse, int slotNumber, char *descrp, int *wantShot)
-{
+int do_game_load(const char *nametouse, int slotNumber, char *descrp, int *wantShot) {
   gameHasBeenRestored++;
 
   FILE*ooo=fopen(nametouse,"rb");
@@ -24332,6 +24698,7 @@ int invscreen() {
 
 long sc_invscreen() {
   curscript->queue_action(ePSAInvScreen, 0, "InventoryScreen");
+  return 0;
 }
 
 long SetInvDimensions(long ww,long hh) {
@@ -24345,6 +24712,7 @@ long SetInvDimensions(long ww,long hh) {
     guiinv[i].Resized();
   }
   guis_need_update = 1;
+  return 0;
 }
 
 long UpdatePalette() {
@@ -24353,6 +24721,7 @@ long UpdatePalette() {
 
   if (!play.fast_forward)  
     setpal();
+  return 0;
 }
 
 // Helper functions used by StartCutscene/EndCutscene, but also
@@ -24399,6 +24768,7 @@ long SkipUntilCharacterStops(long cc) {
   initialize_skippable_cutscene();
   play.fast_forward = 2;
   play.skip_until_char_stops = cc;
+  return 0;
 }
 
 void EndSkippingUntilCharStops() {
@@ -24428,6 +24798,7 @@ long StartCutscene (long skipwith) {
 
   play.in_cutscene = skipwith;
   initialize_skippable_cutscene();
+  return 0;
 }
 
 long EndCutscene () {
@@ -24465,46 +24836,67 @@ long Game_GetInSkippableCutscene() {
 
 // Stubs for plugin functions.
 long ScriptStub_ShellExecute() {
+	return 0;
 }
 long srSetSnowDriftRange(long min_value,long max_value) {
+	return 0;
 }
 long srSetSnowDriftSpeed(long min_value,long max_value) {
+	return 0;
 }
 long srSetSnowFallSpeed(long min_value,long max_value) {
+	return 0;
 }
 long srChangeSnowAmount(long amount) {
+	return 0;
 }
 long srSetSnowBaseline(long top,long bottom) {
+	return 0;
 }
 long srSetSnowTransparency(long min_value,long max_value) {
+	return 0;
 }
 long srSetSnowDefaultView(long view,long loop) {
+	return 0;
 }
 long srSetSnowWindSpeed(long value) {
+	return 0;
 }
 long srSetSnowAmount(long amount) {
+	return 0;
 }
 long srSetSnowView(long kind_id,long event,long view,long loop) {
+	return 0;
 }
 long srChangeRainAmount(long amount) {
+	return 0;
 }
 long srSetRainView(long kind_id,long event,long view,long loop) {
+	return 0;
 }
 long srSetRainDefaultView(long view,long loop) {
+	return 0;
 }
 long srSetRainTransparency(long min_value,long max_value) {
+	return 0;
 }
 long srSetRainWindSpeed(long value) {
+	return 0;
 }
 long srSetRainBaseline(long top,long bottom) {
+	return 0;
 }
 long srSetRainAmount(long amount) {
+	return 0;
 }
 long srSetRainFallSpeed(long min_value,long max_value) {
+	return 0;
 }
 long srSetWindSpeed(long value) {
+	return 0;
 }
 long srSetBaseline(long top,long bottom) {
+	return 0;
 }
 long JoystickCount() {
   return 0;
@@ -24516,10 +24908,13 @@ long Joystick_IsButtonDown(long a) {
   return 0;
 }
 long Joystick_EnableEvents(long a) {
+	return 0;
 }
 long Joystick_DisableEvents() {
+	return 0;
 }
 long Joystick_Click(long a) {
+	return 0;
 }
 long Joystick_Valid() {
   return 0;
@@ -24550,12 +24945,16 @@ long GetFlashlightInt() {
   return 0;
 }
 long SetFlashlightInt1(long Param1){
+	return 0;
 }
 long SetFlashlightInt2(long Param1,long Param2) {
+	return 0;
 }
 long SetFlashlightInt3(long Param1,long Param2,long Param3) {
+	return 0;
 }
 long SetFlashlightInt5(long Param1,long Param2,long Param3,long Param4,long Param5) {
+	return 0;
 }
 
 
@@ -28579,14 +28978,14 @@ void setup_script_exports() {
   scAdd_External_Symbol("StopMusic", (void *)scr_StopMusic);
   scAdd_External_Symbol("StopObjectMoving",(void *)StopObjectMoving);
   scAdd_External_Symbol("StrCat",(void *)_sc_strcat);
-  scAdd_External_Symbol("StrCaseComp",(void *)stricmp);
-  scAdd_External_Symbol("StrComp",(void *)strcmp);
+  scAdd_External_Symbol("StrCaseComp",(void *)String_CaseComp);
+  scAdd_External_Symbol("StrComp",(void *)String_Comp);
   scAdd_External_Symbol("StrContains",(void *)StrContains);
   scAdd_External_Symbol("StrCopy",(void *)_sc_strcpy);
   scAdd_External_Symbol("StrFormat",(void *)_sc_sprintf);
   scAdd_External_Symbol("StrGetCharAt", (void *)StrGetCharAt);
   scAdd_External_Symbol("StringToInt",(void *)StringToInt);
-  scAdd_External_Symbol("StrLen",(void *)strlen);
+  scAdd_External_Symbol("StrLen",(void *)String_Len);
   scAdd_External_Symbol("StrSetCharAt", (void *)StrSetCharAt);
   scAdd_External_Symbol("StrToLowerCase", (void *)_sc_strlower);
   scAdd_External_Symbol("StrToUpperCase", (void *)_sc_strupper);
