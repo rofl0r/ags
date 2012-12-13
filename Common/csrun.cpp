@@ -1979,8 +1979,8 @@ int cc_run_code(ccInstance * inst, long curpc) {
 		}
         } else if (num_args_to_func == 0) {
 		dprintf(2, "calling no-arg func: %s\n", funcname);
-		long (*realfunc) ();
-		realfunc = (long (*)())inst->registers[arg1];
+		long (*realfunc) (void);
+		realfunc = (long (*)(void))inst->registers[arg1];
 		inst->registers[SREG_AX] = realfunc();
         } else {
 		dprintf(2, "calling regular func: %s with %d args\n", funcname, num_args_to_func);

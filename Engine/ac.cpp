@@ -17025,32 +17025,32 @@ long ProcessClick(long xx,long yy,long mood) {
 
 // ** GetGameParameter replacement functions
 
-long Game_GetInventoryItemCount() {
+long Game_GetInventoryItemCount(void) {
   // because of the dummy item 0, this is always one higher than it should be
   return game.numinvitems - 1;
 }
 
-long Game_GetFontCount() {
+long Game_GetFontCount(void) {
   return game.numfonts;
 }
 
-long Game_GetMouseCursorCount() {
+long Game_GetMouseCursorCount(void) {
   return game.numcursors;
 }
 
-long Game_GetCharacterCount() {
+long Game_GetCharacterCount(void) {
   return game.numcharacters;
 }
 
-long Game_GetGUICount() {
+long Game_GetGUICount(void) {
   return game.numgui;
 }
 
-long Game_GetViewCount() {
+long Game_GetViewCount(void) {
   return game.numviews;
 }
 
-long Game_GetUseNativeCoordinates() {
+long Game_GetUseNativeCoordinates(void) {
   if (game.options[OPT_NATIVECOORDINATES] != 0)
   {
     return 1;
@@ -17134,39 +17134,39 @@ long Game_DoOnceOnly(const char *token) {
   return 1;
 }
 
-long Room_GetObjectCount() {
+long Room_GetObjectCount(void) {
   return croom->numobj;
 }
 
-long Room_GetWidth() {
+long Room_GetWidth(void) {
   return thisroom.width;
 }
 
-long Room_GetHeight() {
+long Room_GetHeight(void) {
   return thisroom.height;
 }
 
-long Room_GetColorDepth() {
+long Room_GetColorDepth(void) {
   return bitmap_color_depth(thisroom.ebscene[0]);
 }
 
-long Room_GetLeftEdge() {
+long Room_GetLeftEdge(void) {
   return thisroom.left;
 }
 
-long Room_GetRightEdge() {
+long Room_GetRightEdge(void) {
   return thisroom.right;
 }
 
-long Room_GetTopEdge() {
+long Room_GetTopEdge(void) {
   return thisroom.top;
 }
 
-long Room_GetBottomEdge() {
+long Room_GetBottomEdge(void) {
   return thisroom.bottom;
 }
 
-long Room_GetMusicOnLoad() {
+long Room_GetMusicOnLoad(void) {
   return thisroom.options[ST_TUNE];
 }
 
@@ -17303,47 +17303,47 @@ long GetGameParameter (long parm,long data1,long data2,long data3) {
 }
 
 
-long System_GetColorDepth() {
+long System_GetColorDepth(void) {
   return final_col_dep;
 }
 
-long System_GetOS() {
+long System_GetOS(void) {
   return scsystem.os;
 }
 
-long System_GetScreenWidth() {
+long System_GetScreenWidth(void) {
   return final_scrn_wid;
 }
 
-long System_GetScreenHeight() {
+long System_GetScreenHeight(void) {
   return final_scrn_hit;
 }
 
-long System_GetViewportHeight() {
+long System_GetViewportHeight(void) {
   return divide_down_coordinate(scrnhit);
 }
 
-long System_GetViewportWidth() {
+long System_GetViewportWidth(void) {
   return divide_down_coordinate(scrnwid);
 }
 
-const char *System_GetVersion() {
+const char *System_GetVersion(void) {
   return CreateNewScriptString(ACI_VERSION_TEXT);
 }
 
-long System_GetHardwareAcceleration() {
+long System_GetHardwareAcceleration(void) {
   return gfxDriver->HasAcceleratedStretchAndFlip() ? 1 : 0;
 }
 
-long System_GetNumLock() {
+long System_GetNumLock(void) {
   return (key_shifts & KB_NUMLOCK_FLAG) ? 1 : 0;
 }
 
-long System_GetCapsLock() {
+long System_GetCapsLock(void) {
   return (key_shifts & KB_CAPSLOCK_FLAG) ? 1 : 0;
 }
 
-long System_GetScrollLock() {
+long System_GetScrollLock(void) {
   return (key_shifts & KB_SCROLOCK_FLAG) ? 1 : 0;
 }
 
@@ -17358,7 +17358,7 @@ long System_SetNumLock(long newValue) {
   return 0;
 }
 
-long System_GetVsync() {
+long System_GetVsync(void) {
   return scsystem.vsync;
 }
 
@@ -17367,18 +17367,18 @@ long System_SetVsync(long newValue) {
   return 0;
 }
 
-long System_GetWindowed() {
+long System_GetWindowed(void) {
   if (usetup.windowed)
     return 1;
   return 0;
 }
 
 
-long System_GetSupportsGammaControl() {
+long System_GetSupportsGammaControl(void) {
   return gfxDriver->SupportsGammaControl();
 }
 
-long System_GetGamma() {
+long System_GetGamma(void) {
   return play.gamma_adjustment;
 }
 
@@ -17396,7 +17396,7 @@ long System_SetGamma(long newValue) {
   return 0;
 }
 
-long Game_GetTextReadingSpeed() {
+long Game_GetTextReadingSpeed(void) {
   return play.text_speed;
 }
 
@@ -17408,7 +17408,7 @@ long Game_SetTextReadingSpeed(long newTextSpeed) {
   return 0;
 }
 
-long Game_GetMinimumTextDisplayTimeMs() {
+long Game_GetMinimumTextDisplayTimeMs(void) {
   return play.text_min_display_time_ms;
 }
 
@@ -17417,7 +17417,7 @@ long Game_SetMinimumTextDisplayTimeMs(long newTextMinTime) {
   return 0;
 }
 
-long Game_GetIgnoreUserInputAfterTextTimeoutMs() {
+long Game_GetIgnoreUserInputAfterTextTimeoutMs(void) {
   return play.ignore_user_input_after_text_timeout_ms;
 }
 
@@ -17426,11 +17426,11 @@ long Game_SetIgnoreUserInputAfterTextTimeoutMs(long newValueMs) {
   return 0;
 }
 
-const char *Game_GetFileName() {
+const char *Game_GetFileName(void) {
   return CreateNewScriptString(usetup.main_data_filename);
 }
 
-const char *Game_GetName() {
+const char *Game_GetName(void) {
   return CreateNewScriptString(play.game_name);
 }
 
@@ -17855,7 +17855,7 @@ long DisableGroundLevelAreas(long alsoEffects) {
   return 0;
 }
 
-long EnableGroundLevelAreas() {
+long EnableGroundLevelAreas(void) {
   play.ground_level_areas_disabled = 0;
 
   DEBUG_CONSOLE("Ground-level areas re-enabled");
@@ -17881,7 +17881,7 @@ long FlipScreen(long amount) {
   return 0;
 }
 
-void stopmusic() {
+void stopmusic(void) {
 
   if (crossFading > 0) {
     // stop in the middle of a new track fading in
@@ -17918,7 +17918,7 @@ void stopmusic() {
   current_music_type = 0;
 }
 
-long scr_StopMusic() {
+long scr_StopMusic(void) {
   play.music_queue_size = 0;
   stopmusic();
   return 0;
@@ -17932,7 +17932,7 @@ long SeekMODPattern(long patnum) {
   return 0;
 }
 
-long Game_GetMODPattern() {
+long Game_GetMODPattern(void) {
   if (current_music_type == MUS_MOD) {
     return channels[SCHAN_MUSIC]->get_pos();
   }
@@ -17950,7 +17950,7 @@ long SeekMP3PosMillis (long posn) {
   return 0;
 }
 
-long GetMP3PosMillis () {
+long GetMP3PosMillis (void) {
   // in case they have "while (GetMP3PosMillis() < 5000) "
   if (play.fast_forward)
     return 999999;
@@ -17966,7 +17966,7 @@ long GetMP3PosMillis () {
   return 0;
 }
 
-void update_music_volume() {
+void update_music_volume(void) {
 
   if ((current_music_type) || (crossFading < 0)) 
   {
@@ -18061,7 +18061,7 @@ long SetDigitalMasterVolume (long newvol) {
   return 0;
 }
 
-long System_GetVolume() {
+long System_GetVolume(void) {
   return play.digital_master_volume;
 }
 
@@ -18084,7 +18084,7 @@ long System_SetVolume(long newvol) {
   return 0;
 }
 
-long GetCurrentMusic() {
+long GetCurrentMusic(void) {
   return play.cur_music_number;
 }
 
@@ -18108,7 +18108,7 @@ void post_new_music_check (int newchannel) {
 
 // Sets up the crossfading for playing the new music track,
 // and returns the channel number to use
-int prepare_for_new_music () {
+int prepare_for_new_music (void) {
   int useChannel = SCHAN_MUSIC;
   
   if ((game.options[OPT_CROSSFADEMUSIC] > 0)
@@ -18391,7 +18391,7 @@ long SaidUnknownWord (char*buffer) {
   return 1;
 }
 
-const char* Parser_SaidUnknownWord() {
+const char* Parser_SaidUnknownWord(void) {
   if (play.bad_parsed_word[0] == 0)
     return NULL;
   return CreateNewScriptString(play.bad_parsed_word);
@@ -18825,7 +18825,7 @@ int sc_File::OpenFile(const char *filename, int mode) {
   return 1;
 }
 
-void sc_File::Close() {
+void sc_File::Close(void) {
   if (handle) {
     FileClose(handle);
     handle = NULL;
@@ -20422,14 +20422,14 @@ long SetButtonPic(long guin,long objn,long ptype,long slotn) {
   return 0;
 }
 
-long DisableInterface() {
+long DisableInterface(void) {
   play.disabled_user_interface++;
   guis_need_update = 1;
   set_mouse_cursor(CURS_WAIT);
   return 0;
 }
 
-long EnableInterface() {
+long EnableInterface(void) {
   guis_need_update = 1;
   play.disabled_user_interface--;
   if (play.disabled_user_interface<1) {
@@ -20439,7 +20439,7 @@ long EnableInterface() {
   return 0;
 }
 // Returns 1 if user interface is enabled, 0 if disabled
-long IsInterfaceEnabled() {
+long IsInterfaceEnabled(void) {
   return (play.disabled_user_interface > 0) ? 0 : 1;
 }
 
@@ -20550,7 +20550,7 @@ long HasPlayerBeenInRoom(long roomnum) {
     return 0;
 }
 
-long SetRestartPoint() {
+long SetRestartPoint(void) {
   save_game(RESTART_POINT_SAVE_GAME_NUMBER, "Restart Game Auto-Save");
   return 0;
 }
@@ -20579,7 +20579,7 @@ long SetGameSpeed(long newspd) {
   return 0;
 }
 
-long GetGameSpeed() {
+long GetGameSpeed(void) {
   return frames_per_second - play.game_speed_modifier;
 }
 
@@ -20627,7 +20627,7 @@ long GetGameOption (long opt) {
   return game.options[opt];
 }
 
-long StopDialog() {
+long StopDialog(void) {
   if (play.stop_dialog_at_end == DIALOG_NONE) {
     debug_log("StopDialog called, but was not in a dialog");
     DEBUG_CONSOLE("StopDialog called but no dialog");
@@ -20666,7 +20666,7 @@ long GetDialogOption (long dlg,long opt) {
   return 0;
 }
 
-long Game_GetDialogCount() {
+long Game_GetDialogCount(void) {
   return game.numdialog;
 }
 
@@ -20848,7 +20848,7 @@ long __Rand(long upto) {
   return rand()%upto;
 }
 
-long RefreshMouse() {
+long RefreshMouse(void) {
   domouse(DOMOUSE_NOCURSOR);
   scmouse.x = divide_down_coordinate(mousex);
   scmouse.y = divide_down_coordinate(mousey);
@@ -20871,11 +20871,11 @@ long SetMousePosition (long newx,long newy) {
   return 0;
 }
 
-long GetCursorMode() {
+long GetCursorMode(void) {
   return cur_mode;
 }
 
-int GetMouseCursor() {
+int GetMouseCursor(void) {
   return cur_cursor;
 }
 
@@ -21051,7 +21051,7 @@ ScriptInvItem *GetInvAtLocation(long xx,long yy) {
   return &scrInv[hsnum];
 }
 
-long SaveCursorForLocationChange() {
+long SaveCursorForLocationChange(void) {
   // update the current location name
   char tempo[100];
   GetLocationName(divide_down_coordinate(mousex), divide_down_coordinate(mousey), tempo);
@@ -21254,7 +21254,7 @@ long Object_Move(ScriptObject *objj,long x,long y,long speed,long blocking,long 
   return 0;
 }
 
-long GetPlayerCharacter() {
+long GetPlayerCharacter(void) {
   return game.playercharacter;
 }
 
@@ -21511,21 +21511,21 @@ long SetViewport(long offsx,long offsy) {
   return 0;
 }
 
-long ReleaseViewport() {
+long ReleaseViewport(void) {
   play.offsets_locked = 0;
   DEBUG_CONSOLE("Viewport released back to engine control");
   return 0;
 }
 
-long GetViewportX () {
+long GetViewportX (void) {
   return divide_down_coordinate(offsetx);
 }
 
-long GetViewportY () {
+long GetViewportY (void) {
   return divide_down_coordinate(offsety);
 }
 
-void on_background_frame_change () {
+void on_background_frame_change (void) {
 
   invalidate_screen();
   mark_current_background_dirty();
@@ -21574,7 +21574,7 @@ long SetBackgroundFrame(long frnum) {
   return 0;
 }
 
-long GetBackgroundFrame() {
+long GetBackgroundFrame(void) {
   return play.bg_frame;
 }
 
@@ -21683,7 +21683,7 @@ long script_debug(long cmdd,long dataa) {
 }
 
 
-int init_cd_player() {
+int init_cd_player(void) {
   use_cdplayer=0;
   return platform->InitializeCDPlayer();
 }
@@ -23625,7 +23625,7 @@ block read_serialized_bitmap(FILE* ooo) {
 
 char rbuffer[200];
 
-void first_room_initialization() {
+void first_room_initialization(void) {
   starting_room = displayed_room;
   t1 = time(NULL);
   lastcounter=0;
@@ -24454,7 +24454,7 @@ struct DisplayInvItem {
   int num;
   int sprnum;
   };
-int __actual_invscreen() {
+int __actual_invscreen(void) {
   
   int BUTTONAREAHEIGHT = get_fixed_pixel_size(30);
   int cmode=CURS_ARROW, toret = -1;
@@ -24687,7 +24687,7 @@ start_actinv:
   return toret;
   }
 
-int invscreen() {
+int invscreen(void) {
   int selt=__actual_invscreen();
   if (selt<0) return -1;
   playerchar->activeinv=selt;
@@ -24696,7 +24696,7 @@ int invscreen() {
   return selt;
   }
 
-long sc_invscreen() {
+long sc_invscreen(void) {
   curscript->queue_action(ePSAInvScreen, 0, "InventoryScreen");
   return 0;
 }
@@ -24715,7 +24715,7 @@ long SetInvDimensions(long ww,long hh) {
   return 0;
 }
 
-long UpdatePalette() {
+long UpdatePalette(void) {
   if (game.color_depth > 1)
     invalidate_screen();
 
@@ -24726,11 +24726,11 @@ long UpdatePalette() {
 
 // Helper functions used by StartCutscene/EndCutscene, but also
 // by SkipUntilCharacterStops
-void initialize_skippable_cutscene() {
+void initialize_skippable_cutscene(void) {
   play.end_cutscene_music = -1;
 }
 
-void stop_fast_forwarding() {
+void stop_fast_forwarding(void) {
   // when the skipping of a cutscene comes to an end, update things
   play.fast_forward = 0;
   setpal();
@@ -24771,7 +24771,7 @@ long SkipUntilCharacterStops(long cc) {
   return 0;
 }
 
-void EndSkippingUntilCharStops() {
+void EndSkippingUntilCharStops(void) {
   // not currently skipping, so ignore
   if (play.skip_until_char_stops < 0)
     return;
@@ -24801,7 +24801,7 @@ long StartCutscene (long skipwith) {
   return 0;
 }
 
-long EndCutscene () {
+long EndCutscene (void) {
   if (play.in_cutscene == 0)
     quit("!EndCutscene: not in a cutscene");
 
@@ -24817,7 +24817,7 @@ long EndCutscene () {
   return retval;
 }
 
-long Game_GetSkippingCutscene() {
+long Game_GetSkippingCutscene(void) {
   if (play.fast_forward)
   {
     return 1;
@@ -24825,7 +24825,7 @@ long Game_GetSkippingCutscene() {
   return 0;
 }
 
-long Game_GetInSkippableCutscene() {
+long Game_GetInSkippableCutscene(void) {
   if (play.in_cutscene)
   {
     return 1;
@@ -24835,7 +24835,7 @@ long Game_GetInSkippableCutscene() {
 
 
 // Stubs for plugin functions.
-long ScriptStub_ShellExecute() {
+long ScriptStub_ShellExecute(void) {
 	return 0;
 }
 long srSetSnowDriftRange(long min_value,long max_value) {
@@ -24898,7 +24898,7 @@ long srSetWindSpeed(long value) {
 long srSetBaseline(long top,long bottom) {
 	return 0;
 }
-long JoystickCount() {
+long JoystickCount(void) {
   return 0;
 }
 long Joystick_Open(long a) {
@@ -24916,10 +24916,10 @@ long Joystick_DisableEvents() {
 long Joystick_Click(long a) {
 	return 0;
 }
-long Joystick_Valid() {
+long Joystick_Valid(void) {
   return 0;
 }
-long Joystick_Unplugged() {
+long Joystick_Unplugged(void) {
   return 0;
 }
 long DrawAlpha(long destination,long sprite,long x,long y,long transparency) {
@@ -24941,7 +24941,7 @@ long DrawAdd(long destination,long sprite,long x,long y,longfloat scale) {
   return 0;
 }
 
-long GetFlashlightInt() {
+long GetFlashlightInt(void) {
   return 0;
 }
 long SetFlashlightInt1(long Param1){
@@ -24960,7 +24960,7 @@ long SetFlashlightInt5(long Param1,long Param2,long Param3,long Param4,long Para
 
 extern const char* ccGetSectionNameAtOffs(ccScript *scri, long offs);
 
-void break_into_debugger() 
+void break_into_debugger(void) 
 {
 #ifdef WINDOWS_VERSION
 
@@ -25019,7 +25019,7 @@ void scriptDebugHook (ccInstance *ccinst, int linenum) {
   }
 }
 
-void check_debug_keys() {
+void check_debug_keys(void) {
     if (play.debug_mode) {
       // do the run-time script debugging
 
@@ -25035,7 +25035,7 @@ void check_debug_keys() {
 
 }
 
-void check_new_room() {
+void check_new_room(void) {
   // if they're in a new room, run Player Enters Screen and on_event(ENTER_ROOM)
   if ((in_new_room>0) & (in_new_room!=3)) {
     EventHappened evh;
@@ -25328,7 +25328,7 @@ void mainloop(bool checkControls, IDriverDependantBitmap *extraBitmap, int extra
 }
 
 
-int check_write_access() {
+int check_write_access(void) {
 
   if (platform->GetDiskFreeSpaceMB() < 2)
     return 0;
@@ -25361,7 +25361,7 @@ char *ac_config_file = &ac_conf_file_defname[0];
 char conffilebuf[512];
 
 
-int wait_loop_still_valid() {
+int wait_loop_still_valid(void) {
   if (restrict_until == 0)
     quit("end_wait_loop called but game not in loop_until state");
   int retval = restrict_until;
@@ -25398,7 +25398,7 @@ int wait_loop_still_valid() {
   return retval;
 }
 
-int main_game_loop() {
+int main_game_loop(void) {
   if (displayed_room < 0)
     quit("!A blocking function was called before the first room has been loaded");
 
@@ -25501,7 +25501,7 @@ void setup_exports(char*expfrom) {
   }
 
 
-void compile_room_script() {
+void compile_room_script(void) {
   ccError = 0;
 
   roominst = ccCreateInstance(thisroom.compiled_script);
@@ -25900,7 +25900,7 @@ int init_gfx_mode(int wid,int hit,int cdep) {
   return working_gfx_mode_status;    
 }
 
-void winclosehook() {
+void winclosehook(void) {
   want_exit = 1;
   abort_engine = 1;
   check_dynamic_sprites_at_exit = 0;
@@ -25912,7 +25912,7 @@ void winclosehook() {
 */
 }
 
-void init_game_settings() {
+void init_game_settings(void) {
   int ee;
 
   for (ee=0;ee<256;ee++) {
@@ -26394,7 +26394,7 @@ void read_config_file(char *argv0) {
 
 }
 
-void start_game() {
+void start_game(void) {
   set_cursor_mode(MODE_WALK);
   filter->SetMousePosition(160,100);
   newmusic(0);
@@ -26714,7 +26714,7 @@ int switch_to_graphics_mode(int initasx, int initasy, int scrnwid, int scrnhit, 
   return 0;
 }
 
-void CreateBlankImage()
+void CreateBlankImage(void)
 {
   // this is the first time that we try to use the graphics driver,
   // so it's the most likey place for a crash
@@ -26734,7 +26734,7 @@ void CreateBlankImage()
 
 }
 
-void show_preload () {
+void show_preload (void) {
   // ** Do the preload graphic if available
   color temppal[256];
   block splashsc = load_pcx("preload.pcx",temppal);
@@ -26793,7 +26793,7 @@ const char *loadSaveGameOnStartup = NULL;
 char **global_argv = 0;
 #endif
 
-void initialise_game_file_name()
+void initialise_game_file_name(void)
 {
 #ifdef WINDOWS_VERSION
   WCHAR buffer[MAX_PATH];
@@ -26999,7 +26999,7 @@ int main(int argc,char*argv[]) {
   }
 }
 
-void create_gfx_driver() 
+void create_gfx_driver(void) 
 {
 #ifdef WINDOWS_VERSION
   if (stricmp(usetup.gfxDriverID, "D3D9") == 0)
@@ -27988,7 +27988,7 @@ short int __getshort__bigendian(FILE* file)
 
 
 #define scAdd_External_Symbol ccAddExternalSymbol
-void setup_script_exports() {
+void setup_script_exports(void) {
 	/* these are variable pointers */
 	scAdd_External_Symbol("game",&play);
 	scAdd_External_Symbol("gs_globals",&play.globalvars[0]);

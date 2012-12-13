@@ -109,7 +109,7 @@ EOF
 			}
 			if($decl ne $newdecl) {
 				my $sedcmd = sprintf 'sed -i s\'@%s@%s@\' %s'. "\n", sed_escape($newdecl), sed_escape($decl), $container;
-				system($sedcmd);
+				#system($sedcmd);
 				#print $sedcmd . "\n";
 				print "need to change $real: $newdecl to $decl in $container !\n";
 			} else {
