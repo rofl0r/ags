@@ -1055,7 +1055,7 @@ int Character_GetHasExplicitTint(CharacterInfo *chaa) {
   return 0;
 }
 
-void Character_Say(CharacterInfo *chaa, const char *texx, ...) {
+long Character_Say(CharacterInfo *chaa, const char *texx, ...) {
   
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
@@ -1248,7 +1248,7 @@ void Character_Tint(CharacterInfo *chaa, int red, int green, int blue, int opaci
   chaa->flags |= CHF_HASTINT;
 }
 
-void Character_Think(CharacterInfo *chaa, const char *texx, ...) {
+long Character_Think(CharacterInfo *chaa, const char *texx, ...) {
 
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;

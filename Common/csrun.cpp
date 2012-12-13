@@ -1155,9 +1155,96 @@ void ccSetDebugHook(new_line_hook_type jibble)
   inst->callStackSize--;\
   inst->line_number = inst->callStackLineNumber[inst->callStackSize];\
   currentline = inst->line_number
+//long SetTextOverlay(long ovrid,long xx,long yy,long wii,long fontid,long clr,char*texx,...)
+long call_variadic_function_7args(long addr, int numparm, long *parms, int offset) {
+	parms += offset;
+	long (*fparam) (long, long, long, long, long, long, long, ...);
+	fparam = (long (*)(long, long, long, long, long, long, long, ...))addr;
+	switch (numparm) {
+		case 7:
+			return fparam(parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 8:
+			return fparam(parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 9:
+			return fparam(parms[8], parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		default:
+			cc_error("too many arguments in call to function");
+			return -1;		
+	}
+//long x, long y, long width, long font, long colour, const char* text, ...
+}
+
+
+
+long call_variadic_function_6args(long addr, int numparm, long *parms, int offset) {
+	parms += offset;
+	long (*fparam) (long, long, long, long, long, long, ...);
+	fparam = (long (*)(long, long, long, long, long, long, ...))addr;
+	switch (numparm) {
+		case 6:
+			return fparam(parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 7:
+			return fparam(parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 8:
+			return fparam(parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 9:
+			return fparam(parms[8], parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		default:
+			cc_error("too many arguments in call to function");
+			return -1;		
+	}
+//long x, long y, long width, long font, long colour, const char* text, ...
+}
+//long DisplayAt(long xxp,long yyp,long widd,char*texx, ...)
+
+long call_variadic_function_4args(long addr, int numparm, long *parms, int offset) {
+	parms += offset;
+	long (*fparam) (long, long, long, long, ...);
+	fparam = (long (*)(long, long, long, long, ...))addr;
+	switch (numparm) {
+		case 4:
+			return fparam(parms[3], parms[2], parms[1], parms[0]);
+		case 5:
+			return fparam(parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 6:
+			return fparam(parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 7:
+			return fparam(parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 8:
+			return fparam(parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 9:
+			return fparam(parms[8], parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		default:
+			cc_error("too many arguments in call to function");
+			return -1;		
+	}
+//long x, long y, long width, long font, long colour, const char* text, ...
+}
+
+long call_variadic_function_5args(long addr, int numparm, long *parms, int offset) {
+	parms += offset;
+	long (*fparam) (long, long, long, long, long, ...);
+	fparam = (long (*)(long, long, long, long, long, ...))addr;
+	switch (numparm) {
+		case 5:
+			return fparam(parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 6:
+			return fparam(parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 7:
+			return fparam(parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 8:
+			return fparam(parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		case 9:
+			return fparam(parms[8], parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+		default:
+			cc_error("too many arguments in call to function");
+			return -1;		
+	}
+//long x, long y, long width, long font, long colour, const char* text, ...
+}
 
 // parm list is backwards (last arg is parms[0])
-long call_variadic_function_long(long addr, int numparm, long *parms, int offset) {
+long call_variadic_function_1arg(long addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	long (*fparam) (long, ...);
 	fparam = (long (*)(long, ...))addr;
@@ -1188,73 +1275,59 @@ long call_variadic_function_long(long addr, int numparm, long *parms, int offset
 }
 
 // parm list is backwards (last arg is parms[0])
-void call_variadic_function_void_rawprint(long addr, int numparm, long *parms, int offset) {
+long call_variadic_function_3args(long addr, int numparm, long *parms, int offset) {
 	parms += offset;
-	long (*fparam) (long, long, char*, ...);
-	fparam = (long (*)(long, long, char*, ...))addr;
+	long (*fparam) (long, long, long, ...);
+	fparam = (long (*)(long, long, long, ...))addr;
 	
 	switch(numparm) {
 		case 3:
-			fparam((long)parms[2], (long)parms[1], (char*)parms[0]);
-			return;
+			return fparam((long)parms[2], (long)parms[1], parms[0]);
 		case 4:
-			fparam((long)parms[3], (long)parms[2], (char*)parms[1], parms[0]);
-			return;
+			return fparam((long)parms[3], (long)parms[2], parms[1], parms[0]);
 		case 5:
-			fparam((long)parms[4], (long)parms[3], (char*)parms[2], parms[1], parms[0]);
-			return;
+			return fparam((long)parms[4], (long)parms[3], parms[2], parms[1], parms[0]);
 		case 6:
-			fparam((long)parms[5], (long)parms[4], (char*)parms[3], parms[2], parms[1], parms[0]);
-			return;
+			return fparam((long)parms[5], (long)parms[4], parms[3], parms[2], parms[1], parms[0]);
 		case 7:
-			fparam((long)parms[6], (long)parms[5], (char*)parms[4], parms[3], parms[2], parms[1], parms[0]);
-			return;
+			return fparam((long)parms[6], (long)parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		case 8:
-			fparam((long)parms[7], (long)parms[6], (char*)parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
-			return;
+			return fparam((long)parms[7], (long)parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		case 9:
-			fparam((long)parms[8], (long)parms[7], (char*)parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
-			return;
+			return fparam((long)parms[8], (long)parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		default:
-			cc_error("too many or too few arguments in call to function RawPrint");
-			return;
+			cc_error("too many or too few arguments in call to function");
+			return 0;
 	}
 }
 
 // parm list is backwards (last arg is parms[0])
-void call_variadic_function_void_sayorthink(long addr, int numparm, long *parms, int offset) {
+//long __sc_displayspeech(long chid,char*texx, ...)
+long call_variadic_function_2args(long addr, int numparm, long *parms, int offset) {
 	parms += offset;
-	long (*fparam) (void*, char*, ...);
-	fparam = (long (*)(void*, char*, ...))addr;
+	long (*fparam) (long, long, ...);
+	fparam = (long (*)(long, long, ...))addr;
 	
 	switch(numparm) {
 		case 2:
-			fparam((void*)parms[1], (char*)parms[0]);
-			return;
+			return fparam(parms[1], parms[0]);
 		case 3:
-			fparam((void*)parms[2], (char*)parms[1], parms[0]);
-			return;
+			return fparam(parms[2], parms[1], parms[0]);
 		case 4:
-			fparam((void*)parms[3], (char*)parms[2], parms[1], parms[0]);
-			return;
+			return fparam(parms[3], parms[2], parms[1], parms[0]);
 		case 5:
-			fparam((void*)parms[4], (char*)parms[3], parms[2], parms[1], parms[0]);
-			return;
+			return fparam(parms[4], parms[3], parms[2], parms[1], parms[0]);
 		case 6:
-			fparam((void*)parms[5], (char*)parms[4], parms[3], parms[2], parms[1], parms[0]);
-			return;
+			return fparam(parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		case 7:
-			fparam((void*)parms[6], (char*)parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
-			return;
+			return fparam(parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		case 8:
-			fparam((void*)parms[7], (char*)parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
-			return;
+			return fparam(parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		case 9:
-			fparam((void*)parms[8], (char*)parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
-			return;
+			return fparam(parms[8], parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		default:
 			cc_error("too many or few arguments in call to function");
-			return;
+			return 0;
 	}
 }
 
@@ -1856,7 +1929,7 @@ int cc_run_code(ccInstance * inst, long curpc) {
 	  dprintf(2, "calling obj func: %s with %d args\n", funcname, num_args_to_func);
 	  if(!strcmp("Character::Say^101", funcname) || !strcmp("Character::Think^101", funcname)) {
 		  dprintf(2, "sayorthink\n");
-		call_variadic_function_void_sayorthink(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
+		call_variadic_function_2args(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
 		inst->registers[SREG_AX] = 0;
 	  } else {
 		inst->registers[SREG_AX] = call_function(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
@@ -1870,10 +1943,33 @@ int cc_run_code(ccInstance * inst, long curpc) {
         else {
 		dprintf(2, "calling regular func: %s with %d args\n", funcname, num_args_to_func);
 		if(!strcmp("String::Format^101", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_long(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+			inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("StrFormat", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
 		} else if(!strcmp("RawPrint", funcname)) {
-			call_variadic_function_void_rawprint(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			inst->registers[SREG_AX] = 0;
+			inst->registers[SREG_AX] = call_variadic_function_3args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("Overlay::CreateTextual^106", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_6args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("Overlay::SetText^104", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("DrawingSurface::DrawString^104", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("AbortGame", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("CreateTextOverlay", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_6args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("SetTextOverlay", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_7args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("Display", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("DisplayAt", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_4args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("DisplaySpeech", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("DisplayThought", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
+		} else if(!strcmp("DisplayTopBar", funcname)) {
+			inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
 		} else {
 			inst->registers[SREG_AX] = call_function(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
 		}

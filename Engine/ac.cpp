@@ -937,7 +937,7 @@ void process_interface_click(int,int,int);
 long DisplayMessage (long);
 void do_conversation(int);
 void compile_room_script();
-int  CreateTextOverlay(int,int,int,int,int,char*,...);
+long  CreateTextOverlay(long,long,long,long,long,char*,...);
 long RemoveOverlay(long);
 void stopmusic();
 long play_flc_file(long,long);
@@ -10408,7 +10408,8 @@ void DrawingSurface_DrawTriangle(ScriptDrawingSurface *sds, int x1, int y1, int 
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawString(ScriptDrawingSurface *sds, int xx, int yy, int font, const char* texx, ...) {
+long DrawingSurface_DrawString(ScriptDrawingSurface *sds, long axx, long ayy, long font, const char* texx, ...) {
+	int xx = axx, yy = ayy;
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -13480,7 +13481,7 @@ long CreateGraphicOverlay(long axx,long ayy,long slott,long trans) {
 }
 
 int crovr_id=2;  // whether using SetTextOverlay or CreateTextOvelay
-int CreateTextOverlayCore(int xx, int yy, int wii, int fontid, int clr, const char *tex, int allowShrink) {
+long CreateTextOverlayCore(long xx, long yy, long wii, long fontid, long clr, const char *tex, long allowShrink) {
   if (wii<8) wii=scrnwid/2;
   if (xx<0) xx=scrnwid/2-wii/2;
   if (clr==0) clr=16;
@@ -13489,7 +13490,8 @@ int CreateTextOverlayCore(int xx, int yy, int wii, int fontid, int clr, const ch
   return _display_main(xx,yy,wii, (char*)tex, blcode,fontid,-clr, 0, allowShrink, false);
 }
 
-int CreateTextOverlay(int xx,int yy,int wii,int fontid,int clr,char*texx, ...) {
+long CreateTextOverlay(long axx,long ayy,long wii,long fontid,long clr,char*texx, ...) {
+	int xx = axx, yy = ayy;
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -13508,7 +13510,7 @@ int CreateTextOverlay(int xx,int yy,int wii,int fontid,int clr,char*texx, ...) {
   return CreateTextOverlayCore(xx, yy, wii, fontid, clr, displbuf, allowShrink);
 }
 
-void SetTextOverlay(int ovrid,int xx,int yy,int wii,int fontid,int clr,char*texx,...) {
+long SetTextOverlay(long ovrid,long xx,long yy,long wii,long fontid,long clr,char*texx,...) {
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -13520,7 +13522,7 @@ void SetTextOverlay(int ovrid,int xx,int yy,int wii,int fontid,int clr,char*texx
     quit("SetTextOverlay internal error: inconsistent type ids");
   }
 
-void Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int clr, char*texx, ...) {
+long Overlay_SetText(ScriptOverlay *scover, long wii, long fontid, long clr, char*texx, ...) {
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -13619,7 +13621,8 @@ ScriptOverlay* Overlay_CreateGraphical(int x, int y, int slot, int transparent) 
   return sco;
 }
 
-ScriptOverlay* Overlay_CreateTextual(int x, int y, int width, int font, int colour, const char* text, ...) {
+ScriptOverlay* Overlay_CreateTextual(long ax, long ay, long width, long font, long colour, const char* text, ...) {
+	int x = ax, y = ay;
   ScriptOverlay *sco = new ScriptOverlay();
 
   char displbuf[STD_BUFFER_SIZE];
@@ -13662,7 +13665,8 @@ int DisplaySpeechBackground(int charid,char*speel) {
   return ovrl;
 }
 
-void DisplayAt(int xxp,int yyp,int widd,char*texx, ...) {
+long DisplayAt(long x,long y,long widd,char*texx, ...) {
+	int xxp = x, yyp = y;
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -13675,7 +13679,7 @@ void DisplayAt(int xxp,int yyp,int widd,char*texx, ...) {
   if (widd<1) widd=scrnwid/2;
   if (xxp<0) xxp=scrnwid/2-widd/2;
   _display_at(xxp,yyp,widd,displbuf,1,0, 0, 0, false);
-  }
+}
 
 int play_speech(int charid,int sndid) {
   stop_and_destroy_channel (SCHAN_SPEECH);
@@ -14431,7 +14435,7 @@ void DisplayAtY (int ypos, char *texx) {
   }
 }
 
-void Display(char*texx, ...) {
+long Display(char*texx, ...) {
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -14457,7 +14461,7 @@ void _DisplaySpeechCore(int chid, char *displbuf) {
   DisplaySpeech(displbuf, chid);
 }
 
-void __sc_displayspeech(int chid,char*texx, ...) {
+long __sc_displayspeech(long chid,char*texx, ...) {
   if ((chid<0) || (chid>=game.numcharacters))
     quit("!DisplaySpeech: invalid character specified");
 
@@ -14471,7 +14475,7 @@ void __sc_displayspeech(int chid,char*texx, ...) {
 
 }
 
-void DisplayTopBar(int ypos, int ttexcol, int backcol, char *title, char*texx, ...) {
+long DisplayTopBar(long ypos, long ttexcol, long backcol, char *title, char*texx, ...) {
 
   strcpy(topBar.text, get_translation(title));
 
@@ -14533,7 +14537,7 @@ void _DisplayThoughtCore(int chid, const char *displbuf) {
   _displayspeech ((char*)displbuf, chid, xpp, ypp, width, 1);
 }
 
-void DisplayThought(int chid, const char*texx, ...) {
+long DisplayThought(long chid, const char*texx, ...) {
   if ((chid < 0) || (chid >= game.numcharacters))
     quit("!DisplayThought: invalid character specified");
 
@@ -14776,6 +14780,7 @@ long RawClear (long clr) {
   invalidate_screen();
   mark_current_background_dirty();
 }
+
 long RawSetColor (long clr) {
   push_screen();
   wsetscreen(thisroom.ebscene[play.bg_frame]);
@@ -14783,6 +14788,7 @@ long RawSetColor (long clr) {
   play.raw_color = get_col8_lookup(clr);
   pop_screen();
 }
+
 long RawSetColorRGB(long red,long grn,long blu) {
   if ((red < 0) || (red > 255) || (grn < 0) || (grn > 255) ||
       (blu < 0) || (blu > 255))
@@ -14790,7 +14796,9 @@ long RawSetColorRGB(long red,long grn,long blu) {
 
   play.raw_color = makecol_depth(bitmap_color_depth(thisroom.ebscene[play.bg_frame]), red, grn, blu);
 }
-void RawPrint (int xx, int yy, char*texx, ...) {
+
+long RawPrint (long x, long y, char*texx, ...) {
+	int xx = x, yy = y;
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -14812,6 +14820,7 @@ void RawPrint (int xx, int yy, char*texx, ...) {
   mark_current_background_dirty();
   RAW_END();
 }
+
 long RawPrintMessageWrapped (long axx,long ayy,long wid,long font,long msgm) {
 	int xx = axx, yy = ayy;
   char displbuf[3000];
@@ -21410,7 +21419,7 @@ int _sc_stricmp (char *s1, char *s2) {
   return stricmp (get_translation (s1), get_translation(s2));
 }*/
 
-void _sc_AbortGame(char*texx, ...) {
+long _sc_AbortGame(char*texx, ...) {
   char displbuf[STD_BUFFER_SIZE] = "!?";
   va_list ap;
   va_start(ap,texx);
@@ -21420,7 +21429,7 @@ void _sc_AbortGame(char*texx, ...) {
   quit(displbuf);
 }
 
-void _sc_sprintf(char*destt,char*texx, ...) {
+long _sc_sprintf(char*destt, char*texx, ...) {
   char displbuf[STD_BUFFER_SIZE];
   VALIDATE_STRING(destt);
   check_strlen(destt);
