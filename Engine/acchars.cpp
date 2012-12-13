@@ -476,7 +476,7 @@ long FaceCharacter(long cha,long toface) {
 // **** CHARACTER: FUNCTIONS ****
 
 
-void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addIndex) {
+long Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi,long addIndex) {
   int ee;
 
   if (invi == NULL)
@@ -525,7 +525,7 @@ void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addInd
 
 }
 
-void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
+long Character_AddWaypoint(CharacterInfo *chaa,long x,long y) {
 
   if (chaa->room != displayed_room)
     quit("!MoveCharacterPath: specified character not in current room");
@@ -550,7 +550,7 @@ void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
 
 }
 
-void Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat, int blocking, int direction) {
+long Character_Animate(CharacterInfo *chaa,long loop,long delay,long repeat,long blocking,long direction) {
 
   if (direction == FORWARDS)
     direction = 0;
@@ -567,7 +567,7 @@ void Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat, int
     quit("!Character.Animate: Invalid BLOCKING parameter");
 }
 
-void Character_ChangeRoomAutoPosition(CharacterInfo *chaa, int room, int newPos) {
+long Character_ChangeRoomAutoPosition(CharacterInfo *chaa,long room,long newPos) {
   if (chaa->index_id != game.playercharacter) 
   {
     quit("!Character.ChangeRoomAutoPosition can only be used with the player character.");
@@ -594,7 +594,7 @@ void Character_ChangeRoomAutoPosition(CharacterInfo *chaa, int room, int newPos)
   NewRoom(room);
 }
 
-void Character_ChangeRoom(CharacterInfo *chaa, int room, int x, int y) {
+long Character_ChangeRoom(CharacterInfo *chaa,long room,long x,long y) {
 
   if (chaa->index_id != game.playercharacter) {
     // NewRoomNPC
@@ -653,7 +653,7 @@ void FindReasonableLoopForCharacter(CharacterInfo *chap) {
 
 }
 
-void Character_ChangeView(CharacterInfo *chap, int vii) {
+long Character_ChangeView(CharacterInfo *chap,long vii) {
   vii--;
 
   if ((vii < 0) || (vii >= game.numviews))
@@ -674,7 +674,7 @@ void Character_ChangeView(CharacterInfo *chap, int vii) {
   FindReasonableLoopForCharacter(chap);
 }
 
-void Character_FaceCharacter(CharacterInfo *char1, CharacterInfo *char2, int blockingStyle) {
+long Character_FaceCharacter(CharacterInfo *char1, CharacterInfo *char2,long blockingStyle) {
   if (char2 == NULL) 
     quit("!FaceCharacter: invalid character specified");
   
@@ -684,7 +684,7 @@ void Character_FaceCharacter(CharacterInfo *char1, CharacterInfo *char2, int blo
   Character_FaceLocation(char1, char2->x, char2->y, blockingStyle);
 }
 
-void Character_FaceLocation(CharacterInfo *char1, int xx, int yy, int blockingStyle) {
+long Character_FaceLocation(CharacterInfo *char1,long xx,long yy,long blockingStyle) {
   DEBUG_CONSOLE("%s: Face location %d,%d", char1->scrname, xx, yy);
 
   int diffrx = xx - char1->x;
@@ -783,7 +783,7 @@ void Character_FaceLocation(CharacterInfo *char1, int xx, int yy, int blockingSt
   char1->frame=0;
 }
 
-void Character_FaceObject(CharacterInfo *char1, ScriptObject *obj, int blockingStyle) {
+long Character_FaceObject(CharacterInfo *char1, ScriptObject *obj,long blockingStyle) {
   if (obj == NULL) 
     quit("!FaceObject: invalid object specified");
   
@@ -791,7 +791,7 @@ void Character_FaceObject(CharacterInfo *char1, ScriptObject *obj, int blockingS
   Character_FaceLocation(char1, objs[obj->id].x, objs[obj->id].y, blockingStyle);
 }
 
-void Character_FollowCharacter(CharacterInfo *chaa, CharacterInfo *tofollow, int distaway, int eagerness) {
+long Character_FollowCharacter(CharacterInfo *chaa, CharacterInfo *tofollow,long distaway,long eagerness) {
 
   if ((eagerness < 0) || (eagerness > 250))
     quit("!FollowCharacterEx: invalid eagerness: must be 0-250");
@@ -835,7 +835,7 @@ void Character_FollowCharacter(CharacterInfo *chaa, CharacterInfo *tofollow, int
 
 }
 
-int Character_IsCollidingWithChar(CharacterInfo *char1, CharacterInfo *char2) {
+long Character_IsCollidingWithChar(CharacterInfo *char1, CharacterInfo *char2) {
   if (char2 == NULL)
     quit("!AreCharactersColliding: invalid char2");
 
@@ -854,7 +854,7 @@ int Character_IsCollidingWithChar(CharacterInfo *char1, CharacterInfo *char2) {
   return 0;
 }
 
-int Character_IsCollidingWithObject(CharacterInfo *chin, ScriptObject *objid) {
+long Character_IsCollidingWithObject(CharacterInfo *chin, ScriptObject *objid) {
   if (objid == NULL)
     quit("!AreCharObjColliding: invalid object number");
 
@@ -905,7 +905,7 @@ int Character_IsCollidingWithObject(CharacterInfo *chin, ScriptObject *objid) {
   return 0;
 }
 
-void Character_LockView(CharacterInfo *chap, int vii) {
+long Character_LockView(CharacterInfo *chap,long vii) {
 
   if ((vii < 1) || (vii > game.numviews)) {
     char buffer[150];
@@ -931,7 +931,7 @@ void Character_LockView(CharacterInfo *chap, int vii) {
 }
 
 
-void Character_LockViewAligned(CharacterInfo *chap, int vii, int loop, int align) {
+long Character_LockViewAligned(CharacterInfo *chap,long vii,long loop,long align) {
   if (chap->view < 0)
     quit("!SetCharacterLoop: character has invalid old view number");
 
@@ -962,7 +962,7 @@ void Character_LockViewAligned(CharacterInfo *chap, int vii, int loop, int align
   chap->pic_yoffs = 0;
 }
 
-void Character_LockViewFrame(CharacterInfo *chaa, int view, int loop, int frame) {
+long Character_LockViewFrame(CharacterInfo *chaa,long view,long loop,long frame) {
 
   Character_LockView(chaa, view);
   
@@ -976,7 +976,7 @@ void Character_LockViewFrame(CharacterInfo *chaa, int view, int loop, int frame)
   chaa->frame = frame;
 }
 
-void Character_LockViewOffset(CharacterInfo *chap, int vii, int xoffs, int yoffs) {
+long Character_LockViewOffset(CharacterInfo *chap,long vii,long xoffs,long yoffs) {
   Character_LockView(chap, vii);
 
   if ((current_screen_resolution_multiplier == 1) && (game.default_resolution >= 3)) {
@@ -994,7 +994,7 @@ void Character_LockViewOffset(CharacterInfo *chap, int vii, int xoffs, int yoffs
   chap->pic_yoffs = yoffs;
 }
 
-void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
+long Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
 
   if (invi == NULL)
     quit("!LoseInventoryFromCharacter: invalid invnetory number");
@@ -1029,14 +1029,14 @@ void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
     run_on_event (GE_LOSE_INV, inum);
 }
 
-void Character_PlaceOnWalkableArea(CharacterInfo *chap) {
+long Character_PlaceOnWalkableArea(CharacterInfo *chap) {
   if (displayed_room < 0)
     quit("!Character.PlaceOnWalkableArea: no room is currently loaded");
 
   find_nearest_walkable_area(&chap->x, &chap->y);
 }
 
-void Character_RemoveTint(CharacterInfo *chaa) {
+long Character_RemoveTint(CharacterInfo *chaa) {
   
   if (chaa->flags & CHF_HASTINT) {
     DEBUG_CONSOLE("Un-tint %s", chaa->scrname);
@@ -1047,7 +1047,7 @@ void Character_RemoveTint(CharacterInfo *chaa) {
   }
 }
 
-int Character_GetHasExplicitTint(CharacterInfo *chaa) {
+long Character_GetHasExplicitTint(CharacterInfo *chaa) {
   
   if (chaa->flags & CHF_HASTINT)
     return 1;
@@ -1067,7 +1067,7 @@ long Character_Say(CharacterInfo *chaa, const char *texx, ...) {
 
 }
 
-void Character_SayAt(CharacterInfo *chaa, int x, int y, int width, const char *texx) {
+long Character_SayAt(CharacterInfo *chaa,long x,long y,long width, const char *texx) {
 
   DisplaySpeechAt(x, y, width, chaa->index_id, (char*)texx);
 }
@@ -1091,7 +1091,7 @@ ScriptOverlay* Character_SayBackground(CharacterInfo *chaa, const char *texx) {
   return scOver;
 }
 
-void Character_SetAsPlayer(CharacterInfo *chaa) {
+long Character_SetAsPlayer(CharacterInfo *chaa) {
 
     // set to same character, so ignore
   if (game.playercharacter == chaa->index_id)
@@ -1132,7 +1132,7 @@ void Character_SetAsPlayer(CharacterInfo *chaa) {
 }
 
 
-void Character_SetIdleView(CharacterInfo *chaa, int iview, int itime) {
+long Character_SetIdleView(CharacterInfo *chaa,long iview,long itime) {
 
   if (iview == 1) 
     quit("!SetCharacterIdle: view 1 cannot be used as an idle view, sorry.");
@@ -1168,7 +1168,7 @@ void Character_SetIdleView(CharacterInfo *chaa, int iview, int itime) {
 
 }
 
-void Character_SetOption(CharacterInfo *chaa, int flag, int yesorno) {
+long Character_SetOption(CharacterInfo *chaa,long flag,long yesorno) {
 
   if ((yesorno < 0) || (yesorno > 1))
     quit("!SetCharacterProperty: last parameter must be 0 or 1");
@@ -1185,7 +1185,7 @@ void Character_SetOption(CharacterInfo *chaa, int flag, int yesorno) {
 
 }
 
-void Character_SetSpeed(CharacterInfo *chaa, int xspeed, int yspeed) {
+long Character_SetSpeed(CharacterInfo *chaa,long xspeed,long yspeed) {
 
   if ((xspeed == 0) || (xspeed > 50) || (yspeed == 0) || (yspeed > 50))
     quit("!SetCharacterSpeedEx: invalid speed value");
@@ -1201,7 +1201,7 @@ void Character_SetSpeed(CharacterInfo *chaa, int xspeed, int yspeed) {
 }
 
 
-void Character_StopMoving(CharacterInfo *charp) {
+long Character_StopMoving(CharacterInfo *charp) {
 
   int chaa = charp->index_id;
   if (chaa == play.skip_until_char_stops)
@@ -1231,7 +1231,7 @@ void Character_StopMoving(CharacterInfo *charp) {
   }
 }
 
-void Character_Tint(CharacterInfo *chaa, int red, int green, int blue, int opacity, int luminance) {
+long Character_Tint(CharacterInfo *chaa,long red,long green,long blue,long opacity,long luminance) {
   if ((red < 0) || (green < 0) || (blue < 0) ||
       (red > 255) || (green > 255) || (blue > 255) ||
       (opacity < 0) || (opacity > 100) ||
@@ -1259,7 +1259,7 @@ long Character_Think(CharacterInfo *chaa, const char *texx, ...) {
   _DisplayThoughtCore(chaa->index_id, displbuf);
 }
 
-void Character_UnlockView(CharacterInfo *chaa) {
+long Character_UnlockView(CharacterInfo *chaa) {
   if (chaa->flags & CHF_FIXVIEW) {
     DEBUG_CONSOLE("%s: Released view back to default", chaa->scrname);
   }
@@ -1301,15 +1301,15 @@ void walk_or_move_character(CharacterInfo *chaa, int x, int y, int blocking, int
 
 }
 
-void Character_Walk(CharacterInfo *chaa, int x, int y, int blocking, int direct) {
+long Character_Walk(CharacterInfo *chaa,long x,long y,long blocking,long direct) {
   walk_or_move_character(chaa, x, y, blocking, direct, true);
 }
 
-void Character_Move(CharacterInfo *chaa, int x, int y, int blocking, int direct) {
+long Character_Move(CharacterInfo *chaa,long x,long y,long blocking,long direct) {
   walk_or_move_character(chaa, x, y, blocking, direct, false);
 }
 
-void Character_WalkStraight(CharacterInfo *chaa, int xx, int yy, int blocking) {
+long Character_WalkStraight(CharacterInfo *chaa,long xx,long yy,long blocking) {
 
   if (chaa->room != displayed_room)
     quit("!MoveCharacterStraight: specified character not in current room");
@@ -1350,7 +1350,7 @@ ScriptInvItem* Character_GetActiveInventory(CharacterInfo *chaa) {
   return &scrInv[chaa->activeinv];
 }
 
-void Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem* iit) {
+long Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem* iit) {
   guis_need_update = 1;
 
   if (iit == NULL) {
@@ -1376,22 +1376,22 @@ void Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem* iit) {
   }
 }
 
-int Character_GetAnimating(CharacterInfo *chaa) {
+long Character_GetAnimating(CharacterInfo *chaa) {
   if (chaa->animating)
     return 1;
   return 0;
 }
 
-int Character_GetAnimationSpeed(CharacterInfo *chaa) {
+long Character_GetAnimationSpeed(CharacterInfo *chaa) {
   return chaa->animspeed;
 }
 
-void Character_SetAnimationSpeed(CharacterInfo *chaa, int newval) {
+long Character_SetAnimationSpeed(CharacterInfo *chaa,long newval) {
 
   chaa->animspeed = newval;
 }
 
-int Character_GetBaseline(CharacterInfo *chaa) {
+long Character_GetBaseline(CharacterInfo *chaa) {
 
   if (chaa->baseline < 1)
     return 0;
@@ -1399,17 +1399,17 @@ int Character_GetBaseline(CharacterInfo *chaa) {
   return chaa->baseline;
 }
 
-void Character_SetBaseline(CharacterInfo *chaa, int basel) {
+long Character_SetBaseline(CharacterInfo *chaa,long basel) {
 
   chaa->baseline = basel;
 }
 
-int Character_GetBlinkInterval(CharacterInfo *chaa) {
+long Character_GetBlinkInterval(CharacterInfo *chaa) {
 
   return chaa->blinkinterval;
 }
 
-void Character_SetBlinkInterval(CharacterInfo *chaa, int interval) {
+long Character_SetBlinkInterval(CharacterInfo *chaa,long interval) {
 
   if (interval < 0)
     quit("!SetCharacterBlinkView: invalid blink interval");
@@ -1420,12 +1420,12 @@ void Character_SetBlinkInterval(CharacterInfo *chaa, int interval) {
     chaa->blinktimer = chaa->blinkinterval;
 }
 
-int Character_GetBlinkView(CharacterInfo *chaa) {
+long Character_GetBlinkView(CharacterInfo *chaa) {
 
   return chaa->blinkview + 1;
 }
 
-void Character_SetBlinkView(CharacterInfo *chaa, int vii) {
+long Character_SetBlinkView(CharacterInfo *chaa,long vii) {
   
   if (((vii < 2) || (vii > game.numviews)) && (vii != -1))
     quit("!SetCharacterBlinkView: invalid view number");
@@ -1433,60 +1433,60 @@ void Character_SetBlinkView(CharacterInfo *chaa, int vii) {
   chaa->blinkview = vii - 1;
 }
 
-int Character_GetBlinkWhileThinking(CharacterInfo *chaa) {
+long Character_GetBlinkWhileThinking(CharacterInfo *chaa) {
   if (chaa->flags & CHF_NOBLINKANDTHINK)
     return 0;
   return 1;
 }
 
-void Character_SetBlinkWhileThinking(CharacterInfo *chaa, int yesOrNo) {
+long Character_SetBlinkWhileThinking(CharacterInfo *chaa,long yesOrNo) {
   chaa->flags &= ~CHF_NOBLINKANDTHINK;
   if (yesOrNo == 0)
     chaa->flags |= CHF_NOBLINKANDTHINK;
 }
 
-int Character_GetBlockingHeight(CharacterInfo *chaa) {
+long Character_GetBlockingHeight(CharacterInfo *chaa) {
 
   return chaa->blocking_height;
 }
 
-void Character_SetBlockingHeight(CharacterInfo *chaa, int hit) {
+long Character_SetBlockingHeight(CharacterInfo *chaa,long hit) {
 
   chaa->blocking_height = hit;
 }
 
-int Character_GetBlockingWidth(CharacterInfo *chaa) {
+long Character_GetBlockingWidth(CharacterInfo *chaa) {
 
   return chaa->blocking_width;
 }
 
-void Character_SetBlockingWidth(CharacterInfo *chaa, int wid) {
+long Character_SetBlockingWidth(CharacterInfo *chaa,long wid) {
 
   chaa->blocking_width = wid;
 }
 
-int Character_GetDiagonalWalking(CharacterInfo *chaa) {
+long Character_GetDiagonalWalking(CharacterInfo *chaa) {
 
   if (chaa->flags & CHF_NODIAGONAL)
     return 0;
   return 1;  
 }
 
-void Character_SetDiagonalWalking(CharacterInfo *chaa, int yesorno) {
+long Character_SetDiagonalWalking(CharacterInfo *chaa,long yesorno) {
 
   chaa->flags &= ~CHF_NODIAGONAL;
   if (!yesorno)
     chaa->flags |= CHF_NODIAGONAL;
 }
 
-int Character_GetClickable(CharacterInfo *chaa) {
+long Character_GetClickable(CharacterInfo *chaa) {
   
   if (chaa->flags & CHF_NOINTERACT)
     return 0;
   return 1;
 }
 
-void Character_SetClickable(CharacterInfo *chaa, int clik) {
+long Character_SetClickable(CharacterInfo *chaa,long clik) {
   
   chaa->flags &= ~CHF_NOINTERACT;
   // if they don't want it clickable, set the relevant bit
@@ -1494,21 +1494,21 @@ void Character_SetClickable(CharacterInfo *chaa, int clik) {
     chaa->flags |= CHF_NOINTERACT;
 }
 
-int Character_GetID(CharacterInfo *chaa) {
+long Character_GetID(CharacterInfo *chaa) {
 
   return chaa->index_id;
 
 }
 
-int Character_GetFrame(CharacterInfo *chaa) {
+long Character_GetFrame(CharacterInfo *chaa) {
   return chaa->frame;
 }
 
-void Character_SetFrame(CharacterInfo *chaa, int newval) {
+long Character_SetFrame(CharacterInfo *chaa,long newval) {
   chaa->frame = newval;
 }
 
-int Character_GetIdleView(CharacterInfo *chaa) {
+long Character_GetIdleView(CharacterInfo *chaa) {
 
   if (chaa->idleview < 1)
     return -1;
@@ -1516,21 +1516,21 @@ int Character_GetIdleView(CharacterInfo *chaa) {
   return chaa->idleview + 1;
 }
 
-int Character_GetIInventoryQuantity(CharacterInfo *chaa, int index) {
+long Character_GetIInventoryQuantity(CharacterInfo *chaa,long index) {
   if ((index < 1) || (index >= game.numinvitems))
     quitprintf("!Character.InventoryQuantity: invalid inventory index %d", index);
 
   return chaa->inv[index];
 }
 
-int Character_HasInventory(CharacterInfo *chaa, ScriptInvItem *invi) {
+long Character_HasInventory(CharacterInfo *chaa, ScriptInvItem *invi) {
   if (invi == NULL)
     quit("!Character.HasInventory: NULL inventory item supplied");
 
   return (chaa->inv[invi->id] > 0) ? 1 : 0;
 }
 
-void Character_SetIInventoryQuantity(CharacterInfo *chaa, int index, int quant) {
+long Character_SetIInventoryQuantity(CharacterInfo *chaa,long index,long quant) {
   if ((index < 1) || (index >= game.numinvitems))
     quitprintf("!Character.InventoryQuantity: invalid inventory index %d", index);
 
@@ -1540,28 +1540,28 @@ void Character_SetIInventoryQuantity(CharacterInfo *chaa, int index, int quant) 
   chaa->inv[index] = quant;
 }
 
-int Character_GetIgnoreLighting(CharacterInfo *chaa) {
+long Character_GetIgnoreLighting(CharacterInfo *chaa) {
   
   if (chaa->flags & CHF_NOLIGHTING)
     return 1;
   return 0;
 }
 
-void Character_SetIgnoreLighting(CharacterInfo *chaa, int yesorno) {
+long Character_SetIgnoreLighting(CharacterInfo *chaa,long yesorno) {
   
   chaa->flags &= ~CHF_NOLIGHTING;
   if (yesorno)
     chaa->flags |= CHF_NOLIGHTING;
 }
 
-int Character_GetIgnoreScaling(CharacterInfo *chaa) {
+long Character_GetIgnoreScaling(CharacterInfo *chaa) {
 
   if (chaa->flags & CHF_MANUALSCALING)
     return 1;
   return 0;  
 }
 
-void Character_SetIgnoreScaling(CharacterInfo *chaa, int yesorno) {
+long Character_SetIgnoreScaling(CharacterInfo *chaa,long yesorno) {
 
   if (yesorno) {
     // when setting IgnoreScaling to 1, should reset zoom level
@@ -1571,46 +1571,46 @@ void Character_SetIgnoreScaling(CharacterInfo *chaa, int yesorno) {
   Character_SetManualScaling(chaa, yesorno);
 }
 
-void Character_SetManualScaling(CharacterInfo *chaa, int yesorno) {
+long Character_SetManualScaling(CharacterInfo *chaa,long yesorno) {
 
   chaa->flags &= ~CHF_MANUALSCALING;
   if (yesorno)
     chaa->flags |= CHF_MANUALSCALING;
 }
 
-int Character_GetIgnoreWalkbehinds(CharacterInfo *chaa) {
+long Character_GetIgnoreWalkbehinds(CharacterInfo *chaa) {
   
   if (chaa->flags & CHF_NOWALKBEHINDS)
     return 1;
   return 0;
 }
 
-void Character_SetIgnoreWalkbehinds(CharacterInfo *chaa, int yesorno) {
+long Character_SetIgnoreWalkbehinds(CharacterInfo *chaa,long yesorno) {
   
   chaa->flags &= ~CHF_NOWALKBEHINDS;
   if (yesorno)
     chaa->flags |= CHF_NOWALKBEHINDS;
 }
 
-int Character_GetMovementLinkedToAnimation(CharacterInfo *chaa) {
+long Character_GetMovementLinkedToAnimation(CharacterInfo *chaa) {
   
   if (chaa->flags & CHF_ANTIGLIDE)
     return 1;
   return 0;
 }
 
-void Character_SetMovementLinkedToAnimation(CharacterInfo *chaa, int yesorno) {
+long Character_SetMovementLinkedToAnimation(CharacterInfo *chaa,long yesorno) {
   
   chaa->flags &= ~CHF_ANTIGLIDE;
   if (yesorno)
     chaa->flags |= CHF_ANTIGLIDE;
 }
 
-int Character_GetLoop(CharacterInfo *chaa) {
+long Character_GetLoop(CharacterInfo *chaa) {
   return chaa->loop;
 }
 
-void Character_SetLoop(CharacterInfo *chaa, int newval) {
+long Character_SetLoop(CharacterInfo *chaa,long newval) {
   if ((newval < 0) || (newval >= views[chaa->view].numLoops))
     quit("!Character.Loop: invalid loop number for this view");
 
@@ -1620,7 +1620,7 @@ void Character_SetLoop(CharacterInfo *chaa, int newval) {
     chaa->frame = 0;
 }
 
-int Character_GetMoving(CharacterInfo *chaa) {
+long Character_GetMoving(CharacterInfo *chaa) {
   if (chaa->walking)
     return 1;
   return 0;
@@ -1630,32 +1630,32 @@ const char* Character_GetName(CharacterInfo *chaa) {
   return CreateNewScriptString(chaa->name);
 }
 
-void Character_SetName(CharacterInfo *chaa, const char *newName) {
+long Character_SetName(CharacterInfo *chaa, const char *newName) {
   strncpy(chaa->name, newName, 40);
   chaa->name[39] = 0;
 }
 
-int Character_GetNormalView(CharacterInfo *chaa) {
+long Character_GetNormalView(CharacterInfo *chaa) {
   return chaa->defview + 1;
 }
 
-int Character_GetPreviousRoom(CharacterInfo *chaa) {
+long Character_GetPreviousRoom(CharacterInfo *chaa) {
   return chaa->prevroom;
 }
 
-int Character_GetRoom(CharacterInfo *chaa) {
+long Character_GetRoom(CharacterInfo *chaa) {
   return chaa->room;
 }
 
 
-int Character_GetScaleMoveSpeed(CharacterInfo *chaa) {
+long Character_GetScaleMoveSpeed(CharacterInfo *chaa) {
 
   if (chaa->flags & CHF_SCALEMOVESPEED)
     return 1;
   return 0;  
 }
 
-void Character_SetScaleMoveSpeed(CharacterInfo *chaa, int yesorno) {
+long Character_SetScaleMoveSpeed(CharacterInfo *chaa,long yesorno) {
 
   if ((yesorno < 0) || (yesorno > 1))
     quit("Character.ScaleMoveSpeed: value must be true or false (1 or 0)");
@@ -1665,14 +1665,14 @@ void Character_SetScaleMoveSpeed(CharacterInfo *chaa, int yesorno) {
     chaa->flags |= CHF_SCALEMOVESPEED;
 }
 
-int Character_GetScaleVolume(CharacterInfo *chaa) {
+long Character_GetScaleVolume(CharacterInfo *chaa) {
 
   if (chaa->flags & CHF_SCALEVOLUME)
     return 1;
   return 0;  
 }
 
-void Character_SetScaleVolume(CharacterInfo *chaa, int yesorno) {
+long Character_SetScaleVolume(CharacterInfo *chaa,long yesorno) {
 
   if ((yesorno < 0) || (yesorno > 1))
     quit("Character.ScaleVolume: value must be true or false (1 or 0)");
@@ -1682,11 +1682,11 @@ void Character_SetScaleVolume(CharacterInfo *chaa, int yesorno) {
     chaa->flags |= CHF_SCALEVOLUME;
 }
 
-int Character_GetScaling(CharacterInfo *chaa) {
+long Character_GetScaling(CharacterInfo *chaa) {
   return charextra[chaa->index_id].zoom;
 }
 
-void Character_SetScaling(CharacterInfo *chaa, int zoomlevel) {
+long Character_SetScaling(CharacterInfo *chaa,long zoomlevel) {
 
   if ((chaa->flags & CHF_MANUALSCALING) == 0)
     quit("!Character.Scaling: cannot set property unless ManualScaling is enabled");
@@ -1696,38 +1696,38 @@ void Character_SetScaling(CharacterInfo *chaa, int zoomlevel) {
   charextra[chaa->index_id].zoom = zoomlevel;
 }
 
-int Character_GetSolid(CharacterInfo *chaa) {
+long Character_GetSolid(CharacterInfo *chaa) {
 
   if (chaa->flags & CHF_NOBLOCKING)
     return 0;
   return 1;
 }
 
-void Character_SetSolid(CharacterInfo *chaa, int yesorno) {
+long Character_SetSolid(CharacterInfo *chaa,long yesorno) {
 
   chaa->flags &= ~CHF_NOBLOCKING;
   if (!yesorno)
     chaa->flags |= CHF_NOBLOCKING;
 }
 
-int Character_GetSpeaking(CharacterInfo *chaa) {
+long Character_GetSpeaking(CharacterInfo *chaa) {
   if (get_character_currently_talking() == chaa->index_id)
     return 1;
 
   return 0;
 }
 
-int Character_GetSpeechColor(CharacterInfo *chaa) {
+long Character_GetSpeechColor(CharacterInfo *chaa) {
   
   return chaa->talkcolor;
 }
 
-void Character_SetSpeechColor(CharacterInfo *chaa, int ncol) {
+long Character_SetSpeechColor(CharacterInfo *chaa,long ncol) {
   
   chaa->talkcolor = ncol;
 }
 
-int GetCharacterSpeechAnimationDelay(CharacterInfo *cha) {
+long GetCharacterSpeechAnimationDelay(CharacterInfo *cha) {
   if (game.options[OPT_OLDTALKANIMSPD])
   {
     // The talkanim property only applies to Lucasarts style speech.
@@ -1741,19 +1741,19 @@ int GetCharacterSpeechAnimationDelay(CharacterInfo *cha) {
     return cha->speech_anim_speed;
 }
 
-void Character_SetSpeechAnimationDelay(CharacterInfo *chaa, int newDelay) {
+long Character_SetSpeechAnimationDelay(CharacterInfo *chaa,long newDelay) {
   if (game.options[OPT_OLDTALKANIMSPD])
     quit("!Character.SpeechAnimationDelay cannot be set when legacy speech animation speed is enabled");
   
   chaa->speech_anim_speed = newDelay;
 }
 
-int Character_GetSpeechView(CharacterInfo *chaa) {
+long Character_GetSpeechView(CharacterInfo *chaa) {
   
   return chaa->talkview + 1;
 }
 
-void Character_SetSpeechView(CharacterInfo *chaa, int vii) {
+long Character_SetSpeechView(CharacterInfo *chaa,long vii) {
   if (vii == -1) {
     chaa->talkview = -1;
     return;
@@ -1765,19 +1765,19 @@ void Character_SetSpeechView(CharacterInfo *chaa, int vii) {
   chaa->talkview = vii - 1;
 }
 
-int Character_GetThinkView(CharacterInfo *chaa) {
+long Character_GetThinkView(CharacterInfo *chaa) {
   
   return chaa->thinkview + 1;
 }
 
-void Character_SetThinkView(CharacterInfo *chaa, int vii) {
+long Character_SetThinkView(CharacterInfo *chaa,long vii) {
   if (((vii < 2) || (vii > game.numviews)) && (vii != -1))
     quit("!SetCharacterThinkView: invalid view number");
   
   chaa->thinkview = vii - 1;
 }
 
-int Character_GetTransparency(CharacterInfo *chaa) {
+long Character_GetTransparency(CharacterInfo *chaa) {
   
   if (chaa->transparency == 0)
     return 0;
@@ -1787,7 +1787,7 @@ int Character_GetTransparency(CharacterInfo *chaa) {
   return 100 - ((chaa->transparency * 10) / 25);
 }
 
-void Character_SetTransparency(CharacterInfo *chaa, int trans) {
+long Character_SetTransparency(CharacterInfo *chaa,long trans) {
   
   if ((trans < 0) || (trans > 100))
     quit("!SetCharTransparent: transparency value must be between 0 and 100");
@@ -1800,56 +1800,56 @@ void Character_SetTransparency(CharacterInfo *chaa, int trans) {
     chaa->transparency = ((100-trans) * 25) / 10;
 }
 
-int Character_GetTurnBeforeWalking(CharacterInfo *chaa) {
+long Character_GetTurnBeforeWalking(CharacterInfo *chaa) {
 
   if (chaa->flags & CHF_NOTURNING)
     return 0;
   return 1;  
 }
 
-void Character_SetTurnBeforeWalking(CharacterInfo *chaa, int yesorno) {
+long Character_SetTurnBeforeWalking(CharacterInfo *chaa,long yesorno) {
 
   chaa->flags &= ~CHF_NOTURNING;
   if (!yesorno)
     chaa->flags |= CHF_NOTURNING;
 }
 
-int Character_GetView(CharacterInfo *chaa) {
+long Character_GetView(CharacterInfo *chaa) {
   return chaa->view + 1;
 }
 
-int Character_GetWalkSpeedX(CharacterInfo *chaa) {
+long Character_GetWalkSpeedX(CharacterInfo *chaa) {
   return chaa->walkspeed;
 }
 
-int Character_GetWalkSpeedY(CharacterInfo *chaa) {
+long Character_GetWalkSpeedY(CharacterInfo *chaa) {
   if (chaa->walkspeed_y != UNIFORM_WALK_SPEED)
     return chaa->walkspeed_y;
 
   return chaa->walkspeed;
 }
 
-int Character_GetX(CharacterInfo *chaa) {
+long Character_GetX(CharacterInfo *chaa) {
   return chaa->x;
 }
 
-void Character_SetX(CharacterInfo *chaa, int newval) {
+long Character_SetX(CharacterInfo *chaa,long newval) {
   chaa->x = newval;
 }
 
-int Character_GetY(CharacterInfo *chaa) {
+long Character_GetY(CharacterInfo *chaa) {
   return chaa->y;
 }
 
-void Character_SetY(CharacterInfo *chaa, int newval) {
+long Character_SetY(CharacterInfo *chaa,long newval) {
   chaa->y = newval;
 }
 
-int Character_GetZ(CharacterInfo *chaa) {
+long Character_GetZ(CharacterInfo *chaa) {
   return chaa->z;
 }
 
-void Character_SetZ(CharacterInfo *chaa, int newval) {
+long Character_SetZ(CharacterInfo *chaa,long newval) {
   chaa->z = newval;
 }
 

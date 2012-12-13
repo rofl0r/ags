@@ -121,7 +121,7 @@ const char* String_Append(const char *thisString, const char *extrabit) {
 	return CreateNewScriptString(buffer, false);
 }
 
-const char* String_AppendChar(const char *thisString, char extraOne) {
+const char* String_AppendChar(const char *thisString,long extraOne) {
 	size_t l = thisString? strlen(thisString) : 0;
 	char *buffer = (char*)malloc(l + 2);
 	if(buffer) {

@@ -2271,7 +2271,7 @@ long IsTranslationAvailable () {
   return 0;
 }
 
-int GetTranslationName (char* buffer) {
+long GetTranslationName (char* buffer) {
   VALIDATE_STRING (buffer);
   const char *copyFrom = transFileName;
 
@@ -2298,7 +2298,7 @@ const char* Game_GetTranslationFilename() {
   return CreateNewScriptString(buffer);
 }
 
-int Game_ChangeTranslation(const char *newFilename) {
+long Game_ChangeTranslation(const char *newFilename) {
   if ((newFilename == NULL) || (newFilename[0] == 0))
   {
     close_translation();
@@ -2873,7 +2873,7 @@ long SetObjectTint(long obj,long red,long green,long blue,long opacity,long lumi
   objs[obj].flags |= OBJF_HASTINT;
 }
 
-void Object_Tint(ScriptObject *objj, int red, int green, int blue, int saturation, int luminance) {
+long Object_Tint(ScriptObject *objj,long red,long green,long blue,long saturation,long luminance) {
   SetObjectTint(objj->id, red, green, blue, saturation, luminance);
 }
 
@@ -2890,7 +2890,7 @@ long RemoveObjectTint(long obj) {
   }
 }
 
-void Object_RemoveTint(ScriptObject *objj) {
+long Object_RemoveTint(ScriptObject *objj) {
   RemoveObjectTint(objj->id);
 }
 
@@ -3092,7 +3092,7 @@ long DeleteSaveSlot (long slnum) {
   }
 }
 
-int Game_SetSaveGameDirectory(const char *newFolder) {
+long Game_SetSaveGameDirectory(const char *newFolder) {
 
   // don't allow them to go to another folder
   if ((newFolder[0] == '/') || (newFolder[0] == '\\') ||
@@ -3144,7 +3144,7 @@ int Game_SetSaveGameDirectory(const char *newFolder) {
   return 1;
 }
 
-int GetSaveSlotDescription(int slnum,char*desbuf) {
+long GetSaveSlotDescription(long slnum,char*desbuf) {
   VALIDATE_STRING(desbuf);
   if (load_game(slnum, desbuf, NULL) == 0)
     return 1;
@@ -3152,7 +3152,7 @@ int GetSaveSlotDescription(int slnum,char*desbuf) {
   return 0;
 }
 
-const char* Game_GetSaveSlotDescription(int slnum) {
+const char* Game_GetSaveSlotDescription(long slnum) {
   char buffer[STD_BUFFER_SIZE];
   if (load_game(slnum, buffer, NULL) == 0)
     return CreateNewScriptString(buffer);
@@ -3201,7 +3201,7 @@ void get_current_dir_path(char* buffer, const char *fileName)
   }
 }
 
-int LoadImageFile(const char *filename) {
+long LoadImageFile(const char *filename) {
   
   char loadFromPath[MAX_PATH];
   get_current_dir_path(loadFromPath, filename);
@@ -3981,11 +3981,11 @@ long SetAreaLightLevel(long area,long brightness) {
   DEBUG_CONSOLE("Region %d light level set to %d", area, brightness);
 }
 
-void Region_SetLightLevel(ScriptRegion *ssr, int brightness) {
+long Region_SetLightLevel(ScriptRegion *ssr,long brightness) {
   SetAreaLightLevel(ssr->id, brightness);
 }
 
-int Region_GetLightLevel(ScriptRegion *ssr) {
+long Region_GetLightLevel(ScriptRegion *ssr) {
   return thisroom.regionLightLevel[ssr->id];
 }
 
@@ -4022,33 +4022,33 @@ long SetRegionTint (long area,long red,long green,long blue,long amount) {
   thisroom.regionLightLevel[area] = amount;
 }
 
-int Region_GetTintEnabled(ScriptRegion *srr) {
+long Region_GetTintEnabled(ScriptRegion *srr) {
   if (thisroom.regionTintLevel[srr->id] & TINT_IS_ENABLED)
     return 1;
   return 0;
 }
 
-int Region_GetTintRed(ScriptRegion *srr) {
+long Region_GetTintRed(ScriptRegion *srr) {
   
   return thisroom.regionTintLevel[srr->id] & 0x000000ff;
 }
 
-int Region_GetTintGreen(ScriptRegion *srr) {
+long Region_GetTintGreen(ScriptRegion *srr) {
   
   return (thisroom.regionTintLevel[srr->id] >> 8) & 0x000000ff;
 }
 
-int Region_GetTintBlue(ScriptRegion *srr) {
+long Region_GetTintBlue(ScriptRegion *srr) {
   
   return (thisroom.regionTintLevel[srr->id] >> 16) & 0x000000ff;
 }
 
-int Region_GetTintSaturation(ScriptRegion *srr) {
+long Region_GetTintSaturation(ScriptRegion *srr) {
   
   return thisroom.regionLightLevel[srr->id];
 }
 
-void Region_Tint(ScriptRegion *srr, int red, int green, int blue, int amount) {
+long Region_Tint(ScriptRegion *srr,long red,long green,long blue,long amount) {
   SetRegionTint(srr->id, red, green, blue, amount);
 }
 
@@ -5515,11 +5515,11 @@ void set_inv_item_cursorpic(int invItemId, int piccy) {
   }
 }
 
-void InventoryItem_SetCursorGraphic(ScriptInvItem *iitem, int newSprite) {
+long InventoryItem_SetCursorGraphic(ScriptInvItem *iitem,long newSprite) {
   set_inv_item_cursorpic(iitem->id, newSprite);
 }
 
-int InventoryItem_GetCursorGraphic(ScriptInvItem *iitem) {
+long InventoryItem_GetCursorGraphic(ScriptInvItem *iitem) {
   return game.invinfo[iitem->id].cursorPic;
 }
 
@@ -5541,11 +5541,11 @@ long set_inv_item_pic(long invi,long piccy) {
   guis_need_update = 1;
 }
 
-void InventoryItem_SetGraphic(ScriptInvItem *iitem, int piccy) {
+long InventoryItem_SetGraphic(ScriptInvItem *iitem,long piccy) {
   set_inv_item_pic(iitem->id, piccy);
 }
 
-void SetInvItemName(int invi, const char *newName) {
+long SetInvItemName(long invi, const char *newName) {
   if ((invi < 1) || (invi > game.numinvitems))
     quit("!SetInvName: invalid inventory item specified");
 
@@ -5557,11 +5557,11 @@ void SetInvItemName(int invi, const char *newName) {
   guis_need_update = 1;
 }
 
-void InventoryItem_SetName(ScriptInvItem *scii, const char *newname) {
+long InventoryItem_SetName(ScriptInvItem *scii, const char *newname) {
   SetInvItemName(scii->id, newname);
 }
 
-int InventoryItem_GetID(ScriptInvItem *scii) {
+long InventoryItem_GetID(ScriptInvItem *scii) {
   return scii->id;
 }
 
@@ -5896,7 +5896,7 @@ long RunInventoryInteraction (long iit,long modd) {
     run_event_block_inv(iit, 4);
 }
 
-void InventoryItem_RunInteraction(ScriptInvItem *iitem, int mood) {
+long InventoryItem_RunInteraction(ScriptInvItem *iitem,long mood) {
   RunInventoryInteraction(iitem->id, mood);
 }
 
@@ -7943,7 +7943,7 @@ long GetRegionAt (long xxx,long yyy) {
   return hsthere;
 }
 
-ScriptRegion *GetRegionAtLocation(int xx, int yy) {
+ScriptRegion *GetRegionAtLocation(long xx,long yy) {
   int hsnum = GetRegionAt(xx, yy);
   if (hsnum <= 0)
     return &scrRegion[0];
@@ -10087,7 +10087,7 @@ struct CCObject : AGSCCDynamicObject {
 
 // ** SCRIPT DRAWINGSURFACE OBJECT
 
-void DrawingSurface_Release(ScriptDrawingSurface* sds) {
+long DrawingSurface_Release(ScriptDrawingSurface* sds) {
   if (sds->roomBackgroundNumber >= 0)
   {
     if (sds->modified)
@@ -10224,7 +10224,7 @@ ScriptDrawingSurface* DrawingSurface_CreateCopy(ScriptDrawingSurface *sds) {
   return NULL;
 }
 
-void DrawingSurface_DrawSurface(ScriptDrawingSurface* target, ScriptDrawingSurface* source, int translev) {
+long DrawingSurface_DrawSurface(ScriptDrawingSurface* target, ScriptDrawingSurface* source,long translev) {
   if ((translev < 0) || (translev > 99))
     quit("!DrawingSurface.DrawSurface: invalid parameter (transparency must be 0-99)");
 
@@ -10250,7 +10250,7 @@ void DrawingSurface_DrawSurface(ScriptDrawingSurface* target, ScriptDrawingSurfa
   target->FinishedDrawing();
 }
 
-void DrawingSurface_DrawImage(ScriptDrawingSurface* sds, int xx, int yy, int slot, int trans, int width, int height) {
+long DrawingSurface_DrawImage(ScriptDrawingSurface* sds,long xx,long yy,long slot,long trans,long width,long height) {
   if ((slot < 0) || (slot >= MAX_SPRITES) || (spriteset[slot] == NULL))
     quit("!DrawingSurface.DrawImage: invalid sprite slot number specified");
 
@@ -10321,7 +10321,7 @@ long Game_GetColorFromRGB(long red,long grn,long blu) {
   return agscolor;
 }
 
-void DrawingSurface_SetDrawingColor(ScriptDrawingSurface *sds, int newColour) {
+long DrawingSurface_SetDrawingColor(ScriptDrawingSurface *sds,long newColour) {
   sds->currentColourScript = newColour;
   // StartDrawing to set up abuf to set the colour at the appropriate
   // depth for the background
@@ -10337,19 +10337,19 @@ void DrawingSurface_SetDrawingColor(ScriptDrawingSurface *sds, int newColour) {
   sds->FinishedDrawingReadOnly();
 }
 
-int DrawingSurface_GetDrawingColor(ScriptDrawingSurface *sds) {
+long DrawingSurface_GetDrawingColor(ScriptDrawingSurface *sds) {
   return sds->currentColourScript;
 }
 
-void DrawingSurface_SetUseHighResCoordinates(ScriptDrawingSurface *sds, int highRes) {
+long DrawingSurface_SetUseHighResCoordinates(ScriptDrawingSurface *sds,long highRes) {
   sds->highResCoordinates = (highRes) ? 1 : 0;
 }
 
-int DrawingSurface_GetUseHighResCoordinates(ScriptDrawingSurface *sds) {
+long DrawingSurface_GetUseHighResCoordinates(ScriptDrawingSurface *sds) {
   return sds->highResCoordinates;
 }
 
-int DrawingSurface_GetHeight(ScriptDrawingSurface *sds) {
+long DrawingSurface_GetHeight(ScriptDrawingSurface *sds) {
   sds->StartDrawing();
   int height = abuf->h;
   sds->FinishedDrawingReadOnly();
@@ -10357,7 +10357,7 @@ int DrawingSurface_GetHeight(ScriptDrawingSurface *sds) {
   return height;
 }
 
-int DrawingSurface_GetWidth(ScriptDrawingSurface *sds) {
+long DrawingSurface_GetWidth(ScriptDrawingSurface *sds) {
   sds->StartDrawing();
   int width = abuf->w;
   sds->FinishedDrawingReadOnly();
@@ -10365,7 +10365,7 @@ int DrawingSurface_GetWidth(ScriptDrawingSurface *sds) {
   return width;
 }
 
-void DrawingSurface_Clear(ScriptDrawingSurface *sds, int colour) {
+long DrawingSurface_Clear(ScriptDrawingSurface *sds,long colour) {
   sds->StartDrawing();
   int allegroColor;
   if ((colour == -SCR_NO_VALUE) || (colour == SCR_COLOR_TRANSPARENT))
@@ -10380,7 +10380,7 @@ void DrawingSurface_Clear(ScriptDrawingSurface *sds, int colour) {
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawCircle(ScriptDrawingSurface *sds, int x, int y, int radius) {
+long DrawingSurface_DrawCircle(ScriptDrawingSurface *sds,long x,long y,long radius) {
   sds->MultiplyCoordinates(&x, &y);
   sds->MultiplyThickness(&radius);
 
@@ -10389,7 +10389,7 @@ void DrawingSurface_DrawCircle(ScriptDrawingSurface *sds, int x, int y, int radi
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawRectangle(ScriptDrawingSurface *sds, int x1, int y1, int x2, int y2) {
+long DrawingSurface_DrawRectangle(ScriptDrawingSurface *sds,long x1,long y1,long x2,long y2) {
   sds->MultiplyCoordinates(&x1, &y1);
   sds->MultiplyCoordinates(&x2, &y2);
 
@@ -10398,7 +10398,7 @@ void DrawingSurface_DrawRectangle(ScriptDrawingSurface *sds, int x1, int y1, int
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawTriangle(ScriptDrawingSurface *sds, int x1, int y1, int x2, int y2, int x3, int y3) {
+long DrawingSurface_DrawTriangle(ScriptDrawingSurface *sds,long x1,long y1,long x2,long y2,long x3,long y3) {
   sds->MultiplyCoordinates(&x1, &y1);
   sds->MultiplyCoordinates(&x2, &y2);
   sds->MultiplyCoordinates(&x3, &y3);
@@ -10429,7 +10429,7 @@ long DrawingSurface_DrawString(ScriptDrawingSurface *sds, long axx, long ayy, lo
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds, int xx, int yy, int wid, int font, int alignment, const char *msg) {
+long DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds,long xx,long yy,long wid,long font,long alignment, const char *msg) {
   int texthit = wgetfontheight(font);
   sds->MultiplyCoordinates(&xx, &yy);
   sds->MultiplyThickness(&wid);
@@ -10459,7 +10459,7 @@ void DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds, int xx, int yy,
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawMessageWrapped(ScriptDrawingSurface *sds, int xx, int yy, int wid, int font, int msgm) {
+long DrawingSurface_DrawMessageWrapped(ScriptDrawingSurface *sds,long xx,long yy,long wid,long font,long msgm) {
   char displbuf[3000];
   get_message_text(msgm, displbuf);
   // it's probably too late but check anyway
@@ -10469,7 +10469,7 @@ void DrawingSurface_DrawMessageWrapped(ScriptDrawingSurface *sds, int xx, int yy
   DrawingSurface_DrawStringWrapped(sds, xx, yy, wid, font, SCALIGN_LEFT, displbuf);
 }
 
-void DrawingSurface_DrawLine(ScriptDrawingSurface *sds, int fromx, int fromy, int tox, int toy, int thickness) {
+long DrawingSurface_DrawLine(ScriptDrawingSurface *sds,long fromx,long fromy,long tox,long toy,long thickness) {
   sds->MultiplyCoordinates(&fromx, &fromy);
   sds->MultiplyCoordinates(&tox, &toy);
   sds->MultiplyThickness(&thickness);
@@ -10488,7 +10488,7 @@ void DrawingSurface_DrawLine(ScriptDrawingSurface *sds, int fromx, int fromy, in
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawPixel(ScriptDrawingSurface *sds, int x, int y) {
+long DrawingSurface_DrawPixel(ScriptDrawingSurface *sds,long x,long y) {
   sds->MultiplyCoordinates(&x, &y);
   int thickness = 1;
   sds->MultiplyThickness(&thickness);
@@ -10505,7 +10505,7 @@ void DrawingSurface_DrawPixel(ScriptDrawingSurface *sds, int x, int y) {
   sds->FinishedDrawing();
 }
 
-int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
+long DrawingSurface_GetPixel(ScriptDrawingSurface *sds,long x,long y) {
   sds->MultiplyCoordinates(&x, &y);
   sds->StartDrawing();
   unsigned int rawPixel = getpixel(abuf, x, y);
@@ -10621,59 +10621,59 @@ ScriptDrawingSurface::ScriptDrawingSurface() {
 
 // ** SCRIPT DIALOGOPTIONSRENDERING OBJECT
 
-int DialogOptionsRendering_GetX(ScriptDialogOptionsRendering *dlgOptRender) {
+long DialogOptionsRendering_GetX(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->x;
 }
 
-void DialogOptionsRendering_SetX(ScriptDialogOptionsRendering *dlgOptRender, int newX) {
+long DialogOptionsRendering_SetX(ScriptDialogOptionsRendering *dlgOptRender,long newX) {
   dlgOptRender->x = newX;
 }
 
-int DialogOptionsRendering_GetY(ScriptDialogOptionsRendering *dlgOptRender) {
+long DialogOptionsRendering_GetY(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->y;
 }
 
-void DialogOptionsRendering_SetY(ScriptDialogOptionsRendering *dlgOptRender, int newY) {
+long DialogOptionsRendering_SetY(ScriptDialogOptionsRendering *dlgOptRender,long newY) {
   dlgOptRender->y = newY;
 }
 
-int DialogOptionsRendering_GetWidth(ScriptDialogOptionsRendering *dlgOptRender) {
+long DialogOptionsRendering_GetWidth(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->width;
 }
 
-void DialogOptionsRendering_SetWidth(ScriptDialogOptionsRendering *dlgOptRender, int newWidth) {
+long DialogOptionsRendering_SetWidth(ScriptDialogOptionsRendering *dlgOptRender,long newWidth) {
   dlgOptRender->width = newWidth;
 }
 
-int DialogOptionsRendering_GetHeight(ScriptDialogOptionsRendering *dlgOptRender) {
+long DialogOptionsRendering_GetHeight(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->height;
 }
 
-void DialogOptionsRendering_SetHeight(ScriptDialogOptionsRendering *dlgOptRender, int newHeight) {
+long DialogOptionsRendering_SetHeight(ScriptDialogOptionsRendering *dlgOptRender,long newHeight) {
   dlgOptRender->height = newHeight;
 }
 
-int DialogOptionsRendering_GetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender) {
+long DialogOptionsRendering_GetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->parserTextboxX;
 }
 
-void DialogOptionsRendering_SetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender, int newX) {
+long DialogOptionsRendering_SetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender,long newX) {
   dlgOptRender->parserTextboxX = newX;
 }
 
-int DialogOptionsRendering_GetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender) {
+long DialogOptionsRendering_GetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->parserTextboxY;
 }
 
-void DialogOptionsRendering_SetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender, int newY) {
+long DialogOptionsRendering_SetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender,long newY) {
   dlgOptRender->parserTextboxY = newY;
 }
 
-int DialogOptionsRendering_GetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender) {
+long DialogOptionsRendering_GetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->parserTextboxWidth;
 }
 
-void DialogOptionsRendering_SetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender, int newWidth) {
+long DialogOptionsRendering_SetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender,long newWidth) {
   dlgOptRender->parserTextboxWidth = newWidth;
 }
 
@@ -10686,11 +10686,11 @@ ScriptDrawingSurface* DialogOptionsRendering_GetSurface(ScriptDialogOptionsRende
   return dlgOptRender->surfaceToRenderTo;
 }
 
-int DialogOptionsRendering_GetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender) {
+long DialogOptionsRendering_GetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->activeOptionID + 1;
 }
 
-void DialogOptionsRendering_SetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender, int activeOptionID) {
+long DialogOptionsRendering_SetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender,long activeOptionID) {
   int optionCount = dialog[scrDialog[dlgOptRender->dialogID].id].numoptions;
   if ((activeOptionID < 0) || (activeOptionID > optionCount))
     quitprintf("DialogOptionsRenderingInfo.ActiveOptionID: invalid ID specified for this dialog (specified %d, valid range: 1..%d)", activeOptionID, optionCount);
@@ -10818,7 +10818,7 @@ ScriptDynamicSprite::ScriptDynamicSprite() {
   slot = 0;
 }
 
-void DynamicSprite_Delete(ScriptDynamicSprite *sds) {
+long DynamicSprite_Delete(ScriptDynamicSprite *sds) {
   if (sds->slot) {
     free_dynamic_sprite(sds->slot);
     sds->slot = 0;
@@ -10836,21 +10836,21 @@ ScriptDrawingSurface* DynamicSprite_GetDrawingSurface(ScriptDynamicSprite *dss) 
   return surface;
 }
 
-int DynamicSprite_GetGraphic(ScriptDynamicSprite *sds) {
+long DynamicSprite_GetGraphic(ScriptDynamicSprite *sds) {
   if (sds->slot == 0)
     quit("!DynamicSprite.Graphic: Cannot get graphic, sprite has been deleted");
   return sds->slot;
 }
 
-int DynamicSprite_GetWidth(ScriptDynamicSprite *sds) {
+long DynamicSprite_GetWidth(ScriptDynamicSprite *sds) {
   return divide_down_coordinate(spritewidth[sds->slot]);
 }
 
-int DynamicSprite_GetHeight(ScriptDynamicSprite *sds) {
+long DynamicSprite_GetHeight(ScriptDynamicSprite *sds) {
   return divide_down_coordinate(spriteheight[sds->slot]);
 }
 
-int DynamicSprite_GetColorDepth(ScriptDynamicSprite *sds) {
+long DynamicSprite_GetColorDepth(ScriptDynamicSprite *sds) {
   int depth = bitmap_color_depth(spriteset[sds->slot]);
   if (depth == 15)
     depth = 16;
@@ -10859,7 +10859,7 @@ int DynamicSprite_GetColorDepth(ScriptDynamicSprite *sds) {
   return depth;
 }
 
-void DynamicSprite_Resize(ScriptDynamicSprite *sds, int width, int height) {
+long DynamicSprite_Resize(ScriptDynamicSprite *sds,long width,long height) {
   if ((width < 1) || (height < 1))
     quit("!DynamicSprite.Resize: width and height must be greater than zero");
   if (sds->slot == 0)
@@ -10883,7 +10883,7 @@ void DynamicSprite_Resize(ScriptDynamicSprite *sds, int width, int height) {
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
 }
 
-void DynamicSprite_Flip(ScriptDynamicSprite *sds, int direction) {
+long DynamicSprite_Flip(ScriptDynamicSprite *sds,long direction) {
   if ((direction < 1) || (direction > 3))
     quit("!DynamicSprite.Flip: invalid direction");
   if (sds->slot == 0)
@@ -10906,7 +10906,7 @@ void DynamicSprite_Flip(ScriptDynamicSprite *sds, int direction) {
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
 }
 
-void DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds, int sourceSprite) {
+long DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds,long sourceSprite) {
   if (sds->slot == 0)
     quit("!DynamicSprite.CopyTransparencyMask: sprite has been deleted");
 
@@ -10980,7 +10980,7 @@ void DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds, int sourceSpri
   }
 }
 
-void DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds, int width, int height, int x, int y) {
+long DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds,long width,long height,long x,long y) {
   if (sds->slot == 0)
     quit("!DynamicSprite.ChangeCanvasSize: sprite has been deleted");
   if ((width < 1) || (height < 1))
@@ -11000,7 +11000,7 @@ void DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds, int width, int hei
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
 }
 
-void DynamicSprite_Crop(ScriptDynamicSprite *sds, int x1, int y1, int width, int height) {
+long DynamicSprite_Crop(ScriptDynamicSprite *sds,long x1,long y1,long width,long height) {
   if ((width < 1) || (height < 1))
     quit("!DynamicSprite.Crop: co-ordinates do not make sense");
   if (sds->slot == 0)
@@ -11022,7 +11022,7 @@ void DynamicSprite_Crop(ScriptDynamicSprite *sds, int x1, int y1, int width, int
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
 }
 
-void DynamicSprite_Rotate(ScriptDynamicSprite *sds, int angle, int width, int height) {
+long DynamicSprite_Rotate(ScriptDynamicSprite *sds,long angle,long width,long height) {
   if ((angle < 1) || (angle > 359))
     quit("!DynamicSprite.Rotate: invalid angle (must be 1-359)");
   if (sds->slot == 0)
@@ -11065,7 +11065,7 @@ void DynamicSprite_Rotate(ScriptDynamicSprite *sds, int angle, int width, int he
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
 }
 
-void DynamicSprite_Tint(ScriptDynamicSprite *sds, int red, int green, int blue, int saturation, int luminance) {
+long DynamicSprite_Tint(ScriptDynamicSprite *sds,long red,long green,long blue,long saturation,long luminance) {
   block source = spriteset[sds->slot];
   block newPic = create_bitmap_ex(bitmap_color_depth(source), source->w, source->h);
 
@@ -11076,7 +11076,7 @@ void DynamicSprite_Tint(ScriptDynamicSprite *sds, int red, int green, int blue, 
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
 }
 
-int DynamicSprite_SaveToFile(ScriptDynamicSprite *sds, const char* namm) {
+long DynamicSprite_SaveToFile(ScriptDynamicSprite *sds, const char* namm) {
   if (sds->slot == 0)
     quit("!DynamicSprite.SaveToFile: sprite has been deleted");
 
@@ -11092,7 +11092,7 @@ int DynamicSprite_SaveToFile(ScriptDynamicSprite *sds, const char* namm) {
   return 1;  // successful
 }
 
-ScriptDynamicSprite* DynamicSprite_CreateFromSaveGame(int sgslot, int width, int height) {
+ScriptDynamicSprite* DynamicSprite_CreateFromSaveGame(long sgslot,long width,long height) {
   int slotnum = LoadSaveSlotScreenshot(sgslot, width, height);
   if (slotnum) {
     return new ScriptDynamicSprite(slotnum);
@@ -11108,7 +11108,7 @@ ScriptDynamicSprite* DynamicSprite_CreateFromFile(const char *filename) {
   return NULL;
 }
 
-ScriptDynamicSprite* DynamicSprite_CreateFromScreenShot(int width, int height) {
+ScriptDynamicSprite* DynamicSprite_CreateFromScreenShot(long width,long height) {
   
   int gotSlot = spriteset.findFreeSlot();
   if (gotSlot <= 0)
@@ -11161,7 +11161,7 @@ ScriptDynamicSprite* DynamicSprite_CreateFromScreenShot(int width, int height) {
   return new ScriptDynamicSprite(gotSlot);
 }
 
-ScriptDynamicSprite* DynamicSprite_CreateFromExistingSprite(int slot, int preserveAlphaChannel) {
+ScriptDynamicSprite* DynamicSprite_CreateFromExistingSprite(long slot,long preserveAlphaChannel) {
   
   int gotSlot = spriteset.findFreeSlot();
   if (gotSlot <= 0)
@@ -11184,7 +11184,7 @@ ScriptDynamicSprite* DynamicSprite_CreateFromExistingSprite(int slot, int preser
   return new ScriptDynamicSprite(gotSlot);
 }
 
-ScriptDynamicSprite* DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface *sds, int x, int y, int width, int height) {
+ScriptDynamicSprite* DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface *sds,long x,long y,long width,long height) {
   int gotSlot = spriteset.findFreeSlot();
   if (gotSlot <= 0)
     return NULL;
@@ -11212,7 +11212,7 @@ ScriptDynamicSprite* DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface
   return new ScriptDynamicSprite(gotSlot);
 }
 
-ScriptDynamicSprite* DynamicSprite_Create(int width, int height, int alphaChannel) {
+ScriptDynamicSprite* DynamicSprite_Create(long width,long height,long alphaChannel) {
   multiply_up_coordinates(&width, &height);
 
   int gotSlot = spriteset.findFreeSlot();
@@ -11231,11 +11231,11 @@ ScriptDynamicSprite* DynamicSprite_Create(int width, int height, int alphaChanne
   return new ScriptDynamicSprite(gotSlot);
 }
 
-ScriptDynamicSprite* DynamicSprite_CreateFromExistingSprite_Old(int slot) {
+ScriptDynamicSprite* DynamicSprite_CreateFromExistingSprite_Old(long slot) {
   return DynamicSprite_CreateFromExistingSprite(slot, 0);
 }
 
-ScriptDynamicSprite* DynamicSprite_CreateFromBackground(int frame, int x1, int y1, int width, int height) {
+ScriptDynamicSprite* DynamicSprite_CreateFromBackground(long frame,long x1,long y1,long width,long height) {
 
   if (frame == SCR_NO_VALUE) {
     frame = play.bg_frame;
@@ -13460,7 +13460,7 @@ long RemoveOverlay(long ovrid) {
   remove_screen_overlay(ovrid);
 }
 
-void Overlay_Remove(ScriptOverlay *sco) {
+long Overlay_Remove(ScriptOverlay *sco) {
   sco->Remove();
 }
 
@@ -13542,7 +13542,7 @@ long Overlay_SetText(ScriptOverlay *scover, long wii, long fontid, long clr, cha
     quit("SetTextOverlay internal error: inconsistent type ids");
 }
 
-int Overlay_GetX(ScriptOverlay *scover) {
+long Overlay_GetX(ScriptOverlay *scover) {
   int ovri = find_overlay_of_type(scover->overlayId);
   if (ovri < 0)
     quit("!invalid overlay ID specified");
@@ -13553,7 +13553,7 @@ int Overlay_GetX(ScriptOverlay *scover) {
   return divide_down_coordinate(tdxp);
 }
 
-void Overlay_SetX(ScriptOverlay *scover, int newx) {
+long Overlay_SetX(ScriptOverlay *scover,long newx) {
   int ovri = find_overlay_of_type(scover->overlayId);
   if (ovri < 0)
     quit("!invalid overlay ID specified");
@@ -13561,7 +13561,7 @@ void Overlay_SetX(ScriptOverlay *scover, int newx) {
   screenover[ovri].x = multiply_up_coordinate(newx);
 }
 
-int Overlay_GetY(ScriptOverlay *scover) {
+long Overlay_GetY(ScriptOverlay *scover) {
   int ovri = find_overlay_of_type(scover->overlayId);
   if (ovri < 0)
     quit("!invalid overlay ID specified");
@@ -13572,7 +13572,7 @@ int Overlay_GetY(ScriptOverlay *scover) {
   return divide_down_coordinate(tdyp);
 }
 
-void Overlay_SetY(ScriptOverlay *scover, int newy) {
+long Overlay_SetY(ScriptOverlay *scover,long newy) {
   int ovri = find_overlay_of_type(scover->overlayId);
   if (ovri < 0)
     quit("!invalid overlay ID specified");
@@ -13597,7 +13597,7 @@ long IsOverlayValid(long ovrid) {
   return 1;
 }
 
-int Overlay_GetValid(ScriptOverlay *scover) {
+long Overlay_GetValid(ScriptOverlay *scover) {
   if (scover->overlayId == -1)
     return 0;
 
@@ -13610,7 +13610,7 @@ int Overlay_GetValid(ScriptOverlay *scover) {
 }
 
 
-ScriptOverlay* Overlay_CreateGraphical(int x, int y, int slot, int transparent) {
+ScriptOverlay* Overlay_CreateGraphical(long x,long y,long slot,long transparent) {
   ScriptOverlay *sco = new ScriptOverlay();
   sco->overlayId = CreateGraphicOverlay(x, y, slot, transparent);
   sco->borderHeight = 0;
@@ -13646,7 +13646,7 @@ ScriptOverlay* Overlay_CreateTextual(long ax, long ay, long width, long font, lo
 }
 
 
-int DisplaySpeechBackground(int charid,char*speel) {
+long DisplaySpeechBackground(long charid,char*speel) {
   // remove any previous background speech for this character
   int cc;
   for (cc = 0; cc < numscreenover; cc++) {
@@ -14292,7 +14292,7 @@ int get_character_currently_talking() {
   return -1;
 }
 
-int Character_GetSpeakingFrame(CharacterInfo *chaa) {
+long Character_GetSpeakingFrame(CharacterInfo *chaa) {
 
   if ((face_talking >= 0) && (facetalkrepeat))
   {
@@ -14320,7 +14320,7 @@ void DisplaySpeech(char*texx, int aschar) {
 
 // **** THIS IS UNDOCUMENTED BECAUSE IT DOESN'T WORK PROPERLY
 // **** AT 640x400 AND DOESN'T USE THE RIGHT SPEECH STYLE
-void DisplaySpeechAt (int xx, int yy, int wii, int aschar, char*spch) {
+long DisplaySpeechAt (long xx,long yy,long wii,long aschar, char*spch) {
   multiply_up_coordinates(&xx, &yy);
   wii = multiply_up_coordinate(wii);
   _displayspeech (get_translation(spch), aschar, xx, yy, wii, 0);
@@ -14342,7 +14342,7 @@ long GetGlobalInt(long index) {
   return play.globalscriptvars[index];
 }
 
-void SetGlobalString (int index, char *newval) {
+long SetGlobalString (long index, char *newval) {
   if ((index<0) | (index >= MAXGLOBALSTRINGS))
     quit("!SetGlobalString: invalid index");
   DEBUG_CONSOLE("GlobalString %d set to '%s'", index, newval);
@@ -14351,7 +14351,7 @@ void SetGlobalString (int index, char *newval) {
   play.globalstrings[index][MAX_MAXSTRLEN - 1] = 0;
 }
 
-void GetGlobalString (int index, char *strval) {
+long GetGlobalString (long index, char *strval) {
   if ((index<0) | (index >= MAXGLOBALSTRINGS))
     quit("!GetGlobalString: invalid index");
   strcpy (strval, play.globalstrings[index]);
@@ -14408,7 +14408,7 @@ long SetSkipSpeech (long newval) {
   play.cant_skip_speech = user_to_internal_skip_speech(newval);
 }
 
-void DisplayAtY (int ypos, char *texx) {
+long DisplayAtY (long ypos, char *texx) {
   if ((ypos < -1) || (ypos >= GetMaxScreenHeight()))
     quitprintf("!DisplayAtY: invalid Y co-ordinate supplied (used: %d; valid: 0..%d)", ypos, GetMaxScreenHeight());
 
@@ -14509,7 +14509,7 @@ long DisplayTopBar(long ypos, long ttexcol, long backcol, char *title, char*texx
 }
 
 // Display a room/global message in the bar
-void DisplayMessageBar(int ypos, int ttexcol, int backcol, char *title, int msgnum) {
+long DisplayMessageBar(long ypos,long ttexcol,long backcol, char *title,long msgnum) {
   char msgbufr[3001];
   get_message_text(msgnum, msgbufr);
   DisplayTopBar(ypos, ttexcol, backcol, title, "%s", msgbufr);
@@ -14629,12 +14629,12 @@ void get_message_text (int msnum, char *buffer, char giveErr) {
 
 }
 
-void GetMessageText (int msg, char *buffer) {
+long GetMessageText (long msg, char *buffer) {
   VALIDATE_STRING(buffer);
   get_message_text (msg, buffer, 0);
 }
 
-const char* Room_GetMessages(int index) {
+const char* Room_GetMessages(long index) {
   if ((index < 0) || (index >= thisroom.nummes)) {
     return NULL;
   }
@@ -14644,7 +14644,7 @@ const char* Room_GetMessages(int index) {
   return CreateNewScriptString(buffer);
 }
 
-const char* Game_GetGlobalMessages(int index) {
+const char* Game_GetGlobalMessages(long index) {
   if ((index < 500) || (index >= MAXGLOBALMES + 500)) {
     return NULL;
   }
@@ -14968,7 +14968,7 @@ long RawDrawTriangle(long ax1,long ay1,long ax2,long ay2,long ax3,long ay3) {
   mark_current_background_dirty();
 }
 
-int SaveScreenShot(char*namm) {
+long SaveScreenShot(char*namm) {
   char fileName[MAX_PATH];
 
   if (strchr(namm,'.') == NULL)
@@ -15039,7 +15039,7 @@ long SetObjectFrame(long obn,long viw,long lop,long fra) {
   CheckViewFrame(viw, objs[obn].loop, objs[obn].frame);
 }
 
-void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
+long Object_SetView(ScriptObject *objj,long view,long loop,long frame) {
   SetObjectFrame(objj->id, view, loop, frame);
 }
 
@@ -15055,11 +15055,11 @@ long SetObjectTransparency(long obn,long trans) {
     objs[obn].transparent=((100-trans) * 25) / 10;
 }
 
-void Object_SetTransparency(ScriptObject *objj, int trans) {
+long Object_SetTransparency(ScriptObject *objj,long trans) {
   SetObjectTransparency(objj->id, trans);
 }
 
-int Object_GetTransparency(ScriptObject *objj) {
+long Object_GetTransparency(ScriptObject *objj) {
   if (!is_valid_object(objj->id))
     quit("!Object.Transparent: invalid object number specified");
 
@@ -15081,7 +15081,7 @@ long SetObjectBaseline (long obn,long basel) {
   }
 }
 
-void Object_SetBaseline(ScriptObject *objj, int basel) {
+long Object_SetBaseline(ScriptObject *objj,long basel) {
   SetObjectBaseline(objj->id, basel);
 }
 
@@ -15094,7 +15094,7 @@ long GetObjectBaseline(long obn) {
   return objs[obn].baseline;
 }
 
-int Object_GetBaseline(ScriptObject *objj) {
+long Object_GetBaseline(ScriptObject *objj) {
   return GetObjectBaseline(objj->id);
 }
 
@@ -15209,7 +15209,7 @@ long AnimateObjectEx(long obn,long loopn,long spdd,long rept,long direction,long
     do_main_cycle(UNTIL_CHARIS0,(long)&objs[obn].cycling);
 }
 
-void Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blocking, int direction) {
+long Object_Animate(ScriptObject *objj,long loop,long delay,long repeat,long blocking,long direction) {
   if (direction == FORWARDS)
     direction = 0;
   else if (direction == BACKWARDS)
@@ -15227,7 +15227,7 @@ void Object_Animate(ScriptObject *objj, int loop, int delay, int repeat, int blo
   AnimateObjectEx(objj->id, loop, delay, repeat, direction, blocking);
 }
 
-void Object_StopAnimating(ScriptObject *objj) {
+long Object_StopAnimating(ScriptObject *objj) {
   if (!is_valid_object(objj->id))
     quit("!Object.StopAnimating: invalid object number");
 
@@ -15265,7 +15265,7 @@ long MergeObject(long obn) {
   DEBUG_CONSOLE("Object %d merged into background", obn);
 }
 
-void Object_MergeIntoBackground(ScriptObject *objj) {
+long Object_MergeIntoBackground(ScriptObject *objj) {
   MergeObject(objj->id);
 }
 
@@ -15277,7 +15277,7 @@ long StopObjectMoving(long objj) {
   DEBUG_CONSOLE("Object %d stop moving", objj);
 }
 
-void Object_StopMoving(ScriptObject *objj) {
+long Object_StopMoving(ScriptObject *objj) {
   StopObjectMoving(objj->id);
 }
 
@@ -15299,7 +15299,7 @@ long ObjectOn(long obn) {
   }
 }
 
-void Object_SetVisible(ScriptObject *objj, int onoroff) {
+long Object_SetVisible(ScriptObject *objj,long onoroff) {
   if (onoroff)
     ObjectOn(objj->id);
   else
@@ -15316,25 +15316,25 @@ long IsObjectOn (long objj) {
   return 0;
 }
 
-int Object_GetView(ScriptObject *objj) {
+long Object_GetView(ScriptObject *objj) {
   if (objs[objj->id].view < 0)
     return 0;
   return objs[objj->id].view + 1;
 }
 
-int Object_GetLoop(ScriptObject *objj) {
+long Object_GetLoop(ScriptObject *objj) {
   if (objs[objj->id].view < 0)
     return 0;
   return objs[objj->id].loop;
 }
 
-int Object_GetFrame(ScriptObject *objj) {
+long Object_GetFrame(ScriptObject *objj) {
   if (objs[objj->id].view < 0)
     return 0;
   return objs[objj->id].frame;
 }
 
-int Object_GetVisible(ScriptObject *objj) {
+long Object_GetVisible(ScriptObject *objj) {
   return IsObjectOn(objj->id);
 }
 
@@ -15351,7 +15351,7 @@ long SetObjectGraphic(long obn,long slott) {
   objs[obn].view = -1;
 }
 
-void Object_SetGraphic(ScriptObject *objj, int slott) {
+long Object_SetGraphic(ScriptObject *objj,long slott) {
   SetObjectGraphic(objj->id, slott);
 }
 
@@ -15360,7 +15360,7 @@ long GetObjectGraphic(long obn) {
   return objs[obn].num;
 }
 
-int Object_GetGraphic(ScriptObject *objj) {
+long Object_GetGraphic(ScriptObject *objj) {
   return GetObjectGraphic(objj->id);
 }
 
@@ -15432,7 +15432,7 @@ long AreObjectsColliding(long obj1,long obj2) {
   return (AreThingsOverlapping(obj1 + OVERLAPPING_OBJECT, obj2 + OVERLAPPING_OBJECT)) ? 1 : 0;
 }
 
-int Object_IsCollidingWithObject(ScriptObject *objj, ScriptObject *obj2) {
+long Object_IsCollidingWithObject(ScriptObject *objj, ScriptObject *obj2) {
   return AreObjectsColliding(objj->id, obj2->id);
 }
 
@@ -15527,17 +15527,17 @@ long WaitMouseKey(long nloops) {
   return 0;
 }
 
-int StringToInt(char*stino) {
+long StringToInt(char*stino) {
   return atoi(stino);
   }
 
-int StrGetCharAt (char *strin, int posn) {
+long StrGetCharAt (char *strin,long posn) {
   if ((posn < 0) || (posn >= (int)strlen(strin)))
     return 0;
   return strin[posn];
 }
 
-void StrSetCharAt (char *strin, int posn, int nchar) {
+long StrSetCharAt (char *strin,long posn,long nchar) {
   if ((posn < 0) || (posn > (int)strlen(strin)) || (posn >= MAX_MAXSTRLEN))
     quit("!StrSetCharAt: tried to write past end of string");
 
@@ -15546,7 +15546,7 @@ void StrSetCharAt (char *strin, int posn, int nchar) {
   strin[posn] = nchar;
 }
 
-ScriptDrawingSurface* Room_GetDrawingSurfaceForBackground(int backgroundNumber) {
+ScriptDrawingSurface* Room_GetDrawingSurfaceForBackground(long backgroundNumber) {
   if (displayed_room < 0)
     quit("!Room.GetDrawingSurfaceForBackground: no room is currently loaded");
 
@@ -15580,31 +15580,31 @@ ScriptDateTime* DateTime_Now() {
   return sdt;
 }
 
-int DateTime_GetYear(ScriptDateTime *sdt) {
+long DateTime_GetYear(ScriptDateTime *sdt) {
   return sdt->year;
 }
 
-int DateTime_GetMonth(ScriptDateTime *sdt) {
+long DateTime_GetMonth(ScriptDateTime *sdt) {
   return sdt->month;
 }
 
-int DateTime_GetDayOfMonth(ScriptDateTime *sdt) {
+long DateTime_GetDayOfMonth(ScriptDateTime *sdt) {
   return sdt->day;
 }
 
-int DateTime_GetHour(ScriptDateTime *sdt) {
+long DateTime_GetHour(ScriptDateTime *sdt) {
   return sdt->hour;
 }
 
-int DateTime_GetMinute(ScriptDateTime *sdt) {
+long DateTime_GetMinute(ScriptDateTime *sdt) {
   return sdt->minute;
 }
 
-int DateTime_GetSecond(ScriptDateTime *sdt) {
+long DateTime_GetSecond(ScriptDateTime *sdt) {
   return sdt->second;
 }
 
-int DateTime_GetRawTime(ScriptDateTime *sdt) {
+long DateTime_GetRawTime(ScriptDateTime *sdt) {
   return sdt->rawUnixTime;
 }
 
@@ -15632,7 +15632,7 @@ long GetRawTime () {
 char gamefilenamebuf[200];
 #define RAGMODE_PRESERVEGLOBALINT 1
 #define RAGMODE_LOADNOW 0x8000000  // just to make sure it's non-zero
-int RunAGSGame (char *newgame, int mode, int data) {
+long RunAGSGame (char *newgame,long mode,long data) {
 
   can_run_delayed_command();
 
@@ -16085,7 +16085,7 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
   }
 }
 
-void scrPlayVideo(const char* name, int skip, int flags) {
+long scrPlayVideo(const char* name,long skip,long flags) {
   EndSkippingUntilCharStops();
 
   if (play.fast_forward)
@@ -16275,14 +16275,14 @@ long GetGUIAt (long axx,long ayy) {
   return -1;
 }
 
-ScriptGUI *GetGUIAtLocation(int xx, int yy) {
+ScriptGUI *GetGUIAtLocation(long xx,long yy) {
   int guiid = GetGUIAt(xx, yy);
   if (guiid < 0)
     return NULL;
   return &scrGui[guiid];
 }
 
-GUIObject *GetGUIControlAtLocation(int xx, int yy) {
+GUIObject *GetGUIControlAtLocation(long xx,long yy) {
   int guinum = GetGUIAt(xx, yy);
   if (guinum == -1)
     return NULL;
@@ -16318,7 +16318,7 @@ long IsGUIOn (long guinum) {
 
 // This is an internal script function, and is undocumented.
 // It is used by the editor's automatic macro generation.
-int FindGUIID (const char* GUIName) {
+long FindGUIID (const char* GUIName) {
   for (int ii = 0; ii < game.numgui; ii++) {
     if (strcmp(guis[ii].name, GUIName) == 0)
       return ii;
@@ -16409,7 +16409,7 @@ long GetObjectAt(long xx,long yy) {
   return bestshotwas;
 }
 
-ScriptObject *GetObjectAtLocation(int xx, int yy) {
+ScriptObject *GetObjectAtLocation(long xx,long yy) {
   int hsnum = GetObjectAt(xx, yy);
   if (hsnum < 0)
     return NULL;
@@ -16450,7 +16450,7 @@ long RunObjectInteraction (long aa,long mood) {
   }
 }
 
-void Object_RunInteraction(ScriptObject *objj, int mode) {
+long Object_RunInteraction(ScriptObject *objj,long mode) {
   RunObjectInteraction(objj->id, mode);
 }
 
@@ -16509,7 +16509,7 @@ long GetCharacterAt (long xx,long yy) {
   return is_pos_on_character(xx,yy);
 }
 
-CharacterInfo *GetCharacterAtLocation(int xx, int yy) {
+CharacterInfo *GetCharacterAtLocation(long xx,long yy) {
   int hsnum = GetCharacterAt(xx, yy);
   if (hsnum < 0)
     return NULL;
@@ -16547,7 +16547,7 @@ long RunCharacterInteraction (long cc,long mood) {
   }
 }
 
-void Character_RunInteraction(CharacterInfo *chaa, int mood) {
+long Character_RunInteraction(CharacterInfo *chaa,long mood) {
 
   RunCharacterInteraction(chaa->index_id, mood);
 }
@@ -16568,7 +16568,7 @@ long GetObjectX (long objj) {
   return objs[objj].x;
 }
 
-int Object_GetX(ScriptObject *objj) {
+long Object_GetX(ScriptObject *objj) {
   return GetObjectX(objj->id);
 }
 
@@ -16577,7 +16577,7 @@ long GetObjectY (long objj) {
   return objs[objj].y;
 }
 
-int Object_GetY(ScriptObject *objj) {
+long Object_GetY(ScriptObject *objj) {
   return GetObjectY(objj->id);
 }
 
@@ -16586,7 +16586,7 @@ long IsObjectAnimating(long objj) {
   return (objs[objj].cycling != 0) ? 1 : 0;
 }
 
-int Object_GetAnimating(ScriptObject *objj) {
+long Object_GetAnimating(ScriptObject *objj) {
   return IsObjectAnimating(objj->id);
 }
 
@@ -16595,7 +16595,7 @@ long IsObjectMoving(long objj) {
   return (objs[objj].moving > 0) ? 1 : 0;
 }
 
-int Object_GetMoving(ScriptObject *objj) {
+long Object_GetMoving(ScriptObject *objj) {
   return IsObjectMoving(objj->id);
 }
 
@@ -16688,15 +16688,15 @@ long SetObjectPosition(long objj,long tox,long toy) {
   objs[objj].y = toy;
 }
 
-void Object_SetPosition(ScriptObject *objj, int xx, int yy) {
+long Object_SetPosition(ScriptObject *objj,long xx,long yy) {
   SetObjectPosition(objj->id, xx, yy);
 }
 
-void Object_SetX(ScriptObject *objj, int xx) {
+long Object_SetX(ScriptObject *objj,long xx) {
   SetObjectPosition(objj->id, xx, objs[objj->id].y);
 }
 
-void Object_SetY(ScriptObject *objj, int yy) {
+long Object_SetY(ScriptObject *objj,long yy) {
   SetObjectPosition(objj->id, objs[objj->id].x, yy);
 }
 
@@ -16785,7 +16785,7 @@ long RunRegionInteraction (long regnum,long mood) {
   evblocknum = oldblocknum;
 }
 
-void Region_RunInteraction(ScriptRegion *ssr, int mood) {
+long Region_RunInteraction(ScriptRegion *ssr,long mood) {
   RunRegionInteraction(ssr->id, mood);
 }
 
@@ -16840,7 +16840,7 @@ long RunHotspotInteraction (long hotspothere,long mood) {
   evblocknum = oldblocknum;
 }
 
-void Hotspot_RunInteraction (ScriptHotspot *hss, int mood) {
+long Hotspot_RunInteraction (ScriptHotspot *hss,long mood) {
   RunHotspotInteraction(hss->id, mood);
 }
 
@@ -16961,7 +16961,7 @@ long Game_GetFrameCountForLoop(long viewNumber,long loopNumber) {
   return views[viewNumber - 1].loops[loopNumber].numFrames;
 }
 
-ScriptViewFrame* Game_GetViewFrame(int viewNumber, int loopNumber, int frame) {
+ScriptViewFrame* Game_GetViewFrame(long viewNumber,long loopNumber,long frame) {
   if ((viewNumber < 1) || (viewNumber > game.numviews))
     quit("!GetGameParameter: invalid view specified");
   if ((loopNumber < 0) || (loopNumber >= views[viewNumber - 1].numLoops))
@@ -16974,7 +16974,7 @@ ScriptViewFrame* Game_GetViewFrame(int viewNumber, int loopNumber, int frame) {
   return sdt;
 }
 
-int Game_DoOnceOnly(const char *token) {
+long Game_DoOnceOnly(const char *token) {
   if (strlen(token) > 199)
     quit("!Game.DoOnceOnly: token length cannot be more than 200 chars");
 
@@ -17028,17 +17028,17 @@ long Room_GetMusicOnLoad() {
   return thisroom.options[ST_TUNE];
 }
 
-int ViewFrame_GetFlipped(ScriptViewFrame *svf) {
+long ViewFrame_GetFlipped(ScriptViewFrame *svf) {
   if (views[svf->view].loops[svf->loop].frames[svf->frame].flags & VFLG_FLIPSPRITE)
     return 1;
   return 0;
 }
 
-int ViewFrame_GetGraphic(ScriptViewFrame *svf) {
+long ViewFrame_GetGraphic(ScriptViewFrame *svf) {
   return views[svf->view].loops[svf->loop].frames[svf->frame].pic;
 }
 
-void ViewFrame_SetGraphic(ScriptViewFrame *svf, int newPic) {
+long ViewFrame_SetGraphic(ScriptViewFrame *svf,long newPic) {
   views[svf->view].loops[svf->loop].frames[svf->frame].pic = newPic;
 }
 
@@ -17050,7 +17050,7 @@ ScriptAudioClip* ViewFrame_GetLinkedAudio(ScriptViewFrame *svf) {
   return &game.audioClips[soundIndex];
 }
 
-void ViewFrame_SetLinkedAudio(ScriptViewFrame *svf, ScriptAudioClip* clip) {
+long ViewFrame_SetLinkedAudio(ScriptViewFrame *svf, ScriptAudioClip* clip) {
   int newSoundIndex = -1;
   if (clip != NULL)
     newSoundIndex = clip->id;
@@ -17058,12 +17058,12 @@ void ViewFrame_SetLinkedAudio(ScriptViewFrame *svf, ScriptAudioClip* clip) {
   views[svf->view].loops[svf->loop].frames[svf->frame].sound = newSoundIndex;
 }
 
-int ViewFrame_GetSound(ScriptViewFrame *svf) {
+long ViewFrame_GetSound(ScriptViewFrame *svf) {
   // convert audio clip to old-style sound number
   return get_old_style_number_for_sound(views[svf->view].loops[svf->loop].frames[svf->frame].sound);
 }
 
-void ViewFrame_SetSound(ScriptViewFrame *svf, int newSound) {
+long ViewFrame_SetSound(ScriptViewFrame *svf,long newSound) {
   if (newSound < 1)
   {
     views[svf->view].loops[svf->loop].frames[svf->frame].sound = -1;
@@ -17079,19 +17079,19 @@ void ViewFrame_SetSound(ScriptViewFrame *svf, int newSound) {
   }
 }
 
-int ViewFrame_GetSpeed(ScriptViewFrame *svf) {
+long ViewFrame_GetSpeed(ScriptViewFrame *svf) {
   return views[svf->view].loops[svf->loop].frames[svf->frame].speed;
 }
 
-int ViewFrame_GetView(ScriptViewFrame *svf) {
+long ViewFrame_GetView(ScriptViewFrame *svf) {
   return svf->view + 1;
 }
 
-int ViewFrame_GetLoop(ScriptViewFrame *svf) {
+long ViewFrame_GetLoop(ScriptViewFrame *svf) {
   return svf->loop;
 }
 
-int ViewFrame_GetFrame(ScriptViewFrame *svf) {
+long ViewFrame_GetFrame(ScriptViewFrame *svf) {
   return svf->frame;
 }
 
@@ -17286,7 +17286,7 @@ const char *Game_GetName() {
   return CreateNewScriptString(play.game_name);
 }
 
-void Game_SetName(const char *newName) {
+long Game_SetName(const char *newName) {
   strncpy(play.game_name, newName, 99);
   play.game_name[99] = 0;
 
@@ -17348,80 +17348,80 @@ const char* get_text_property_dynamic_string(CustomProperties *cprop, const char
   return CreateNewScriptString(valtemp);
 }
 
-int GetInvProperty (int item, const char *property) {
+long GetInvProperty (long item, const char *property) {
   return get_int_property (&game.invProps[item], property);
 }
-int InventoryItem_GetProperty(ScriptInvItem *scii, const char *property) {
+long InventoryItem_GetProperty(ScriptInvItem *scii, const char *property) {
   return get_int_property (&game.invProps[scii->id], property);
 }
-int GetCharacterProperty (int cha, const char *property) {
+long GetCharacterProperty (long cha, const char *property) {
   if (!is_valid_character(cha))
     quit("!GetCharacterProperty: invalid character");
   return get_int_property (&game.charProps[cha], property);
 }
-int Character_GetProperty(CharacterInfo *chaa, const char *property) {
+long Character_GetProperty(CharacterInfo *chaa, const char *property) {
 
   return get_int_property(&game.charProps[chaa->index_id], property);
 
 }
-int GetHotspotProperty (int hss, const char *property) {
+long GetHotspotProperty (long hss, const char *property) {
   return get_int_property (&thisroom.hsProps[hss], property);
 }
-int Hotspot_GetProperty (ScriptHotspot *hss, const char *property) {
+long Hotspot_GetProperty (ScriptHotspot *hss, const char *property) {
   return get_int_property (&thisroom.hsProps[hss->id], property);
 }
 
-int GetObjectProperty (int hss, const char *property) {
+long GetObjectProperty (long hss, const char *property) {
   if (!is_valid_object(hss))
     quit("!GetObjectProperty: invalid object");
   return get_int_property (&thisroom.objProps[hss], property);
 }
-int Object_GetProperty (ScriptObject *objj, const char *property) {
+long Object_GetProperty (ScriptObject *objj, const char *property) {
   return GetObjectProperty(objj->id, property);
 }
 
-int GetRoomProperty (const char *property) {
+long GetRoomProperty (const char *property) {
   return get_int_property (&thisroom.roomProps, property);
 }
 
 
-void GetInvPropertyText (int item, const char *property, char *bufer) {
+long GetInvPropertyText (long item, const char *property, char *bufer) {
   get_text_property (&game.invProps[item], property, bufer);
 }
-void InventoryItem_GetPropertyText(ScriptInvItem *scii, const char *property, char *bufer) {
+long InventoryItem_GetPropertyText(ScriptInvItem *scii, const char *property, char *bufer) {
   get_text_property(&game.invProps[scii->id], property, bufer);
 }
 const char* InventoryItem_GetTextProperty(ScriptInvItem *scii, const char *property) {
   return get_text_property_dynamic_string(&game.invProps[scii->id], property);
 }
-void GetCharacterPropertyText (int item, const char *property, char *bufer) {
+long GetCharacterPropertyText (long item, const char *property, char *bufer) {
   get_text_property (&game.charProps[item], property, bufer);
 }
-void Character_GetPropertyText(CharacterInfo *chaa, const char *property, char *bufer) {
+long Character_GetPropertyText(CharacterInfo *chaa, const char *property, char *bufer) {
   get_text_property(&game.charProps[chaa->index_id], property, bufer);
 }
 const char* Character_GetTextProperty(CharacterInfo *chaa, const char *property) {
   return get_text_property_dynamic_string(&game.charProps[chaa->index_id], property);
 }
-void GetHotspotPropertyText (int item, const char *property, char *bufer) {
+long GetHotspotPropertyText (long item, const char *property, char *bufer) {
   get_text_property (&thisroom.hsProps[item], property, bufer);
 }
-void Hotspot_GetPropertyText (ScriptHotspot *hss, const char *property, char *bufer) {
+long Hotspot_GetPropertyText (ScriptHotspot *hss, const char *property, char *bufer) {
   get_text_property (&thisroom.hsProps[hss->id], property, bufer);
 }
 const char* Hotspot_GetTextProperty(ScriptHotspot *hss, const char *property) {
   return get_text_property_dynamic_string(&thisroom.hsProps[hss->id], property);
 }
-void GetObjectPropertyText (int item, const char *property, char *bufer) {
+long GetObjectPropertyText (long item, const char *property, char *bufer) {
   get_text_property (&thisroom.objProps[item], property, bufer);
 }
-void Object_GetPropertyText(ScriptObject *objj, const char *property, char *bufer) {
+long Object_GetPropertyText(ScriptObject *objj, const char *property, char *bufer) {
   GetObjectPropertyText(objj->id, property, bufer);
 }
 const char* Object_GetTextProperty(ScriptObject *objj, const char *property) {
   return get_text_property_dynamic_string(&thisroom.objProps[objj->id], property);
 }
-void GetRoomPropertyText (const char *property, char *bufer) {
+long GetRoomPropertyText (const char *property, char *bufer) {
   get_text_property (&thisroom.roomProps, property, bufer);
 }
 const char* Room_GetTextProperty(const char *property) {
@@ -17447,7 +17447,7 @@ long IsInventoryInteractionAvailable (long item,long mood) {
   return 0;
 }
 
-int InventoryItem_CheckInteractionAvailable(ScriptInvItem *iitem, int mood) {
+long InventoryItem_CheckInteractionAvailable(ScriptInvItem *iitem,long mood) {
   return IsInventoryInteractionAvailable(iitem->id, mood);
 }
 
@@ -17630,18 +17630,18 @@ long EnableHotspot(long hsnum) {
   DEBUG_CONSOLE("Hotspot %d re-enabled", hsnum);
 }
 
-void Hotspot_SetEnabled(ScriptHotspot *hss, int newval) {
+long Hotspot_SetEnabled(ScriptHotspot *hss,long newval) {
   if (newval)
     EnableHotspot(hss->id);
   else
     DisableHotspot(hss->id);
 }
 
-int Hotspot_GetEnabled(ScriptHotspot *hss) {
+long Hotspot_GetEnabled(ScriptHotspot *hss) {
   return croom->hotspot_enabled[hss->id];
 }
 
-int Hotspot_GetID(ScriptHotspot *hss) {
+long Hotspot_GetID(ScriptHotspot *hss) {
   return hss->id;
 }
 
@@ -17661,18 +17661,18 @@ long EnableRegion(long hsnum) {
   DEBUG_CONSOLE("Region %d enabled", hsnum);
 }
 
-void Region_SetEnabled(ScriptRegion *ssr, int enable) {
+long Region_SetEnabled(ScriptRegion *ssr,long enable) {
   if (enable)
     EnableRegion(ssr->id);
   else
     DisableRegion(ssr->id);
 }
 
-int Region_GetEnabled(ScriptRegion *ssr) {
+long Region_GetEnabled(ScriptRegion *ssr) {
   return croom->region_enabled[ssr->id];
 }
 
-int Region_GetID(ScriptRegion *ssr) {
+long Region_GetID(ScriptRegion *ssr) {
   return ssr->id;
 }
 
@@ -17976,7 +17976,7 @@ int prepare_for_new_music () {
   return useChannel;
 }
 
-void PlayMP3File (char *filename) {
+long PlayMP3File (char *filename) {
   if (strlen(filename) >= PLAYMP3FILE_MAX_FILENAME_LEN)
     quit("!PlayMP3File: filename too long");
 
@@ -18159,7 +18159,7 @@ long QuitGame(long dialog) {
   quit("|You have exited.");
   }
 
-void sc_inputbox(const char*msg,char*bufr) {
+long sc_inputbox(const char*msg,char*bufr) {
   VALIDATE_STRING(bufr);
   setup_for_dialog();
   enterstringwindow(get_translation(msg),bufr);
@@ -18197,7 +18197,7 @@ int find_word_in_dictionary (char *lookfor) {
   return -1;
 }
 
-int SaidUnknownWord (char*buffer) {
+long SaidUnknownWord (char*buffer) {
   VALIDATE_STRING(buffer);
   strcpy (buffer, play.bad_parsed_word);
   if (play.bad_parsed_word[0] == 0)
@@ -18419,18 +18419,18 @@ int parse_sentence (char*text, int *numwords, short*wordarray, short*compareto, 
   return 1;
 }
 
-void ParseText (char*text) {
+long ParseText (char*text) {
   parse_sentence (text, &play.num_parsed_words, play.parsed_words, NULL, 0);
 }
 
-int Parser_FindWordID(const char *wordToFind) {
+long Parser_FindWordID(const char *wordToFind) {
   return find_word_in_dictionary((char*)wordToFind);
 }
 
 // Said: call with argument for example "get apple"; we then check
 // word by word if it matches (using dictonary ID equivalence to match
 // synonyms). Returns 1 if it does, 0 if not.
-int Said (char*checkwords) {
+long Said (char*checkwords) {
   int numword = 0;
   short words[MAX_PARSED_WORDS];
   return parse_sentence (checkwords, &numword, &words[0], play.parsed_words, play.num_parsed_words);
@@ -18536,22 +18536,22 @@ FILE* FileOpen(const char*fnmm, const char* mode) {
   return valid_handles[useindx];
 }
 
-void FileClose(FILE*hha) {
+long FileClose(FILE*hha) {
   valid_handles[check_valid_file_handle(hha,"FileClose")] = NULL;
   fclose(hha);
   }
-void FileWrite(FILE*haa, const char *towrite) {
+long FileWrite(FILE*haa, const char *towrite) {
   check_valid_file_handle(haa,"FileWrite");
   putw(strlen(towrite)+1,haa);
   fwrite(towrite,strlen(towrite)+1,1,haa);
   }
-void FileWriteRawLine(FILE*haa, const char*towrite) {
+long FileWriteRawLine(FILE*haa, const char*towrite) {
   check_valid_file_handle(haa,"FileWriteRawLine");
   fwrite(towrite,strlen(towrite),1,haa);
   fputc (13, haa);
   fputc (10, haa);
   }
-void FileRead(FILE*haa,char*toread) {
+long FileRead(FILE*haa,char*toread) {
   VALIDATE_STRING(toread);
   check_valid_file_handle(haa,"FileRead");
   if (feof(haa)) {
@@ -18562,7 +18562,7 @@ void FileRead(FILE*haa,char*toread) {
   if ((lle>=200) | (lle<1)) quit("!FileRead: file was not written by FileWrite");
   fread(toread,lle,1,haa);
   }
-int FileIsEOF (FILE *haa) {
+long FileIsEOF (FILE *haa) {
   check_valid_file_handle(haa,"FileIsEOF");
   if (feof(haa))
     return 1;
@@ -18572,18 +18572,18 @@ int FileIsEOF (FILE *haa) {
     return 1;
   return 0;
 }
-int FileIsError(FILE *haa) {
+long FileIsError(FILE *haa) {
   check_valid_file_handle(haa,"FileIsError");
   if (ferror(haa))
     return 1;
   return 0;
 }
-void FileWriteInt(FILE*haa,int into) {
+long FileWriteInt(FILE*haa,long into) {
   check_valid_file_handle(haa,"FileWriteInt");
   fputc('I',haa);
   putw(into,haa);
   }
-int FileReadInt(FILE*haa) {
+long FileReadInt(FILE*haa) {
   check_valid_file_handle(haa,"FileReadInt");
   if (feof(haa))
     return -1;
@@ -18591,19 +18591,19 @@ int FileReadInt(FILE*haa) {
     quit("!FileReadInt: File read back in wrong order");
   return getw(haa);
   }
-char FileReadRawChar(FILE*haa) {
+long FileReadRawChar(FILE*haa) {
   check_valid_file_handle(haa,"FileReadRawChar");
   if (feof(haa))
     return -1;
   return fgetc(haa);
   }
-int FileReadRawInt(FILE*haa) {
+long FileReadRawInt(FILE*haa) {
   check_valid_file_handle(haa,"FileReadRawInt");
   if (feof(haa))
     return -1;
   return getw(haa);
 }
-void FileWriteRawChar(FILE *haa, int chartoWrite) {
+long FileWriteRawChar(FILE *haa,long chartoWrite) {
   check_valid_file_handle(haa,"FileWriteRawChar");
   if ((chartoWrite < 0) || (chartoWrite > 255))
     quit("!FileWriteRawChar: can only write values 0-255");
@@ -18629,7 +18629,7 @@ void sc_File::Close() {
   }
 }
 
-int File_Exists(const char *fnmm) {
+long File_Exists(const char *fnmm) {
   char fileToCheck[MAX_PATH];
 
   if (!validate_user_file_path(fnmm, fileToCheck, false))
@@ -18643,7 +18643,7 @@ int File_Exists(const char *fnmm) {
   return 1;
 }
 
-int File_Delete(const char *fnmm) {
+long File_Delete(const char *fnmm) {
 
   char fileToDelete[MAX_PATH];
 
@@ -18655,7 +18655,7 @@ int File_Delete(const char *fnmm) {
   return 1;
 }
 
-void *sc_OpenFile(const char *fnmm, int mode) {
+void *sc_OpenFile(const char *fnmm,long mode) {
   if ((mode < scFileRead) || (mode > scFileAppend))
     quit("!OpenFile: invalid file mode");
 
@@ -18668,27 +18668,27 @@ void *sc_OpenFile(const char *fnmm, int mode) {
   return scf;
 }
 
-void File_Close(sc_File *fil) {
+long File_Close(sc_File *fil) {
   fil->Close();
 }
 
-void File_WriteString(sc_File *fil, const char *towrite) {
+long File_WriteString(sc_File *fil, const char *towrite) {
   FileWrite(fil->handle, towrite);
 }
 
-void File_WriteInt(sc_File *fil, int towrite) {
+long File_WriteInt(sc_File *fil,long towrite) {
   FileWriteInt(fil->handle, towrite);
 }
 
-void File_WriteRawChar(sc_File *fil, int towrite) {
+long File_WriteRawChar(sc_File *fil,long towrite) {
   FileWriteRawChar(fil->handle, towrite);
 }
 
-void File_WriteRawLine(sc_File *fil, const char *towrite) {
+long File_WriteRawLine(sc_File *fil, const char *towrite) {
   FileWriteRawLine(fil->handle, towrite);
 }
 
-void File_ReadRawLine(sc_File *fil, char* buffer) {
+long File_ReadRawLine(sc_File *fil, char* buffer) {
   check_valid_file_handle(fil->handle, "File.ReadRawLine");
   check_strlen(buffer);
   int i = 0;
@@ -18714,7 +18714,7 @@ const char* File_ReadRawLineBack(sc_File *fil) {
   return CreateNewScriptString(readbuffer);
 }
 
-void File_ReadString(sc_File *fil, char *toread) {
+long File_ReadString(sc_File *fil, char *toread) {
   FileRead(fil->handle, toread);
 }
 
@@ -18734,25 +18734,25 @@ const char* File_ReadStringBack(sc_File *fil) {
   return CreateNewScriptString(retVal, false);
 }
 
-int File_ReadInt(sc_File *fil) {
+long File_ReadInt(sc_File *fil) {
   return FileReadInt(fil->handle);
 }
 
-int File_ReadRawChar(sc_File *fil) {
+long File_ReadRawChar(sc_File *fil) {
   return FileReadRawChar(fil->handle);
 }
 
-int File_ReadRawInt(sc_File *fil) {
+long File_ReadRawInt(sc_File *fil) {
   return FileReadRawInt(fil->handle);
 }
 
-int File_GetEOF(sc_File *fil) {
+long File_GetEOF(sc_File *fil) {
   if (fil->handle == NULL)
     return 1;
   return FileIsEOF(fil->handle);
 }
 
-int File_GetError(sc_File *fil) {
+long File_GetError(sc_File *fil) {
   if (fil->handle == NULL)
     return 1;
   return FileIsError(fil->handle);
@@ -18800,14 +18800,14 @@ long InterfaceOff(long ifn) {
   else if (guis[ifn].popup==POPUP_MOUSEY) guis[ifn].on=-1;
 }
 
-void GUI_SetVisible(ScriptGUI *tehgui, int isvisible) {
+long GUI_SetVisible(ScriptGUI *tehgui,long isvisible) {
   if (isvisible)
     InterfaceOn(tehgui->id);
   else
     InterfaceOff(tehgui->id);
 }
 
-int GUI_GetVisible(ScriptGUI *tehgui) {
+long GUI_GetVisible(ScriptGUI *tehgui) {
   // GUI_GetVisible is slightly different from IsGUIOn, because
   // with a mouse ypos gui it returns 1 if the GUI is enabled,
   // whereas IsGUIOn actually checks if it is displayed
@@ -18816,11 +18816,11 @@ int GUI_GetVisible(ScriptGUI *tehgui) {
   return 0;
 }
 
-int GUIControl_GetVisible(GUIObject *guio) {
+long GUIControl_GetVisible(GUIObject *guio) {
   return guio->IsVisible();
 }
 
-void GUIControl_SetVisible(GUIObject *guio, int visible) {
+long GUIControl_SetVisible(GUIObject *guio,long visible) {
   if (visible != guio->IsVisible()) 
   {
     if (visible)
@@ -18833,13 +18833,13 @@ void GUIControl_SetVisible(GUIObject *guio, int visible) {
   }
 }
 
-int GUIControl_GetClickable(GUIObject *guio) {
+long GUIControl_GetClickable(GUIObject *guio) {
   if (guio->IsClickable())
     return 1;
   return 0;
 }
 
-void GUIControl_SetClickable(GUIObject *guio, int enabled) {
+long GUIControl_SetClickable(GUIObject *guio,long enabled) {
   if (enabled)
     guio->SetClickable(true);
   else
@@ -18849,13 +18849,13 @@ void GUIControl_SetClickable(GUIObject *guio, int enabled) {
   guis_need_update = 1;
 }
 
-int GUIControl_GetEnabled(GUIObject *guio) {
+long GUIControl_GetEnabled(GUIObject *guio) {
   if (guio->IsDisabled())
     return 0;
   return 1;
 }
 
-void GUIControl_SetEnabled(GUIObject *guio, int enabled) {
+long GUIControl_SetEnabled(GUIObject *guio,long enabled) {
   if (enabled)
     guio->Enable();
   else
@@ -18874,7 +18874,7 @@ long SetGUIObjectEnabled(long guin,long objn,long enabled) {
   GUIControl_SetEnabled(guis[guin].objs[objn], enabled);
 }
 
-int GUIControl_GetID(GUIObject *guio) {
+long GUIControl_GetID(GUIObject *guio) {
   return guio->objn;
 }
 
@@ -18924,27 +18924,27 @@ GUITextBox* GUIControl_GetAsTextBox(GUIObject *guio) {
   return (GUITextBox*)guio;
 }
 
-int GUIControl_GetX(GUIObject *guio) {
+long GUIControl_GetX(GUIObject *guio) {
   return divide_down_coordinate(guio->x);
 }
 
-void GUIControl_SetX(GUIObject *guio, int xx) {
+long GUIControl_SetX(GUIObject *guio,long xx) {
   guio->x = multiply_up_coordinate(xx);
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
 }
 
-int GUIControl_GetY(GUIObject *guio) {
+long GUIControl_GetY(GUIObject *guio) {
   return divide_down_coordinate(guio->y);
 }
 
-void GUIControl_SetY(GUIObject *guio, int yy) {
+long GUIControl_SetY(GUIObject *guio,long yy) {
   guio->y = multiply_up_coordinate(yy);
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
 }
 
-void GUIControl_SetPosition(GUIObject *guio, int xx, int yy) {
+long GUIControl_SetPosition(GUIObject *guio,long xx,long yy) {
   GUIControl_SetX(guio, xx);
   GUIControl_SetY(guio, yy);
 }
@@ -18958,29 +18958,29 @@ long SetGUIObjectPosition(long guin,long objn,long xx,long yy) {
   GUIControl_SetPosition(guis[guin].objs[objn], xx, yy);
 }
 
-int GUI_GetX(ScriptGUI *tehgui) {
+long GUI_GetX(ScriptGUI *tehgui) {
   return divide_down_coordinate(guis[tehgui->id].x);
 }
 
-void GUI_SetX(ScriptGUI *tehgui, int xx) {
+long GUI_SetX(ScriptGUI *tehgui,long xx) {
   if (xx >= thisroom.width)
     quit("!GUI.X: co-ordinates specified are out of range.");
 
   guis[tehgui->id].x = multiply_up_coordinate(xx);
 }
 
-int GUI_GetY(ScriptGUI *tehgui) {
+long GUI_GetY(ScriptGUI *tehgui) {
   return divide_down_coordinate(guis[tehgui->id].y);
 }
 
-void GUI_SetY(ScriptGUI *tehgui, int yy) {
+long GUI_SetY(ScriptGUI *tehgui,long yy) {
   if (yy >= thisroom.height)
     quit("!GUI.Y: co-ordinates specified are out of range.");
 
   guis[tehgui->id].y = multiply_up_coordinate(yy);
 }
 
-void GUI_SetPosition(ScriptGUI *tehgui, int xx, int yy) {
+long GUI_SetPosition(ScriptGUI *tehgui,long xx,long yy) {
   GUI_SetX(tehgui, xx);
   GUI_SetY(tehgui, yy);
 }
@@ -18992,29 +18992,29 @@ long SetGUIPosition(long ifn,long xx,long yy) {
   GUI_SetPosition(&scrGui[ifn], xx, yy);
 }
 
-int GUIControl_GetWidth(GUIObject *guio) {
+long GUIControl_GetWidth(GUIObject *guio) {
   return divide_down_coordinate(guio->wid);
 }
 
-void GUIControl_SetWidth(GUIObject *guio, int newwid) {
+long GUIControl_SetWidth(GUIObject *guio,long newwid) {
   guio->wid = multiply_up_coordinate(newwid);
   guio->Resized();
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
 }
 
-int GUIControl_GetHeight(GUIObject *guio) {
+long GUIControl_GetHeight(GUIObject *guio) {
   return divide_down_coordinate(guio->hit);
 }
 
-void GUIControl_SetHeight(GUIObject *guio, int newhit) {
+long GUIControl_SetHeight(GUIObject *guio,long newhit) {
   guio->hit = multiply_up_coordinate(newhit);
   guio->Resized();
   guis[guio->guin].control_positions_changed();
   guis_need_update = 1;
 }
 
-void GUIControl_SetSize(GUIObject *guio, int newwid, int newhit) {
+long GUIControl_SetSize(GUIObject *guio,long newwid,long newhit) {
   if ((newwid < 2) || (newhit < 2))
     quit("!SetGUIObjectSize: new size is too small (must be at least 2x2)");
 
@@ -19023,12 +19023,12 @@ void GUIControl_SetSize(GUIObject *guio, int newwid, int newhit) {
   GUIControl_SetHeight(guio, newhit);
 }
 
-void GUIControl_SendToBack(GUIObject *guio) {
+long GUIControl_SendToBack(GUIObject *guio) {
   if (guis[guio->guin].send_to_back(guio->objn))
     guis_need_update = 1;
 }
 
-void GUIControl_BringToFront(GUIObject *guio) {
+long GUIControl_BringToFront(GUIObject *guio) {
   if (guis[guio->guin].bring_to_front(guio->objn))
     guis_need_update = 1;
 }
@@ -19059,7 +19059,7 @@ void recreate_guibg_image(GUIMain *tehgui)
   }
 }
 
-void GUI_SetSize(ScriptGUI *sgui, int widd, int hitt) {
+long GUI_SetSize(ScriptGUI *sgui,long widd,long hitt) {
   if ((widd < 1) || (hitt < 1) || (widd > BASEWIDTH) || (hitt > GetMaxScreenHeight()))
     quitprintf("!SetGUISize: invalid dimensions (tried to set to %d x %d)", widd, hitt);
 
@@ -19077,19 +19077,19 @@ void GUI_SetSize(ScriptGUI *sgui, int widd, int hitt) {
   guis_need_update = 1;
 }
 
-int GUI_GetWidth(ScriptGUI *sgui) {
+long GUI_GetWidth(ScriptGUI *sgui) {
   return divide_down_coordinate(guis[sgui->id].wid);
 }
 
-int GUI_GetHeight(ScriptGUI *sgui) {
+long GUI_GetHeight(ScriptGUI *sgui) {
   return divide_down_coordinate(guis[sgui->id].hit);
 }
 
-void GUI_SetWidth(ScriptGUI *sgui, int newwid) {
+long GUI_SetWidth(ScriptGUI *sgui,long newwid) {
   GUI_SetSize(sgui, newwid, GUI_GetHeight(sgui));
 }
 
-void GUI_SetHeight(ScriptGUI *sgui, int newhit) {
+long GUI_SetHeight(ScriptGUI *sgui,long newhit) {
   GUI_SetSize(sgui, GUI_GetWidth(sgui), newhit);
 }
 
@@ -19100,12 +19100,12 @@ long SetGUISize (long ifn,long widd,long hitt) {
   GUI_SetSize(&scrGui[ifn], widd, hitt);
 }
 
-void GUI_SetZOrder(ScriptGUI *tehgui, int z) {
+long GUI_SetZOrder(ScriptGUI *tehgui,long z) {
   guis[tehgui->id].zorder = z;
   update_gui_zorder();
 }
 
-int GUI_GetZOrder(ScriptGUI *tehgui) {
+long GUI_GetZOrder(ScriptGUI *tehgui) {
   return guis[tehgui->id].zorder;
 }
 
@@ -19116,13 +19116,13 @@ long SetGUIZOrder(long guin,long z) {
   GUI_SetZOrder(&scrGui[guin], z);
 }
 
-void GUI_SetClickable(ScriptGUI *tehgui, int clickable) {
+long GUI_SetClickable(ScriptGUI *tehgui,long clickable) {
   guis[tehgui->id].flags &= ~GUIF_NOCLICK;
   if (clickable == 0)
     guis[tehgui->id].flags |= GUIF_NOCLICK;
 }
 
-int GUI_GetClickable(ScriptGUI *tehgui) {
+long GUI_GetClickable(ScriptGUI *tehgui) {
   if (guis[tehgui->id].flags & GUIF_NOCLICK)
     return 0;
   return 1;
@@ -19135,28 +19135,28 @@ long SetGUIClickable(long guin,long clickable) {
   GUI_SetClickable(&scrGui[guin], clickable);
 }
 
-int GUI_GetID(ScriptGUI *tehgui) {
+long GUI_GetID(ScriptGUI *tehgui) {
   return tehgui->id;
 }
 
-GUIObject* GUI_GetiControls(ScriptGUI *tehgui, int idx) {
+GUIObject* GUI_GetiControls(ScriptGUI *tehgui,long idx) {
   if ((idx < 0) || (idx >= guis[tehgui->id].numobjs))
     return NULL;
   return guis[tehgui->id].objs[idx];
 }
 
-int GUI_GetControlCount(ScriptGUI *tehgui) {
+long GUI_GetControlCount(ScriptGUI *tehgui) {
   return guis[tehgui->id].numobjs;
 }
 
-void GUI_SetTransparency(ScriptGUI *tehgui, int trans) {
+long GUI_SetTransparency(ScriptGUI *tehgui,long trans) {
   if ((trans < 0) | (trans > 100))
     quit("!SetGUITransparency: transparency value must be between 0 and 100");
 
   guis[tehgui->id].SetTransparencyAsPercentage(trans);
 }
 
-int GUI_GetTransparency(ScriptGUI *tehgui) {
+long GUI_GetTransparency(ScriptGUI *tehgui) {
   if (guis[tehgui->id].transparency == 0)
     return 0;
   if (guis[tehgui->id].transparency == 255)
@@ -19173,7 +19173,7 @@ long SetGUITransparency(long ifn,long trans) {
   GUI_SetTransparency(&scrGui[ifn], trans);
 }
 
-void GUI_Centre(ScriptGUI *sgui) {
+long GUI_Centre(ScriptGUI *sgui) {
   GUIMain *tehgui = &guis[sgui->id];
   tehgui->x = scrnwid / 2 - tehgui->wid / 2;
   tehgui->y = scrnhit / 2 - tehgui->hit / 2;
@@ -19186,7 +19186,7 @@ long CentreGUI (long ifn) {
   GUI_Centre(&scrGui[ifn]);
 }
 
-int GetTextWidth(char *text, int fontnum) {
+long GetTextWidth(char *text,long fontnum) {
   VALIDATE_STRING(text);
   if ((fontnum < 0) || (fontnum >= game.numfonts))
     quit("!GetTextWidth: invalid font number.");
@@ -19194,7 +19194,7 @@ int GetTextWidth(char *text, int fontnum) {
   return divide_down_coordinate(wgettextwidth_compensate(text, fontnum));
 }
 
-int GetTextHeight(char *text, int fontnum, int width) {
+long GetTextHeight(char *text,long fontnum,long width) {
   VALIDATE_STRING(text);
   if ((fontnum < 0) || (fontnum >= game.numfonts))
     quit("!GetTextHeight: invalid font number.");
@@ -19213,11 +19213,11 @@ const char* TextBox_GetText_New(GUITextBox *texbox) {
   return CreateNewScriptString(texbox->text);
 }
 
-void TextBox_GetText(GUITextBox *texbox, char *buffer) {
+long TextBox_GetText(GUITextBox *texbox, char *buffer) {
   strcpy(buffer, texbox->text);
 }
 
-void TextBox_SetText(GUITextBox *texbox, const char *newtex) {
+long TextBox_SetText(GUITextBox *texbox, const char *newtex) {
   if (strlen(newtex) > 190)
     quit("!SetTextBoxText: text too long");
 
@@ -19227,11 +19227,11 @@ void TextBox_SetText(GUITextBox *texbox, const char *newtex) {
   }
 }
 
-int TextBox_GetTextColor(GUITextBox *guit) {
+long TextBox_GetTextColor(GUITextBox *guit) {
   return guit->textcol;
 }
 
-void TextBox_SetTextColor(GUITextBox *guit, int colr) {
+long TextBox_SetTextColor(GUITextBox *guit,long colr) {
   if (guit->textcol != colr) 
   {
     guit->textcol = colr;
@@ -19239,11 +19239,11 @@ void TextBox_SetTextColor(GUITextBox *guit, int colr) {
   }
 }
 
-int TextBox_GetFont(GUITextBox *guit) {
+long TextBox_GetFont(GUITextBox *guit) {
   return guit->font;
 }
 
-void TextBox_SetFont(GUITextBox *guit, int fontnum) {
+long TextBox_SetFont(GUITextBox *guit,long fontnum) {
   if ((fontnum < 0) || (fontnum >= game.numfonts))
     quit("!SetTextBoxFont: invalid font number.");
 
@@ -19265,7 +19265,7 @@ long SetTextBoxFont(long guin,long objn,long fontnum) {
   TextBox_SetFont(guit, fontnum);
 }
 
-void GetTextBoxText(int guin, int objn, char*txbuf) {
+long GetTextBoxText(long guin,long objn, char*txbuf) {
   VALIDATE_STRING(txbuf);
   if ((guin<0) | (guin>=game.numgui)) quit("!GetTextBoxText: invalid GUI number");
   if ((objn<0) | (objn>=guis[guin].numobjs)) quit("!GetTextBoxText: invalid object number");
@@ -19276,7 +19276,7 @@ void GetTextBoxText(int guin, int objn, char*txbuf) {
   TextBox_GetText(guisl, txbuf);
 }
 
-void SetTextBoxText(int guin, int objn, char*txbuf) {
+long SetTextBoxText(long guin,long objn, char*txbuf) {
   if ((guin<0) | (guin>=game.numgui)) quit("!SetTextBoxText: invalid GUI number");
   if ((objn<0) | (objn>=guis[guin].numobjs)) quit("!SetTextBoxText: invalid object number");
   if (guis[guin].get_control_type(objn)!=GOBJ_TEXTBOX)
@@ -19289,7 +19289,7 @@ void SetTextBoxText(int guin, int objn, char*txbuf) {
 
 // *** LIST BOX FUNCTIONS
 
-int ListBox_AddItem(GUIListBox *lbb, const char *text) {
+long ListBox_AddItem(GUIListBox *lbb, const char *text) {
   if (lbb->AddItem(text) < 0)
     return 0;
 
@@ -19297,7 +19297,7 @@ int ListBox_AddItem(GUIListBox *lbb, const char *text) {
   return 1;
 }
 
-int ListBox_InsertItemAt(GUIListBox *lbb, int index, const char *text) {
+long ListBox_InsertItemAt(GUIListBox *lbb,long index, const char *text) {
   if (lbb->InsertItem(index, text) < 0)
     return 0;
 
@@ -19305,12 +19305,12 @@ int ListBox_InsertItemAt(GUIListBox *lbb, int index, const char *text) {
   return 1;
 }
 
-void ListBox_Clear(GUIListBox *listbox) {
+long ListBox_Clear(GUIListBox *listbox) {
   listbox->Clear();
   guis_need_update = 1;
 }
 
-void ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
+long ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
   char searchPath[MAX_PATH];
   validate_user_file_path(filemask, searchPath, false);
 
@@ -19325,14 +19325,14 @@ void ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
   guis_need_update = 1;
 }
 
-int ListBox_GetSaveGameSlots(GUIListBox *listbox, int index) {
+long ListBox_GetSaveGameSlots(GUIListBox *listbox,long index) {
   if ((index < 0) || (index >= listbox->numItems))
     quit("!ListBox.SaveGameSlot: index out of range");
 
   return listbox->saveGameIndex[index];
 }
 
-int ListBox_FillSaveGameList(GUIListBox *listbox) {
+long ListBox_FillSaveGameList(GUIListBox *listbox) {
   listbox->Clear();
 
   int numsaves=0;
@@ -19395,7 +19395,7 @@ int ListBox_FillSaveGameList(GUIListBox *listbox) {
   return 0;
 }
 
-int ListBox_GetItemAtLocation(GUIListBox *listbox, int x, int y) {
+long ListBox_GetItemAtLocation(GUIListBox *listbox,long x,long y) {
 
   if (guis[listbox->guin].on < 1)
     return -1;
@@ -19410,7 +19410,7 @@ int ListBox_GetItemAtLocation(GUIListBox *listbox, int x, int y) {
   return listbox->GetIndexFromCoordinates(x, y);
 }
 
-char *ListBox_GetItemText(GUIListBox *listbox, int index, char *buffer) {
+char *ListBox_GetItemText(GUIListBox *listbox,long index, char *buffer) {
   if ((index < 0) || (index >= listbox->numItems))
     quit("!ListBoxGetItemText: invalid item specified");
   strncpy(buffer, listbox->items[index],198);
@@ -19418,14 +19418,14 @@ char *ListBox_GetItemText(GUIListBox *listbox, int index, char *buffer) {
   return buffer;
 }
 
-const char* ListBox_GetItems(GUIListBox *listbox, int index) {
+const char* ListBox_GetItems(GUIListBox *listbox,long index) {
   if ((index < 0) || (index >= listbox->numItems))
     quit("!ListBox.Items: invalid index specified");
 
   return CreateNewScriptString(listbox->items[index]);
 }
 
-void ListBox_SetItemText(GUIListBox *listbox, int index, const char *newtext) {
+long ListBox_SetItemText(GUIListBox *listbox,long index, const char *newtext) {
   if ((index < 0) || (index >= listbox->numItems))
     quit("!ListBoxSetItemText: invalid item specified");
 
@@ -19435,7 +19435,7 @@ void ListBox_SetItemText(GUIListBox *listbox, int index, const char *newtext) {
   }
 }
 
-void ListBox_RemoveItem(GUIListBox *listbox, int itemIndex) {
+long ListBox_RemoveItem(GUIListBox *listbox,long itemIndex) {
   
   if ((itemIndex < 0) || (itemIndex >= listbox->numItems))
     quit("!ListBoxRemove: invalid listindex specified");
@@ -19444,15 +19444,15 @@ void ListBox_RemoveItem(GUIListBox *listbox, int itemIndex) {
   guis_need_update = 1;
 }
 
-int ListBox_GetItemCount(GUIListBox *listbox) {
+long ListBox_GetItemCount(GUIListBox *listbox) {
   return listbox->numItems;
 }
 
-int ListBox_GetFont(GUIListBox *listbox) {
+long ListBox_GetFont(GUIListBox *listbox) {
   return listbox->font;
 }
 
-void ListBox_SetFont(GUIListBox *listbox, int newfont) {
+long ListBox_SetFont(GUIListBox *listbox,long newfont) {
 
   if ((newfont < 0) || (newfont >= game.numfonts))
     quit("!ListBox.Font: invalid font number.");
@@ -19464,35 +19464,35 @@ void ListBox_SetFont(GUIListBox *listbox, int newfont) {
 
 }
 
-int ListBox_GetHideBorder(GUIListBox *listbox) {
+long ListBox_GetHideBorder(GUIListBox *listbox) {
   return (listbox->exflags & GLF_NOBORDER) ? 1 : 0;
 }
 
-void ListBox_SetHideBorder(GUIListBox *listbox, int newValue) {
+long ListBox_SetHideBorder(GUIListBox *listbox,long newValue) {
   listbox->exflags &= ~GLF_NOBORDER;
   if (newValue)
     listbox->exflags |= GLF_NOBORDER;
   guis_need_update = 1;
 }
 
-int ListBox_GetHideScrollArrows(GUIListBox *listbox) {
+long ListBox_GetHideScrollArrows(GUIListBox *listbox) {
   return (listbox->exflags & GLF_NOARROWS) ? 1 : 0;
 }
 
-void ListBox_SetHideScrollArrows(GUIListBox *listbox, int newValue) {
+long ListBox_SetHideScrollArrows(GUIListBox *listbox,long newValue) {
   listbox->exflags &= ~GLF_NOARROWS;
   if (newValue)
     listbox->exflags |= GLF_NOARROWS;
   guis_need_update = 1;
 }
 
-int ListBox_GetSelectedIndex(GUIListBox *listbox) {
+long ListBox_GetSelectedIndex(GUIListBox *listbox) {
   if ((listbox->selected < 0) || (listbox->selected >= listbox->numItems))
     return -1;
   return listbox->selected;
 }
 
-void ListBox_SetSelectedIndex(GUIListBox *guisl, int newsel) {
+long ListBox_SetSelectedIndex(GUIListBox *guisl,long newsel) {
 
   if (newsel >= guisl->numItems)
     newsel = -1;
@@ -19510,11 +19510,11 @@ void ListBox_SetSelectedIndex(GUIListBox *guisl, int newsel) {
 
 }
 
-int ListBox_GetTopItem(GUIListBox *listbox) {
+long ListBox_GetTopItem(GUIListBox *listbox) {
   return listbox->topItem;
 }
 
-void ListBox_SetTopItem(GUIListBox *guisl, int item) {
+long ListBox_SetTopItem(GUIListBox *guisl,long item) {
   if ((guisl->numItems == 0) && (item == 0))
     ;  // allow resetting an empty box to the top
   else if ((item >= guisl->numItems) || (item < 0))
@@ -19524,18 +19524,18 @@ void ListBox_SetTopItem(GUIListBox *guisl, int item) {
   guis_need_update = 1;
 }
 
-int ListBox_GetRowCount(GUIListBox *listbox) {
+long ListBox_GetRowCount(GUIListBox *listbox) {
   return listbox->num_items_fit;
 }
 
-void ListBox_ScrollDown(GUIListBox *listbox) {
+long ListBox_ScrollDown(GUIListBox *listbox) {
   if (listbox->topItem + listbox->num_items_fit < listbox->numItems) {
     listbox->topItem++;
     guis_need_update = 1;
   }
 }
 
-void ListBox_ScrollUp(GUIListBox *listbox) {
+long ListBox_ScrollUp(GUIListBox *listbox) {
   if (listbox->topItem > 0) {
     listbox->topItem--;
     guis_need_update = 1;
@@ -19556,7 +19556,7 @@ long ListBoxClear(long guin,long objn) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   ListBox_Clear(guisl);
 }
-void ListBoxAdd(int guin, int objn, const char*newitem) {
+long ListBoxAdd(long guin,long objn, const char*newitem) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   ListBox_AddItem(guisl, newitem);
 }
@@ -19572,7 +19572,7 @@ long ListBoxGetNumItems(long guin,long objn) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   return ListBox_GetItemCount(guisl);
 }
-char* ListBoxGetItemText(int guin, int objn, int item, char*buffer) {
+char* ListBoxGetItemText(long guin,long objn,long item, char*buffer) {
   VALIDATE_STRING(buffer);
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   return ListBox_GetItemText(guisl, item, buffer);
@@ -19591,7 +19591,7 @@ long ListBoxSaveGameList (long guin,long objn) {
   return ListBox_FillSaveGameList(guisl);
 }
 
-void ListBoxDirList (int guin, int objn, const char*filemask) {
+long ListBoxDirList (long guin,long objn, const char*filemask) {
   GUIListBox *guisl = is_valid_listbox(guin,objn);
   ListBox_FillDirList(guisl, filemask);
 }
@@ -19604,11 +19604,11 @@ const char* Label_GetText_New(GUILabel *labl) {
   return CreateNewScriptString(labl->GetText());
 }
 
-void Label_GetText(GUILabel *labl, char *buffer) {
+long Label_GetText(GUILabel *labl, char *buffer) {
   strcpy(buffer, labl->GetText());
 }
 
-void Label_SetText(GUILabel *labl, const char *newtx) {
+long Label_SetText(GUILabel *labl, const char *newtx) {
   newtx = get_translation(newtx);
 
   if (strcmp(labl->GetText(), newtx)) {
@@ -19617,22 +19617,22 @@ void Label_SetText(GUILabel *labl, const char *newtx) {
   }
 }
 
-int Label_GetColor(GUILabel *labl) {
+long Label_GetColor(GUILabel *labl) {
   return labl->textcol;
 }
 
-void Label_SetColor(GUILabel *labl, int colr) {
+long Label_SetColor(GUILabel *labl,long colr) {
   if (labl->textcol != colr) {
     labl->textcol = colr;
     guis_need_update = 1;
   }
 }
 
-int Label_GetFont(GUILabel *labl) {
+long Label_GetFont(GUILabel *labl) {
   return labl->font;
 }
 
-void Label_SetFont(GUILabel *guil, int fontnum) {
+long Label_SetFont(GUILabel *guil,long fontnum) {
   if ((fontnum < 0) || (fontnum >= game.numfonts))
     quit("!SetLabelFont: invalid font number.");
 
@@ -19655,7 +19655,7 @@ long SetLabelColor(long guin,long objn,long colr) {
   Label_SetColor(guil, colr);
 }
 
-void SetLabelText(int guin,int objn,char*newtx) {
+long SetLabelText(long guin,long objn,char*newtx) {
   VALIDATE_STRING(newtx);
   if ((guin<0) | (guin>=game.numgui)) quit("!SetLabelText: invalid GUI number");
   if ((objn<0) | (objn>=guis[guin].numobjs)) quit("!SetLabelTexT: invalid object number");
@@ -19680,7 +19680,7 @@ long SetLabelFont(long guin,long objn,long fontnum) {
 
 // *** INV WINDOW FUNCTIONS
 
-void InvWindow_SetCharacterToUse(GUIInv *guii, CharacterInfo *chaa) {
+long InvWindow_SetCharacterToUse(GUIInv *guii, CharacterInfo *chaa) {
   if (chaa == NULL)
     guii->charId = -1;
   else
@@ -19698,48 +19698,48 @@ CharacterInfo* InvWindow_GetCharacterToUse(GUIInv *guii) {
   return &game.chars[guii->charId];
 }
 
-void InvWindow_SetItemWidth(GUIInv *guii, int newwidth) {
+long InvWindow_SetItemWidth(GUIInv *guii,long newwidth) {
   guii->itemWidth = newwidth;
   guii->Resized();
 }
 
-int InvWindow_GetItemWidth(GUIInv *guii) {
+long InvWindow_GetItemWidth(GUIInv *guii) {
   return guii->itemWidth;
 }
 
-void InvWindow_SetItemHeight(GUIInv *guii, int newhit) {
+long InvWindow_SetItemHeight(GUIInv *guii,long newhit) {
   guii->itemHeight = newhit;
   guii->Resized();
 }
 
-int InvWindow_GetItemHeight(GUIInv *guii) {
+long InvWindow_GetItemHeight(GUIInv *guii) {
   return guii->itemHeight;
 }
 
-void InvWindow_SetTopItem(GUIInv *guii, int topitem) {
+long InvWindow_SetTopItem(GUIInv *guii,long topitem) {
   if (guii->topIndex != topitem) {
     guii->topIndex = topitem;
     guis_need_update = 1;
   }
 }
 
-int InvWindow_GetTopItem(GUIInv *guii) {
+long InvWindow_GetTopItem(GUIInv *guii) {
   return guii->topIndex;
 }
 
-int InvWindow_GetItemsPerRow(GUIInv *guii) {
+long InvWindow_GetItemsPerRow(GUIInv *guii) {
   return guii->itemsPerLine;
 }
 
-int InvWindow_GetItemCount(GUIInv *guii) {
+long InvWindow_GetItemCount(GUIInv *guii) {
   return charextra[guii->CharToDisplay()].invorder_count;
 }
 
-int InvWindow_GetRowCount(GUIInv *guii) {
+long InvWindow_GetRowCount(GUIInv *guii) {
   return guii->numLines;
 }
 
-void InvWindow_ScrollDown(GUIInv *guii) {
+long InvWindow_ScrollDown(GUIInv *guii) {
   if ((charextra[guii->CharToDisplay()].invorder_count) >
       (guii->topIndex + (guii->itemsPerLine * guii->numLines))) { 
     guii->topIndex += guii->itemsPerLine;
@@ -19747,7 +19747,7 @@ void InvWindow_ScrollDown(GUIInv *guii) {
   }
 }
 
-void InvWindow_ScrollUp(GUIInv *guii) {
+long InvWindow_ScrollUp(GUIInv *guii) {
   if (guii->topIndex > 0) {
     guii->topIndex -= guii->itemsPerLine;
     if (guii->topIndex < 0)
@@ -19757,7 +19757,7 @@ void InvWindow_ScrollUp(GUIInv *guii) {
   }
 }
 
-ScriptInvItem* InvWindow_GetItemAtIndex(GUIInv *guii, int index) {
+ScriptInvItem* InvWindow_GetItemAtIndex(GUIInv *guii,long index) {
   if ((index < 0) || (index >= charextra[guii->CharToDisplay()].invorder_count))
     return NULL;
   return &scrInv[charextra[guii->CharToDisplay()].invorder[index]];
@@ -19766,7 +19766,7 @@ ScriptInvItem* InvWindow_GetItemAtIndex(GUIInv *guii, int index) {
 
 // *** SLIDER FUNCTIONS
 
-void Slider_SetMax(GUISlider *guisl, int valn) {
+long Slider_SetMax(GUISlider *guisl,long valn) {
 
   if (valn != guisl->max) {
     guisl->max = valn;
@@ -19781,11 +19781,11 @@ void Slider_SetMax(GUISlider *guisl, int valn) {
 
 }
 
-int Slider_GetMax(GUISlider *guisl) {
+long Slider_GetMax(GUISlider *guisl) {
   return guisl->max;
 }
 
-void Slider_SetMin(GUISlider *guisl, int valn) {
+long Slider_SetMin(GUISlider *guisl,long valn) {
 
   if (valn != guisl->min) {
     guisl->min = valn;
@@ -19800,11 +19800,11 @@ void Slider_SetMin(GUISlider *guisl, int valn) {
 
 }
 
-int Slider_GetMin(GUISlider *guisl) {
+long Slider_GetMin(GUISlider *guisl) {
   return guisl->min;
 }
 
-void Slider_SetValue(GUISlider *guisl, int valn) {
+long Slider_SetValue(GUISlider *guisl,long valn) {
   if (valn > guisl->max) valn = guisl->max;
   if (valn < guisl->min) valn = guisl->min;
 
@@ -19814,7 +19814,7 @@ void Slider_SetValue(GUISlider *guisl, int valn) {
   }
 }
 
-int Slider_GetValue(GUISlider *guisl) {
+long Slider_GetValue(GUISlider *guisl) {
   return guisl->value;
 }
 
@@ -19836,11 +19836,11 @@ long GetSliderValue(long guin,long objn) {
   return Slider_GetValue(guisl);
 }
 
-int Slider_GetBackgroundGraphic(GUISlider *guisl) {
+long Slider_GetBackgroundGraphic(GUISlider *guisl) {
   return (guisl->bgimage > 0) ? guisl->bgimage : 0;
 }
 
-void Slider_SetBackgroundGraphic(GUISlider *guisl, int newImage) {
+long Slider_SetBackgroundGraphic(GUISlider *guisl,long newImage) {
   if (newImage != guisl->bgimage)
   {
     guisl->bgimage = newImage;
@@ -19848,11 +19848,11 @@ void Slider_SetBackgroundGraphic(GUISlider *guisl, int newImage) {
   }
 }
 
-int Slider_GetHandleGraphic(GUISlider *guisl) {
+long Slider_GetHandleGraphic(GUISlider *guisl) {
   return (guisl->handlepic > 0) ? guisl->handlepic : 0;
 }
 
-void Slider_SetHandleGraphic(GUISlider *guisl, int newImage) {
+long Slider_SetHandleGraphic(GUISlider *guisl,long newImage) {
   if (newImage != guisl->handlepic)
   {
     guisl->handlepic = newImage;
@@ -19860,11 +19860,11 @@ void Slider_SetHandleGraphic(GUISlider *guisl, int newImage) {
   }
 }
 
-int Slider_GetHandleOffset(GUISlider *guisl) {
+long Slider_GetHandleOffset(GUISlider *guisl) {
   return guisl->handleoffset;
 }
 
-void Slider_SetHandleOffset(GUISlider *guisl, int newOffset) {
+long Slider_SetHandleOffset(GUISlider *guisl,long newOffset) {
   if (newOffset != guisl->handleoffset)
   {
     guisl->handleoffset = newOffset;
@@ -19872,14 +19872,14 @@ void Slider_SetHandleOffset(GUISlider *guisl, int newOffset) {
   }
 }
 
-void GUI_SetBackgroundGraphic(ScriptGUI *tehgui, int slotn) {
+long GUI_SetBackgroundGraphic(ScriptGUI *tehgui,long slotn) {
   if (guis[tehgui->id].bgpic != slotn) {
     guis[tehgui->id].bgpic = slotn;
     guis_need_update = 1;
   }
 }
 
-int GUI_GetBackgroundGraphic(ScriptGUI *tehgui) {
+long GUI_GetBackgroundGraphic(ScriptGUI *tehgui) {
   if (guis[tehgui->id].bgpic < 1)
     return 0;
   return guis[tehgui->id].bgpic;
@@ -19896,7 +19896,7 @@ long SetGUIBackgroundPic (long guin,long slotn) {
 // *** BUTTON FUNCTIONS
 
 
-void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) {
+long Button_Animate(GUIButton *butt,long view,long loop,long speed,long repeat) {
   int guin = butt->guin;
   int objn = butt->objn;
   
@@ -19937,11 +19937,11 @@ const char* Button_GetText_New(GUIButton *butt) {
   return CreateNewScriptString(butt->text);
 }
 
-void Button_GetText(GUIButton *butt, char *buffer) {
+long Button_GetText(GUIButton *butt, char *buffer) {
   strcpy(buffer, butt->text);
 }
 
-void Button_SetText(GUIButton *butt, const char *newtx) {
+long Button_SetText(GUIButton *butt, const char *newtx) {
   newtx = get_translation(newtx);
   if (strlen(newtx) > 49) quit("!SetButtonText: text too long, button has 50 chars max");
 
@@ -19951,7 +19951,7 @@ void Button_SetText(GUIButton *butt, const char *newtx) {
   }
 }
 
-void Button_SetFont(GUIButton *butt, int newFont) {
+long Button_SetFont(GUIButton *butt,long newFont) {
   if ((newFont < 0) || (newFont >= game.numfonts))
     quit("!Button.Font: invalid font number.");
 
@@ -19961,17 +19961,17 @@ void Button_SetFont(GUIButton *butt, int newFont) {
   }
 }
 
-int Button_GetFont(GUIButton *butt) {
+long Button_GetFont(GUIButton *butt) {
   return butt->font;
 }
 
-int Button_GetClipImage(GUIButton *butt) {
+long Button_GetClipImage(GUIButton *butt) {
   if (butt->flags & GUIF_CLIP)
     return 1;
   return 0;
 }
 
-void Button_SetClipImage(GUIButton *butt, int newval) {
+long Button_SetClipImage(GUIButton *butt,long newval) {
   butt->flags &= ~GUIF_CLIP;
   if (newval)
     butt->flags |= GUIF_CLIP;
@@ -19979,18 +19979,18 @@ void Button_SetClipImage(GUIButton *butt, int newval) {
   guis_need_update = 1;
 }
 
-int Button_GetGraphic(GUIButton *butt) {
+long Button_GetGraphic(GUIButton *butt) {
   // return currently displayed pic
   if (butt->usepic < 0)
     return butt->pic;
   return butt->usepic;
 }
 
-int Button_GetMouseOverGraphic(GUIButton *butt) {
+long Button_GetMouseOverGraphic(GUIButton *butt) {
   return butt->overpic;
 }
 
-void Button_SetMouseOverGraphic(GUIButton *guil, int slotn) {
+long Button_SetMouseOverGraphic(GUIButton *guil,long slotn) {
   DEBUG_CONSOLE("GUI %d Button %d mouseover set to slot %d", guil->guin, guil->objn, slotn);
 
   if ((guil->isover != 0) && (guil->ispushed == 0))
@@ -20001,11 +20001,11 @@ void Button_SetMouseOverGraphic(GUIButton *guil, int slotn) {
   FindAndRemoveButtonAnimation(guil->guin, guil->objn);
 }
 
-int Button_GetNormalGraphic(GUIButton *butt) {
+long Button_GetNormalGraphic(GUIButton *butt) {
   return butt->pic;
 }
 
-void Button_SetNormalGraphic(GUIButton *guil, int slotn) {
+long Button_SetNormalGraphic(GUIButton *guil,long slotn) {
   DEBUG_CONSOLE("GUI %d Button %d normal set to slot %d", guil->guin, guil->objn, slotn);
   // normal pic - update if mouse is not over, or if there's no overpic
   if (((guil->isover == 0) || (guil->overpic < 1)) && (guil->ispushed == 0))
@@ -20019,11 +20019,11 @@ void Button_SetNormalGraphic(GUIButton *guil, int slotn) {
   FindAndRemoveButtonAnimation(guil->guin, guil->objn);
 }
 
-int Button_GetPushedGraphic(GUIButton *butt) {
+long Button_GetPushedGraphic(GUIButton *butt) {
   return butt->pushedpic;
 }
 
-void Button_SetPushedGraphic(GUIButton *guil, int slotn) {
+long Button_SetPushedGraphic(GUIButton *guil,long slotn) {
   DEBUG_CONSOLE("GUI %d Button %d pushed set to slot %d", guil->guin, guil->objn, slotn);
 
   if (guil->ispushed)
@@ -20034,18 +20034,18 @@ void Button_SetPushedGraphic(GUIButton *guil, int slotn) {
   FindAndRemoveButtonAnimation(guil->guin, guil->objn);
 }
 
-int Button_GetTextColor(GUIButton *butt) {
+long Button_GetTextColor(GUIButton *butt) {
   return butt->textcol;
 }
 
-void Button_SetTextColor(GUIButton *butt, int newcol) {
+long Button_SetTextColor(GUIButton *butt,long newcol) {
   if (butt->textcol != newcol) {
     butt->textcol = newcol;
     guis_need_update = 1;
   }
 }
 
-void SetButtonText(int guin,int objn,char*newtx) {
+long SetButtonText(long guin,long objn,char*newtx) {
   VALIDATE_STRING(newtx);
   if ((guin<0) | (guin>=game.numgui))
     quit("!SetButtonText: invalid GUI number");
@@ -20355,7 +20355,7 @@ long Game_GetDialogCount() {
   return game.numdialog;
 }
 
-void Dialog_Start(ScriptDialog *sd) {
+long Dialog_Start(ScriptDialog *sd) {
   RunDialog(sd->id);
 }
 
@@ -20364,7 +20364,7 @@ void Dialog_Start(ScriptDialog *sd) {
 #define SAYCHOSEN_YES 2
 #define SAYCHOSEN_NO  3 
 
-int Dialog_DisplayOptions(ScriptDialog *sd, int sayChosenOption) {
+long Dialog_DisplayOptions(ScriptDialog *sd,long sayChosenOption) {
   if ((sayChosenOption < 1) || (sayChosenOption > 3))
     quit("!Dialog.DisplayOptions: invalid parameter passed");
 
@@ -20376,15 +20376,15 @@ int Dialog_DisplayOptions(ScriptDialog *sd, int sayChosenOption) {
   return chose;
 }
 
-void Dialog_SetOptionState(ScriptDialog *sd, int option, int newState) {
+long Dialog_SetOptionState(ScriptDialog *sd,long option,long newState) {
   SetDialogOption(sd->id, option, newState);
 }
 
-int Dialog_GetOptionState(ScriptDialog *sd, int option) {
+long Dialog_GetOptionState(ScriptDialog *sd,long option) {
   return GetDialogOption(sd->id, option);
 }
 
-int Dialog_HasOptionBeenChosen(ScriptDialog *sd, int option) {
+long Dialog_HasOptionBeenChosen(ScriptDialog *sd,long option) {
   if ((option < 1) || (option > dialog[sd->id].numoptions))
     quit("!Dialog.HasOptionBeenChosen: Invalid option number specified");
   option--;
@@ -20394,15 +20394,15 @@ int Dialog_HasOptionBeenChosen(ScriptDialog *sd, int option) {
   return 0;
 }
 
-int Dialog_GetOptionCount(ScriptDialog *sd) {
+long Dialog_GetOptionCount(ScriptDialog *sd) {
   return dialog[sd->id].numoptions;
 }
 
-int Dialog_GetShowTextParser(ScriptDialog *sd) {
+long Dialog_GetShowTextParser(ScriptDialog *sd) {
   return (dialog[sd->id].topicFlags & DTFLG_SHOWPARSER) ? 1 : 0;
 }
 
-const char* Dialog_GetOptionText(ScriptDialog *sd, int option) {
+const char* Dialog_GetOptionText(ScriptDialog *sd,long option) {
   if ((option < 1) || (option > dialog[sd->id].numoptions))
     quit("!Dialog.GetOptionText: Invalid option number specified");
 
@@ -20411,7 +20411,7 @@ const char* Dialog_GetOptionText(ScriptDialog *sd, int option) {
   return CreateNewScriptString(get_translation(dialog[sd->id].optionnames[option]));
 }
 
-int Dialog_GetID(ScriptDialog *sd) {
+long Dialog_GetID(ScriptDialog *sd) {
   return sd->id;
 }
 
@@ -20513,7 +20513,7 @@ long SetPalRGB(long inndx,long rr,long gg,long bb) {
 /*void scSetPal(color*pptr) {
   wsetpalette(0,255,pptr);
   }
-void scGetPal(color*pptr) {
+long scGetPal(color*pptr) {
   get_palette(pptr);
   }*/
 long FadeIn(long sppd) {
@@ -20582,7 +20582,7 @@ long GetHotspotPointX (long hotspot) {
   return thisroom.hswalkto[hotspot].x;
 }
 
-int Hotspot_GetWalkToX(ScriptHotspot *hss) {
+long Hotspot_GetWalkToX(ScriptHotspot *hss) {
   return GetHotspotPointX(hss->id);
 }
 
@@ -20596,7 +20596,7 @@ long GetHotspotPointY (long hotspot) {
   return thisroom.hswalkto[hotspot].y;
 }
 
-int Hotspot_GetWalkToY(ScriptHotspot *hss) {
+long Hotspot_GetWalkToY(ScriptHotspot *hss) {
   return GetHotspotPointY(hss->id);
 }
 
@@ -20608,7 +20608,7 @@ long GetHotspotAt(long xxx,long yyy) {
   return get_hotspot_at(xxx,yyy);
 }
 
-ScriptHotspot *GetHotspotAtLocation(int xx, int yy) {
+ScriptHotspot *GetHotspotAtLocation(long xx,long yy) {
   int hsnum = GetHotspotAt(xx, yy);
   if (hsnum <= 0)
     return &scrHotspot[0];
@@ -20725,7 +20725,7 @@ long GetInvAt (long xxx,long yyy) {
   return -1;
 }
 
-ScriptInvItem *GetInvAtLocation(int xx, int yy) {
+ScriptInvItem *GetInvAtLocation(long xx,long yy) {
   int hsnum = GetInvAt(xx, yy);
   if (hsnum <= 0)
     return NULL;
@@ -20745,7 +20745,7 @@ long SaveCursorForLocationChange() {
   }
 }
 
-void GetObjectName(int obj, char *buffer) {
+long GetObjectName(long obj, char *buffer) {
   VALIDATE_STRING(buffer);
   if (!is_valid_object(obj))
     quit("!GetObjectName: invalid object number");
@@ -20753,7 +20753,7 @@ void GetObjectName(int obj, char *buffer) {
   strcpy(buffer, get_translation(thisroom.objectnames[obj]));
 }
 
-void Object_GetName(ScriptObject *objj, char *buffer) {
+long Object_GetName(ScriptObject *objj, char *buffer) {
   GetObjectName(objj->id, buffer);
 }
 
@@ -20764,7 +20764,7 @@ const char* Object_GetName_New(ScriptObject *objj) {
   return CreateNewScriptString(get_translation(thisroom.objectnames[objj->id]));
 }
 
-void GetHotspotName(int hotspot, char *buffer) {
+long GetHotspotName(long hotspot, char *buffer) {
   VALIDATE_STRING(buffer);
   if ((hotspot < 0) || (hotspot >= MAX_HOTSPOTS))
     quit("!GetHotspotName: invalid hotspot number");
@@ -20772,7 +20772,7 @@ void GetHotspotName(int hotspot, char *buffer) {
   strcpy(buffer, get_translation(thisroom.hotspotnames[hotspot]));
 }
 
-void Hotspot_GetName(ScriptHotspot *hss, char *buffer) {
+long Hotspot_GetName(ScriptHotspot *hss, char *buffer) {
   GetHotspotName(hss->id, buffer);
 }
 
@@ -20780,7 +20780,7 @@ const char* Hotspot_GetName_New(ScriptHotspot *hss) {
   return CreateNewScriptString(get_translation(thisroom.hotspotnames[hss->id]));
 }
 
-void GetLocationName(int xxx,int yyy,char*tempo) {
+long GetLocationName(long xxx,long yyy,char*tempo) {
   if (displayed_room < 0)
     quit("!GetLocationName: no room has been loaded");
 
@@ -20843,19 +20843,19 @@ void GetLocationName(int xxx,int yyy,char*tempo) {
   play.get_loc_name_last_time = onhs;
 }
 
-const char* Game_GetLocationName(int x, int y) {
+const char* Game_GetLocationName(long x,long y) {
   char buffer[STD_BUFFER_SIZE];
   GetLocationName(x, y, buffer);
   return CreateNewScriptString(buffer);
 }
 
-void GetInvName(int indx,char*buff) {
+long GetInvName(long indx,char*buff) {
   VALIDATE_STRING(buff);
   if ((indx<0) | (indx>=game.numinvitems)) quit("!GetInvName: invalid inventory item specified");
   strcpy(buff,get_translation(game.invinfo[indx].name));
 }
 
-void InventoryItem_GetName(ScriptInvItem *iitem, char *buff) {
+long InventoryItem_GetName(ScriptInvItem *iitem, char *buff) {
   GetInvName(iitem->id, buff);
 }
 
@@ -20869,7 +20869,7 @@ long GetInvGraphic(long indx) {
   return game.invinfo[indx].pic;
 }
 
-int InventoryItem_GetGraphic(ScriptInvItem *iitem) {
+long InventoryItem_GetGraphic(ScriptInvItem *iitem) {
   return game.invinfo[iitem->id].pic;
 }
 
@@ -20902,7 +20902,7 @@ long MoveObjectDirect(long objj,long xx,long yy,long spp) {
   move_object(objj,xx,yy,spp,1);
   }
 
-void Object_Move(ScriptObject *objj, int x, int y, int speed, int blocking, int direct) {
+long Object_Move(ScriptObject *objj,long x,long y,long speed,long blocking,long direct) {
   if ((direct == ANYWHERE) || (direct == 1))
     direct = 1;
   else if ((direct == WALKABLE_AREAS) || (direct == 0))
@@ -21011,11 +21011,11 @@ long SetObjectClickable (long cha,long clik) {
     objs[cha].flags|=OBJF_NOINTERACT;
   }
 
-void Object_SetClickable(ScriptObject *objj, int clik) {
+long Object_SetClickable(ScriptObject *objj,long clik) {
   SetObjectClickable(objj->id, clik);
 }
 
-int Object_GetClickable(ScriptObject *objj) {
+long Object_GetClickable(ScriptObject *objj) {
   if (!is_valid_object(objj->id))
     quit("!Object.Clickable: Invalid object specified");
 
@@ -21024,7 +21024,7 @@ int Object_GetClickable(ScriptObject *objj) {
   return 1;
 }
 
-void Object_SetIgnoreScaling(ScriptObject *objj, int newval) {
+long Object_SetIgnoreScaling(ScriptObject *objj,long newval) {
   if (!is_valid_object(objj->id))
     quit("!Object.IgnoreScaling: Invalid object specified");
 
@@ -21036,7 +21036,7 @@ void Object_SetIgnoreScaling(ScriptObject *objj, int newval) {
   objcache[objj->id].ywas = -9999;
 }
 
-int Object_GetIgnoreScaling(ScriptObject *objj) {
+long Object_GetIgnoreScaling(ScriptObject *objj) {
   if (!is_valid_object(objj->id))
     quit("!Object.IgnoreScaling: Invalid object specified");
 
@@ -21045,31 +21045,31 @@ int Object_GetIgnoreScaling(ScriptObject *objj) {
   return 1;
 }
 
-void Object_SetSolid(ScriptObject *objj, int solid) {
+long Object_SetSolid(ScriptObject *objj,long solid) {
   objs[objj->id].flags &= ~OBJF_SOLID;
   if (solid)
     objs[objj->id].flags |= OBJF_SOLID;
 }
 
-int Object_GetSolid(ScriptObject *objj) {
+long Object_GetSolid(ScriptObject *objj) {
   if (objs[objj->id].flags & OBJF_SOLID)
     return 1;
   return 0;
 }
 
-void Object_SetBlockingWidth(ScriptObject *objj, int bwid) {
+long Object_SetBlockingWidth(ScriptObject *objj,long bwid) {
   objs[objj->id].blocking_width = bwid;
 }
 
-int Object_GetBlockingWidth(ScriptObject *objj) {
+long Object_GetBlockingWidth(ScriptObject *objj) {
   return objs[objj->id].blocking_width;
 }
 
-void Object_SetBlockingHeight(ScriptObject *objj, int bhit) {
+long Object_SetBlockingHeight(ScriptObject *objj,long bhit) {
   objs[objj->id].blocking_height = bhit;
 }
 
-int Object_GetBlockingHeight(ScriptObject *objj) {
+long Object_GetBlockingHeight(ScriptObject *objj) {
   return objs[objj->id].blocking_height;
 }
 
@@ -21083,15 +21083,15 @@ long SetObjectIgnoreWalkbehinds (long cha,long clik) {
   objcache[cha].ywas = -9999;
 }
 
-int Object_GetID(ScriptObject *objj) {
+long Object_GetID(ScriptObject *objj) {
   return objj->id;
 }
 
-void Object_SetIgnoreWalkbehinds(ScriptObject *chaa, int clik) {
+long Object_SetIgnoreWalkbehinds(ScriptObject *chaa,long clik) {
   SetObjectIgnoreWalkbehinds(chaa->id, clik);
 }
 
-int Object_GetIgnoreWalkbehinds(ScriptObject *chaa) {
+long Object_GetIgnoreWalkbehinds(ScriptObject *chaa) {
   if (!is_valid_object(chaa->id))
     quit("!Object.IgnoreWalkbehinds: Invalid object specified");
 
@@ -21135,7 +21135,7 @@ long MoveCharacterBlocking(long chaa,long xx,long yy,long direct) {
   }
 
 
-/*void GetLanguageString(int indxx,char*buffr) {
+/*long GetLanguageString(long indxx,char*buffr) {
   VALIDATE_STRING(buffr);
   char*bptr=get_language_text(indxx);
   if (bptr==NULL) strcpy(buffr,"[language string error]");
@@ -21360,7 +21360,7 @@ void my_strncpy(char *dest, const char *src, int len) {
     strcpy(dest, src);
 }
 
-void _sc_strcat(char*s1,char*s2) {
+long _sc_strcat(char*s1,char*s2) {
   // make sure they don't try to append a char to the string
   VALIDATE_STRING (s2);
   check_strlen(s1);
@@ -21369,12 +21369,12 @@ void _sc_strcat(char*s1,char*s2) {
   my_strncpy(&s1[strlen(s1)], s2, mosttocopy);
 }
 
-void _sc_strcpy(char*s1,char*s2) {
+long _sc_strcpy(char*s1,char*s2) {
   check_strlen(s1);
   my_strncpy(s1, s2, MAXSTRLEN - 1);
 }
 
-int StrContains (const char *s1, const char *s2) {
+long StrContains (const char *s1, const char *s2) {
   VALIDATE_STRING (s1);
   VALIDATE_STRING (s2);
   char *tempbuf1 = (char*)malloc(strlen(s1) + 1);
@@ -21399,13 +21399,13 @@ int StrContains (const char *s1, const char *s2) {
 #define strupr _strupr
 #endif
 
-void _sc_strlower (char *desbuf) {
+long _sc_strlower (char *desbuf) {
   VALIDATE_STRING(desbuf);
   check_strlen (desbuf);
   strlwr (desbuf);
 }
 
-void _sc_strupper (char *desbuf) {
+long _sc_strupper (char *desbuf) {
   VALIDATE_STRING(desbuf);
   check_strlen (desbuf);
   strupr (desbuf);
@@ -21477,7 +21477,7 @@ InteractionVariable *FindGraphicalVariable(const char *varName) {
   return NULL;
 }
 
-int GetGraphicalVariable (const char *varName) {
+long GetGraphicalVariable (const char *varName) {
   InteractionVariable *theVar = FindGraphicalVariable(varName);
   if (theVar == NULL) {
     char quitmessage[120];
@@ -21488,7 +21488,7 @@ int GetGraphicalVariable (const char *varName) {
   return theVar->value;
 }
 
-void SetGraphicalVariable (const char *varName, int p_value) {
+long SetGraphicalVariable (const char *varName,long p_value) {
   InteractionVariable *theVar = FindGraphicalVariable(varName);
   if (theVar == NULL) {
     char quitmessage[120];
@@ -23131,7 +23131,7 @@ void convert_guid_from_text_to_binary(const char *guidText, unsigned char *buffe
   temp = buffer[6]; buffer[6] = buffer[7]; buffer[7] = temp;
 }
 
-void save_game(int slotn, const char*descript) {
+long save_game(long slotn, const char*descript) {
   
   // dont allow save in rep_exec_always, because we dont save
   // the state of blocked scripts
