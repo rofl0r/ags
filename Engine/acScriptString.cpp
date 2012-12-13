@@ -281,6 +281,63 @@ int String_GetChars(const char *texx, int index) {
 extern void quitprintf(char*texx, ...);
 
 void my_sprintf(char *buffer, const char *fmt, va_list ap) {
+	char* p = (char*) fmt;
+	char* out = buffer;
+	char fmtbuf[16];
+	char *fmtp;
+	union FOOLZ {
+		unsigned long l;
+		unsigned int i;
+		char* c;
+		float f;
+	} theArg;// = va_arg(ap, union FOOLZ);
+	
+	while(*p) {
+		if(*p == '%') {
+			if(p[1] == '%') {
+				*out++ = '%';
+				p++;
+				goto donefmt;
+			}
+			fmtp = fmtbuf;
+			do {
+				*(fmtp++) = *p;
+				p++;
+				switch(*p) {
+					case 'f': case 'd': case 'c': case 's':
+						*(fmtp++) = *p;
+						*(fmtp++) = 0;
+						theArg = va_arg(ap, union FOOLZ);
+						switch(*p) {
+							case 'f':
+								sprintf(out, fmtbuf, theArg.f);
+								break;
+							case 'd':
+								sprintf(out, fmtbuf, theArg.i);
+								break;
+							case 'c':
+								sprintf(out, fmtbuf, theArg.i);
+								break;
+							case 's':
+								sprintf(out, fmtbuf, theArg.c);
+								break;
+						}
+						out += strlen(out);
+						goto donefmt;
+					default:
+						break;
+				}
+				
+			} while(*p);
+		} else {
+			*out++ = *p;
+		}
+		donefmt:
+		p++;
+	}
+	*out = 0;
+#if 0	
+	
 	int bufidx = 0;
 	const char *curptr = fmt;
 	const char *endptr;
@@ -371,5 +428,6 @@ void my_sprintf(char *buffer, const char *fmt, va_list ap) {
 		curptr = endptr;
 	}
 	buffer[bufidx] = 0;
+#endif
 }
 
