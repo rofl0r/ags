@@ -350,12 +350,12 @@ int eip_guinum, eip_guiobj;
 int trans_mode=0;
 int engineNeedsAsInt = 100;
 
-int  sc_GetTime(int whatti);
+long  sc_GetTime(long whatti);
 void quitprintf(char*texx, ...);
 void replace_macro_tokens(char*,char*);
 void wouttext_reverseifnecessary(int x, int y, int font, char *text);
-void SetGameSpeed(int newspd);
-void SetMultitasking(int mode);
+long SetGameSpeed(long newspd);
+long SetMultitasking(long mode);
 void put_sprite_256(int xxx,int yyy,block piccy);
 void construct_virtual_screen(bool fullRedraw);
 int initialize_engine_with_exception_handling(int argc,char*argv[]);
@@ -910,8 +910,8 @@ bool AmbientSound::IsPlaying () {
 
 int  Overlay_GetValid(ScriptOverlay *scover);
 void mainloop(bool checkControls = false, IDriverDependantBitmap *extraBitmap = NULL, int extraX = 0, int extraY = 0);
-void set_mouse_cursor(int);
-void set_default_cursor();
+long set_mouse_cursor(long);
+long set_default_cursor(void);
 int  run_text_script(ccInstance*,char*);
 int  run_text_script_2iparam(ccInstance*,char*,long,long);
 int  run_text_script_iparam(ccInstance*,char*,long);
@@ -920,50 +920,49 @@ int  run_text_script_iparam(ccInstance*,char*,long);
 int  run_interaction_event (NewInteraction *nint, int evnt, int chkAny = -1, int isInv = 0);
 int  run_interaction_script(InteractionScripts *nint, int evnt, int chkAny = -1, int isInv = 0);
 void new_room(int,CharacterInfo*);
-void NewRoom(int);
-void AnimateObject(int,int,int,int);
-void SetObjectView(int,int);
-void GiveScore(int);
+long AnimateObject(long,long,long,long);
+long SetObjectView(long,long);
+long GiveScore(long);
 void walk_character(int,int,int,int,bool);
 void move_object(int,int,int,int,int);
-void StopMoving(int);
-void MoveCharacterToHotspot(int,int);
-int  GetCursorMode();
+long StopMoving(long);
+long MoveCharacterToHotspot(long,long);
+
 void GetLocationName(int,int,char*);
 void save_game(int,const char*);
 int  load_game(int,char*, int*);
 void update_music_volume();
 int  invscreen();
 void process_interface_click(int,int,int);
-void DisplayMessage (int);
+long DisplayMessage (long);
 void do_conversation(int);
 void compile_room_script();
 int  CreateTextOverlay(int,int,int,int,int,char*,...);
-void RemoveOverlay(int);
+long RemoveOverlay(long);
 void stopmusic();
-void play_flc_file(int,int);
-void SetCharacterView(int,int);
-void ReleaseCharacterView(int);
+long play_flc_file(long,long);
+long SetCharacterView(long,long);
+long ReleaseCharacterView(long);
 void setevent(int evtyp,int ev1=0,int ev2=-1000,int ev3=0);
 void update_events();
 void process_event(EventHappened*);
-int  GetLocationType(int,int);
+long  GetLocationType(long,long);
 int  __GetLocationType(int,int,int);
-int  AreCharObjColliding(int charid,int objid);
+long  AreCharObjColliding(long charid,long objid);
 int  play_speech(int,int);
 void stop_speech();
-int  play_sound (int);
+long  play_sound (long);
 int  play_sound_priority (int, int);
-int  __Rand(int);
-int  cd_manager(int,int);
+long  __Rand(long);
+long  cd_manager(long,long);
 int  DisplaySpeechBackground(int,char*);
-void MergeObject(int);
-void script_debug(int,int);
+long MergeObject(long);
+long script_debug(long,long);
 void sc_inputbox(const char*,char*);
 void ParseText(char*);
-void FaceLocation(int,int,int);
+long FaceLocation(long,long,long);
 void check_debug_keys();
-int  IsInterfaceEnabled();
+long  IsInterfaceEnabled(void);
 void break_up_text_into_lines(int,int,char*);
 void start_game();
 void init_game_settings();
@@ -971,15 +970,15 @@ void show_preload();
 void stop_recording ();
 void save_game_data (FILE *, block screenshot);
 void setup_script_exports ();
-void SetSpeechFont (int);
-void SetNormalFont (int);
+long SetSpeechFont (long);
+long SetNormalFont (long);
 void tint_image (block source, block dest, int red, int grn, int blu, int light_level, int luminance=255);
 void get_message_text (int msnum, char *buffer, char giveErr = 1);
 void render_graphics(IDriverDependantBitmap *extraBitmap = NULL, int extraX = 0, int extraY = 0);
 int  wait_loop_still_valid();
 SOUNDCLIP *load_music_from_disk(int mnum, bool repeat);
 void play_new_music(int mnum, SOUNDCLIP *music);
-int GetGameSpeed();
+long GetGameSpeed(void);
 int check_for_messages_from_editor();
 int show_dialog_options(int dlgnum, int sayChosenOption, bool runGameLoopsInBackground);
 void add_to_sprite_list(IDriverDependantBitmap* spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind = false);
@@ -1789,7 +1788,7 @@ long StopAmbientSound (long channel) {
     quit("!StopAmbientSound: invalid channel");
 
   if (ambient[channel].channel == 0)
-    return;
+    return 0;
 
   stop_and_destroy_channel(channel);
   ambient[channel].channel = 0;
@@ -1815,7 +1814,7 @@ long PlayAmbientSound (long channel,long sndnum,long vol,long x,long y) {
     quit("!PlayAmbientSound: volume must be 1 to 255");
 
   if (usetup.digicard == DIGI_NONE)
-    return;
+    return 0;
 
   // only play the sound if it's not already playing
   if ((ambient[channel].channel < 1) || (channels[ambient[channel].channel] == NULL) ||
@@ -1831,7 +1830,7 @@ long PlayAmbientSound (long channel,long sndnum,long vol,long x,long y) {
     if (asound == NULL) {
       debug_log ("Cannot load ambient sound %d", sndnum);
       DEBUG_CONSOLE("FAILED to load ambient sound %d", sndnum);
-      return;
+      return 0;
     }
 
     DEBUG_CONSOLE("Playing ambient sound %d on channel %d", sndnum, channel);
@@ -1903,7 +1902,7 @@ long restart_game() {
   can_run_delayed_command();
   if (inside_script) {
     curscript->queue_action(ePSARestartGame, 0, "RestartGame");
-    return;
+    return 0;
   }
   int errcod;
   if ((errcod = load_game(RESTART_POINT_SAVE_GAME_NUMBER, NULL, NULL))!=0)
@@ -2903,7 +2902,7 @@ long TintScreen(long red,long grn,long blu) {
 
   if ((red == 0) && (grn == 0) && (blu == 0)) {
     play.screen_tint = -1;
-    return;
+    return 0;
   }
   red = (red * 25) / 10;
   grn = (grn * 25) / 10;
@@ -3062,7 +3061,7 @@ long RestoreGameSlot(long slnum) {
   can_run_delayed_command();
   if (inside_script) {
     curscript->queue_action(ePSARestoreGame, slnum, "RestoreGameSlot");
-    return;
+    return 0;
   }
   load_game(slnum, NULL, NULL);
 }
@@ -3160,8 +3159,9 @@ const char* Game_GetSaveSlotDescription(int slnum) {
   return NULL;
 }
 
-long LoadSaveSlotScreenshot(long slnum,long width,long height) {
+long LoadSaveSlotScreenshot(long slnum,long awidth,long aheight) {
   int gotSlot;
+  int width = awidth, height = aheight;
   multiply_up_coordinates(&width, &height);
 
   if (load_game(slnum, NULL, &gotSlot) != 0)
@@ -3237,11 +3237,11 @@ long restore_game_dialog() {
   can_run_delayed_command();
   if (thisroom.options[ST_SAVELOAD] == 1) {
     DisplayMessage (983);
-    return;
+    return 0;
   }
   if (inside_script) {
     curscript->queue_action(ePSARestoreGameDialog, 0, "RestoreGameDialog");
-    return;
+    return 0;
   }
   setup_for_dialog();
   int toload=loadgamedialog();
@@ -3254,11 +3254,11 @@ long restore_game_dialog() {
 long save_game_dialog() {
   if (thisroom.options[ST_SAVELOAD] == 1) {
     DisplayMessage (983);
-    return;
+    return 0;
   }
   if (inside_script) {
     curscript->queue_action(ePSASaveGameDialog, 0, "SaveGameDialog");
-    return;
+    return 0;
   }
   setup_for_dialog();
   int toload=savegamedialog();
@@ -3712,7 +3712,7 @@ long my_fade_out(long spdd) {
   EndSkippingUntilCharStops();
 
   if (play.fast_forward)
-    return;
+    return 0;
 
   if (play.screen_is_faded_out == 0)
     gfxDriver->FadeOut(spdd, play.fade_to_red, play.fade_to_green, play.fade_to_blue);
@@ -4095,7 +4095,8 @@ long Mouse_GetVisible() {
 }
 
 #define MOUSE_MAX_Y divide_down_coordinate(vesa_yres)
-long SetMouseBounds (long x1,long y1,long x2,long y2) {
+long SetMouseBounds (long ax1,long ay1,long ax2,long ay2) {
+	int x1 = ax1, y1 = ay1, x2 = ax2, y2 = ay2;
   if ((x1 == 0) && (y1 == 0) && (x2 == 0) && (y2 == 0)) {
     x2 = BASEWIDTH-1;
     y2 = MOUSE_MAX_Y - 1;
@@ -5400,7 +5401,7 @@ void precache_view(int view)
 }
 
 // set_default_cursor: resets visual appearance to current mode (walk, look, etc)
-long set_default_cursor() {
+long set_default_cursor(void) {
   set_mouse_cursor(cur_mode);
   }
 
@@ -5490,11 +5491,11 @@ long set_cursor_mode(long newmode) {
   guis_need_update = 1;
   if (game.mcurs[newmode].flags & MCF_DISABLED) {
     find_next_enabled_cursor(newmode);
-    return; }
+    return 0; }
   if (newmode == MODE_USE) {
     if (playerchar->activeinv == -1) {
       find_next_enabled_cursor(0);
-      return;
+      return 0;
       }
     update_inv_cursor(playerchar->activeinv);
     }
@@ -5527,7 +5528,7 @@ long set_inv_item_pic(long invi,long piccy) {
     quit("!SetInvItemPic: invalid inventory item specified");
 
   if (game.invinfo[invi].pic == piccy)
-    return;
+    return 0;
 
   if (game.invinfo[invi].pic == game.invinfo[invi].cursorPic)
   {
@@ -13462,7 +13463,8 @@ void Overlay_Remove(ScriptOverlay *sco) {
   sco->Remove();
 }
 
-long CreateGraphicOverlay(long xx,long yy,long slott,long trans) {
+long CreateGraphicOverlay(long axx,long ayy,long slott,long trans) {
+	int xx = axx, yy = ayy;
   multiply_up_coordinates(&xx, &yy);
 
   block screeno=create_bitmap_ex(final_col_dep, spritewidth[slott],spriteheight[slott]);
@@ -13576,7 +13578,8 @@ void Overlay_SetY(ScriptOverlay *scover, int newy) {
   screenover[ovri].y = multiply_up_coordinate(newy);
 }
 
-long MoveOverlay(long ovrid,long newx,long newy) {
+long MoveOverlay(long ovrid,long anewx,long anewy) {
+	int newx=anewx, newy=anewy;
   multiply_up_coordinates(&newx, &newy);
   
   int ovri=find_overlay_of_type(ovrid);
@@ -14350,7 +14353,9 @@ void GetGlobalString (int index, char *strval) {
   strcpy (strval, play.globalstrings[index]);
 }
 
-const char* Game_GetGlobalStrings(int index) {
+const char* Game_GetGlobalStrings(long index);
+
+const char* Game_GetGlobalStrings(long index) {
   if ((index < 0) || (index >= MAXGLOBALSTRINGS))
     quit("!Game.GlobalStrings: invalid index");
 
@@ -14654,7 +14659,7 @@ long DisplayMessageAtY(long msnum,long ypos) {
     else
       DisplayAtY(ypos, msgbufr);
     display_message_aschar=0;
-    return;
+    return 0;
   }
 
   if (display_message_aschar > 0) {
@@ -14712,7 +14717,7 @@ long RawSaveScreen () {
 long RawRestoreScreen() {
   if (raw_saved_screen == NULL) {
     debug_log("RawRestoreScreen: unable to restore, since the screen hasn't been saved previously.");
-    return;
+    return 0;
   }
   block deston = thisroom.ebscene[play.bg_frame];
   blit(raw_saved_screen, deston, 0, 0, 0, 0, deston->w, deston->h);
@@ -14723,7 +14728,7 @@ long RawRestoreScreen() {
 long RawRestoreScreenTinted(long red,long green,long blue,long opacity) {
   if (raw_saved_screen == NULL) {
     debug_log("RawRestoreScreenTinted: unable to restore, since the screen hasn't been saved previously.");
-    return;
+    return 0;
   }
   if ((red < 0) || (green < 0) || (blue < 0) ||
       (red > 255) || (green > 255) || (blue > 255) ||
@@ -14753,7 +14758,7 @@ long RawDrawFrameTransparent (long frame,long translev) {
     // just draw it over the top, no transparency
     blit(thisroom.ebscene[frame], thisroom.ebscene[play.bg_frame], 0, 0, 0, 0, thisroom.ebscene[frame]->w, thisroom.ebscene[frame]->h);
     play.raw_modified[play.bg_frame] = 1;
-    return;
+    return 0;
   }
   // Draw it transparently
   RAW_START();
@@ -14807,7 +14812,8 @@ void RawPrint (int xx, int yy, char*texx, ...) {
   mark_current_background_dirty();
   RAW_END();
 }
-long RawPrintMessageWrapped (long xx,long yy,long wid,long font,long msgm) {
+long RawPrintMessageWrapped (long axx,long ayy,long wid,long font,long msgm) {
+	int xx = axx, yy = ayy;
   char displbuf[3000];
   int texthit = wgetfontheight(font);
   multiply_up_coordinates(&xx, &yy);
@@ -14844,7 +14850,8 @@ void RawDrawImageCore(int xx, int yy, int slot) {
   RAW_END();
 }
 
-long RawDrawImage(long xx,long yy,long slot) {
+long RawDrawImage(long axx,long ayy,long slot) {
+	int xx = axx, yy = ayy;
   multiply_up_coordinates(&xx, &yy);
   RawDrawImageCore(xx, yy, slot);
 }
@@ -14876,12 +14883,13 @@ long RawDrawImageTransparent(long xx,long yy,long slot,long trans) {
 
   update_polled_stuff();  // this operation can be slow so stop music skipping
 }
-long RawDrawImageResized(long xx,long yy,long gotSlot,long width,long height) {
-  if ((gotSlot < 0) || (gotSlot >= MAX_SPRITES) || (spriteset[gotSlot] == NULL))
+long RawDrawImageResized(long axx,long ayy,long gotSlot,long awidth,long aheight) {
+	int xx = axx, yy = ayy, width = awidth, height = aheight;
+	if ((gotSlot < 0) || (gotSlot >= MAX_SPRITES) || (spriteset[gotSlot] == NULL))
     quit("!RawDrawImageResized: invalid sprite slot number specified");
   // very small, don't draw it
   if ((width < 1) || (height < 1))
-    return;
+    return 0;
 
   multiply_up_coordinates(&xx, &yy);
   multiply_up_coordinates(&width, &height);
@@ -14904,8 +14912,9 @@ long RawDrawImageResized(long xx,long yy,long gotSlot,long width,long height) {
   update_polled_stuff();  // this operation can be slow so stop music skipping
   RAW_END();
 }
-long RawDrawLine (long fromx,long fromy,long tox,long toy) {
-  multiply_up_coordinates(&fromx, &fromy);
+long RawDrawLine (long afromx,long afromy,long atox,long atoy) {
+	int fromx = afromx, fromy = afromy, tox = atox, toy = atoy;
+	multiply_up_coordinates(&fromx, &fromy);
   multiply_up_coordinates(&tox, &toy);
 
   play.raw_modified[play.bg_frame] = 1;
@@ -14918,7 +14927,8 @@ long RawDrawLine (long fromx,long fromy,long tox,long toy) {
   invalidate_screen();
   mark_current_background_dirty();
 }
-long RawDrawCircle (long xx,long yy,long rad) {
+long RawDrawCircle (long axx,long ayy,long rad) {
+	int xx = axx, yy = ayy;
   multiply_up_coordinates(&xx, &yy);
   rad = multiply_up_coordinate(rad);
 
@@ -14927,8 +14937,9 @@ long RawDrawCircle (long xx,long yy,long rad) {
   invalidate_screen();
   mark_current_background_dirty();
 }
-long RawDrawRectangle(long x1,long y1,long x2,long y2) {
-  play.raw_modified[play.bg_frame] = 1;
+long RawDrawRectangle(long ax1,long ay1,long ax2,long ay2) {
+	int x1 = ax1, y1 = ay1, x2 = ax2, y2 = ay2;
+	play.raw_modified[play.bg_frame] = 1;
   multiply_up_coordinates(&x1, &y1);
   multiply_up_coordinates_round_up(&x2, &y2);
 
@@ -14936,7 +14947,8 @@ long RawDrawRectangle(long x1,long y1,long x2,long y2) {
   invalidate_screen();
   mark_current_background_dirty();
 }
-long RawDrawTriangle(long x1,long y1,long x2,long y2,long x3,long y3) {
+long RawDrawTriangle(long ax1,long ay1,long ax2,long ay2,long ax3,long ay3) {
+	int x1 = ax1, y1 = ay1, x2 = ax2, y2 = ay2, x3 = ax3, y3 = ay3;
   play.raw_modified[play.bg_frame] = 1;
   multiply_up_coordinates(&x1, &y1);
   multiply_up_coordinates(&x2, &y2);
@@ -15154,7 +15166,7 @@ void animate_character(CharacterInfo *chap, int loopn,int sppd,int rept, int noi
 long AnimateObjectEx(long obn,long loopn,long spdd,long rept,long direction,long blocking) {
   if (obn>=MANOBJNUM) {
     scAnimateCharacter(obn - 100,loopn,spdd,rept);
-    return;
+    return 0;
   }
   if (!is_valid_object(obn))
     quit("!AnimateObject: invalid object number specified");
@@ -15805,7 +15817,7 @@ long play_flc_file(long numb,long playflags) {
     play.screen_is_faded_out = 0;
 
   if (play.fast_forward)
-    return;
+    return 0;
 
   wreadpalette(0,255,oldpal);
 
@@ -15830,7 +15842,7 @@ long play_flc_file(long numb,long playflags) {
     iii=clibfopen(flicnam,"rb"); }
   if (iii==NULL) {
     debug_log("FLIC animation FLIC%d.FLC not found",numb);
-    return;
+    return 0;
     }
   fseek(iii,8,SEEK_CUR);
   fread(&fliwidth,2,1,iii);
@@ -16229,7 +16241,7 @@ long RunDialog(long tum) {
       play.stop_dialog_at_end = DIALOG_NEWTOPIC + tum;
     else
       quit("!NewRoom: two NewRoom/RunDiaolg/StopDialog requests within dialog");
-    return;
+    return 0;
   }
 
   if (inside_script) 
@@ -16238,7 +16250,8 @@ long RunDialog(long tum) {
     do_conversation(tum);
 }
 
-long GetGUIAt (long xx,long yy) {
+long GetGUIAt (long axx,long ayy) {
+	int xx = axx, yy = ayy;
   multiply_up_coordinates(&xx, &yy);
   
   int aa, ll;
@@ -16414,7 +16427,7 @@ long RunObjectInteraction (long aa,long mood) {
     if (passon>=0) 
     {
       if (run_interaction_script(thisroom.objectScripts[aa], passon, 4, (passon == 3)))
-        return;
+        return 0;
     }
     run_interaction_script(thisroom.objectScripts[aa], 4);  // any click on obj
   }
@@ -16422,7 +16435,7 @@ long RunObjectInteraction (long aa,long mood) {
   {
     if (passon>=0) {
       if (run_interaction_event(&croom->intrObject[aa],passon, 4, (passon == 3)))
-        return;
+        return 0;
     }
     run_interaction_event(&croom->intrObject[aa],4);  // any click on obj
   }
@@ -16807,7 +16820,7 @@ long RunHotspotInteraction (long hotspothere,long mood) {
       if (run_interaction_event(&croom->intrHotspot[hotspothere],passon, 5, (passon == 3))) {
         evblockbasename = oldbasename;
         evblocknum = oldblocknum;
-        return;
+        return 0;
       }
     }
     // run the 'any click on hs' event
@@ -16839,7 +16852,7 @@ long ProcessClick(long xx,long yy,long mood) {
       DEBUG_CONSOLE("Move to walk-to point hotspot %d", hsnum);
     }
     walk_character(game.playercharacter,xx,yy,0, true);
-    return;
+    return 0;
   }
   play.usedmode=mood;
 
@@ -16850,10 +16863,10 @@ long ProcessClick(long xx,long yy,long mood) {
   }
   
   if (loctype == LOCTYPE_CHAR) {
-    if (check_click_on_character(xx,yy,mood)) return;
+    if (check_click_on_character(xx,yy,mood)) return 0;
   }
   else if (loctype == LOCTYPE_OBJ) {
-    if (check_click_on_object(xx,yy,mood)) return;
+    if (check_click_on_object(xx,yy,mood)) return 0;
   }
   else if (loctype == LOCTYPE_HOTSPOT) 
     RunHotspotInteraction (getloctype_index, mood);
@@ -17870,7 +17883,7 @@ long System_SetVolume(long newvol) {
     quit("!System.Volume: invalid volume - must be from 0-100");
 
   if (newvol == play.digital_master_volume)
-    return;
+    return 0;
 
   play.digital_master_volume = newvol;
   set_volume((newvol * 255) / 100, (newvol * 255) / 100);
@@ -18132,7 +18145,7 @@ long QuitGame(long dialog) {
     setup_for_dialog();
     rcode=quitdialog();
     restore_after_dialog();
-    if (rcode==0) return;
+    if (rcode==0) return 0;
     }
   quit("|You have exited.");
   }
@@ -18745,7 +18758,7 @@ long InterfaceOn(long ifn) {
 
   if (guis[ifn].on == 1) {
     DEBUG_CONSOLE("GUIOn(%d) ignored (already on)", ifn);
-    return;
+    return 0;
   }
   guis_need_update = 1;
   guis[ifn].on=1;
@@ -18762,7 +18775,7 @@ long InterfaceOff(long ifn) {
   if ((ifn<0) | (ifn>=game.numgui)) quit("!GUIOff: invalid GUI specified");
   if ((guis[ifn].on==0) && (guis[ifn].popup!=POPUP_MOUSEY)) {
     DEBUG_CONSOLE("GUIOff(%d) ignored (already off)", ifn);
-    return;
+    return 0;
   }
   DEBUG_CONSOLE("GUI %d turned off", ifn);
   guis[ifn].on=0;
@@ -20122,7 +20135,7 @@ long NewRoom(long nrnum) {
   if (displayed_room < 0) {
     // called from game_start; change the room where the game will start
     playerchar->room = nrnum;
-    return;
+    return 0;
   }
 
   
@@ -20136,7 +20149,7 @@ long NewRoom(long nrnum) {
       play.stop_dialog_at_end = DIALOG_NEWROOM + nrnum;
     else
       quit("!NewRoom: two NewRoom/RunDialog/StopDialog requests within dialog");
-    return;
+    return 0;
   }
 
   if (in_leaves_screen >= 0) {
@@ -20146,15 +20159,15 @@ long NewRoom(long nrnum) {
   }
   else if (in_enters_screen) {
     setevent(EV_NEWROOM,nrnum);
-    return;
+    return 0;
   }
   else if (in_inv_screen) {
     inv_screen_newroom = nrnum;
-    return;
+    return 0;
   }
   else if ((inside_script==0) & (in_graph_script==0)) {
     new_room(nrnum,playerchar);
-    return;
+    return 0;
   }
   else if (inside_script) {
     curscript->queue_action(ePSANewRoom, nrnum, "NewRoom");
@@ -20235,7 +20248,7 @@ long CallRoomScript (long value) {
 long SetGameSpeed(long newspd) {
   // if Ctrl+E has been used to max out frame rate, lock it there
   if ((frames_per_second == 1000) && (display_fps == 2))
-    return;
+    return 0;
 
   newspd += play.game_speed_modifier;
   if (newspd>1000) newspd=1000;
@@ -20296,7 +20309,7 @@ long StopDialog() {
   if (play.stop_dialog_at_end == DIALOG_NONE) {
     debug_log("StopDialog called, but was not in a dialog");
     DEBUG_CONSOLE("StopDialog called but no dialog");
-    return;
+    return 0;
   }
   play.stop_dialog_at_end = DIALOG_STOP;
 }
@@ -20397,7 +20410,7 @@ long ShakeScreen(long severe) {
   EndSkippingUntilCharStops();
 
   if (play.fast_forward)
-    return;
+    return 0;
 
   int hh;
   block oldsc=abuf;
@@ -20498,7 +20511,7 @@ long FadeIn(long sppd) {
   EndSkippingUntilCharStops();
 
   if (play.fast_forward)
-    return;
+    return 0;
 
   my_fade_in(palette,sppd);
 }
@@ -20516,7 +20529,8 @@ long RefreshMouse() {
   scmouse.y = divide_down_coordinate(mousey);
 }
 
-long SetMousePosition (long newx,long newy) {
+long SetMousePosition (long x,long y) {
+	int newx = x, newy = y;
   if (newx < 0)
     newx = 0;
   if (newy < 0)
@@ -21081,7 +21095,7 @@ long MoveCharacterToObject(long chaa,long obbj) {
   // invalid object, do nothing
   // this allows MoveCharacterToObject(EGO, GetObjectAt(...));
   if (!is_valid_object(obbj))
-    return;
+    return 0;
 
   walk_character(chaa,objs[obbj].x+5,objs[obbj].y+6,0, true);
   do_main_cycle(UNTIL_MOVEEND,(long)&game.chars[chaa].walking);
@@ -21090,7 +21104,7 @@ long MoveCharacterToObject(long chaa,long obbj) {
 long MoveCharacterToHotspot(long chaa,long hotsp) {
   if ((hotsp<0) || (hotsp>=MAX_HOTSPOTS))
     quit("!MovecharacterToHotspot: invalid hotspot");
-  if (thisroom.hswalkto[hotsp].x<1) return;
+  if (thisroom.hswalkto[hotsp].x<1) return 0;
   walk_character(chaa,thisroom.hswalkto[hotsp].x,thisroom.hswalkto[hotsp].y,0, true);
   do_main_cycle(UNTIL_MOVEEND,(long)&game.chars[chaa].walking);
   }
@@ -21170,7 +21184,7 @@ long SetBackgroundFrame(long frnum) {
     quit("!SetBackgrondFrame: invalid frame number specified");
   if (frnum<0) {
     play.bg_frame_locked=0;
-    return;
+    return 0;
   }
 
   play.bg_frame_locked = 1;
@@ -21178,7 +21192,7 @@ long SetBackgroundFrame(long frnum) {
   if (frnum == play.bg_frame)
   {
     // already on this frame, do nothing
-    return;
+    return 0;
   }
 
   play.bg_frame = frnum;
@@ -21190,7 +21204,7 @@ long GetBackgroundFrame() {
 }
 
 long script_debug(long cmdd,long dataa) {
-  if (play.debug_mode==0) return;
+  if (play.debug_mode==0) return 0;
   int rr;
   if (cmdd==0) {
     for (rr=1;rr<game.numinvitems;rr++)
@@ -21266,7 +21280,7 @@ long script_debug(long cmdd,long dataa) {
     if (dataa == 0) dataa = game.playercharacter;
     if (game.chars[dataa].walking < 1) {
       Display("Not currently moving.");
-      return;
+      return 0;
     }
     block tempw=create_bitmap(thisroom.walls->w,thisroom.walls->h);
     int mlsnum = game.chars[dataa].walking;
@@ -24368,7 +24382,7 @@ long SkipUntilCharacterStops(long cc) {
 
   // if they are not currently moving, do nothing
   if (!game.chars[cc].walking)
-    return;
+    return 0;
 
   if (play.in_cutscene)
     quit("!SkipUntilCharacterStops: cannot be used within a cutscene");
@@ -24533,1091 +24547,6 @@ long SetFlashlightInt2(long Param1,long Param2) {
 long SetFlashlightInt3(long Param1,long Param2,long Param3) {
 }
 long SetFlashlightInt5(long Param1,long Param2,long Param3,long Param4,long Param5) {
-}
-
-#define scAdd_External_Symbol ccAddExternalSymbol
-void setup_script_exports() {
-	/* these are variable pointers */
-	scAdd_External_Symbol("game",&play);
-	scAdd_External_Symbol("gs_globals",&play.globalvars[0]);
-	scAdd_External_Symbol("mouse",&scmouse);
-	scAdd_External_Symbol("palette",&palette[0]);
-	scAdd_External_Symbol("system",&scsystem);
-	scAdd_External_Symbol("savegameindex",&play.filenumbers[0]);
-	
-  // the ^5 after the function name is the number of params
-  // this is to allow an extra parameter to be added in a later
-  // version without screwing up the stack in previous versions
-  // (just export both the ^5 and the ^6 as seperate funcs)
-  register_audio_script_functions();
-  scAdd_External_Symbol("Character::AddInventory^2",(void *)Character_AddInventory);
-  scAdd_External_Symbol("Character::AddWaypoint^2",(void *)Character_AddWaypoint);
-  scAdd_External_Symbol("Character::Animate^5",(void *)Character_Animate);
-  scAdd_External_Symbol("Character::ChangeRoom^3",(void *)Character_ChangeRoom);
-  scAdd_External_Symbol("Character::ChangeRoomAutoPosition^2",(void *)Character_ChangeRoomAutoPosition);
-  scAdd_External_Symbol("Character::ChangeView^1",(void *)Character_ChangeView);
-  scAdd_External_Symbol("Character::FaceCharacter^2",(void *)Character_FaceCharacter);
-  scAdd_External_Symbol("Character::FaceLocation^3",(void *)Character_FaceLocation);
-  scAdd_External_Symbol("Character::FaceObject^2",(void *)Character_FaceObject);
-  scAdd_External_Symbol("Character::FollowCharacter^3",(void *)Character_FollowCharacter);
-  scAdd_External_Symbol("Character::GetProperty^1",(void *)Character_GetProperty);
-  scAdd_External_Symbol("Character::GetPropertyText^2",(void *)Character_GetPropertyText);
-  scAdd_External_Symbol("Character::GetTextProperty^1",(void *)Character_GetTextProperty);
-  scAdd_External_Symbol("Character::HasInventory^1",(void *)Character_HasInventory);
-  scAdd_External_Symbol("Character::IsCollidingWithChar^1",(void *)Character_IsCollidingWithChar);
-  scAdd_External_Symbol("Character::IsCollidingWithObject^1",(void *)Character_IsCollidingWithObject);
-  scAdd_External_Symbol("Character::LockView^1",(void *)Character_LockView);
-  scAdd_External_Symbol("Character::LockViewAligned^3",(void *)Character_LockViewAligned);
-  scAdd_External_Symbol("Character::LockViewFrame^3",(void *)Character_LockViewFrame);
-  scAdd_External_Symbol("Character::LockViewOffset^3",(void *)Character_LockViewOffset);
-  scAdd_External_Symbol("Character::LoseInventory^1",(void *)Character_LoseInventory);
-  scAdd_External_Symbol("Character::Move^4",(void *)Character_Move);
-  scAdd_External_Symbol("Character::PlaceOnWalkableArea^0",(void *)Character_PlaceOnWalkableArea);
-  scAdd_External_Symbol("Character::RemoveTint^0",(void *)Character_RemoveTint);
-  scAdd_External_Symbol("Character::RunInteraction^1",(void *)Character_RunInteraction);
-  scAdd_External_Symbol("Character::Say^101",(void *)Character_Say);
-  scAdd_External_Symbol("Character::SayAt^4",(void *)Character_SayAt);
-  scAdd_External_Symbol("Character::SayBackground^1",(void *)Character_SayBackground);
-  scAdd_External_Symbol("Character::SetAsPlayer^0",(void *)Character_SetAsPlayer);
-  scAdd_External_Symbol("Character::SetIdleView^2",(void *)Character_SetIdleView);
-  //scAdd_External_Symbol("Character::SetOption^2",(void *)Character_SetOption);
-  scAdd_External_Symbol("Character::SetWalkSpeed^2",(void *)Character_SetSpeed);
-  scAdd_External_Symbol("Character::StopMoving^0",(void *)Character_StopMoving);
-  scAdd_External_Symbol("Character::Think^101",(void *)Character_Think);
-  scAdd_External_Symbol("Character::Tint^5",(void *)Character_Tint);
-  scAdd_External_Symbol("Character::UnlockView^0",(void *)Character_UnlockView);
-  scAdd_External_Symbol("Character::Walk^4",(void *)Character_Walk);
-  scAdd_External_Symbol("Character::WalkStraight^3",(void *)Character_WalkStraight);
-
-  // static
-  scAdd_External_Symbol("Character::GetAtScreenXY^2", (void *)GetCharacterAtLocation);
-
-  scAdd_External_Symbol("Character::get_ActiveInventory",(void *)Character_GetActiveInventory);
-  scAdd_External_Symbol("Character::set_ActiveInventory",(void *)Character_SetActiveInventory);
-  scAdd_External_Symbol("Character::get_Animating", (void *)Character_GetAnimating);
-  scAdd_External_Symbol("Character::get_AnimationSpeed", (void *)Character_GetAnimationSpeed);
-  scAdd_External_Symbol("Character::set_AnimationSpeed", (void *)Character_SetAnimationSpeed);
-  scAdd_External_Symbol("Character::get_Baseline",(void *)Character_GetBaseline);
-  scAdd_External_Symbol("Character::set_Baseline",(void *)Character_SetBaseline);
-  scAdd_External_Symbol("Character::get_BlinkInterval",(void *)Character_GetBlinkInterval);
-  scAdd_External_Symbol("Character::set_BlinkInterval",(void *)Character_SetBlinkInterval);
-  scAdd_External_Symbol("Character::get_BlinkView",(void *)Character_GetBlinkView);
-  scAdd_External_Symbol("Character::set_BlinkView",(void *)Character_SetBlinkView);
-  scAdd_External_Symbol("Character::get_BlinkWhileThinking",(void *)Character_GetBlinkWhileThinking);
-  scAdd_External_Symbol("Character::set_BlinkWhileThinking",(void *)Character_SetBlinkWhileThinking);
-  scAdd_External_Symbol("Character::get_BlockingHeight",(void *)Character_GetBlockingHeight);
-  scAdd_External_Symbol("Character::set_BlockingHeight",(void *)Character_SetBlockingHeight);
-  scAdd_External_Symbol("Character::get_BlockingWidth",(void *)Character_GetBlockingWidth);
-  scAdd_External_Symbol("Character::set_BlockingWidth",(void *)Character_SetBlockingWidth);
-  scAdd_External_Symbol("Character::get_Clickable",(void *)Character_GetClickable);
-  scAdd_External_Symbol("Character::set_Clickable",(void *)Character_SetClickable);
-  scAdd_External_Symbol("Character::get_DiagonalLoops", (void *)Character_GetDiagonalWalking);
-  scAdd_External_Symbol("Character::set_DiagonalLoops", (void *)Character_SetDiagonalWalking);
-  scAdd_External_Symbol("Character::get_Frame", (void *)Character_GetFrame);
-  scAdd_External_Symbol("Character::set_Frame", (void *)Character_SetFrame);
-  scAdd_External_Symbol("Character::get_HasExplicitTint", (void *)Character_GetHasExplicitTint);
-  scAdd_External_Symbol("Character::get_ID", (void *)Character_GetID);
-  scAdd_External_Symbol("Character::get_IdleView", (void *)Character_GetIdleView);
-  scAdd_External_Symbol("Character::geti_InventoryQuantity", (void *)Character_GetIInventoryQuantity);
-  scAdd_External_Symbol("Character::seti_InventoryQuantity", (void *)Character_SetIInventoryQuantity);
-  scAdd_External_Symbol("Character::get_IgnoreLighting",(void *)Character_GetIgnoreLighting);
-  scAdd_External_Symbol("Character::set_IgnoreLighting",(void *)Character_SetIgnoreLighting);
-  scAdd_External_Symbol("Character::get_IgnoreScaling", (void *)Character_GetIgnoreScaling);
-  scAdd_External_Symbol("Character::set_IgnoreScaling", (void *)Character_SetIgnoreScaling);
-  scAdd_External_Symbol("Character::get_IgnoreWalkbehinds",(void *)Character_GetIgnoreWalkbehinds);
-  scAdd_External_Symbol("Character::set_IgnoreWalkbehinds",(void *)Character_SetIgnoreWalkbehinds);
-  scAdd_External_Symbol("Character::get_Loop", (void *)Character_GetLoop);
-  scAdd_External_Symbol("Character::set_Loop", (void *)Character_SetLoop);
-  scAdd_External_Symbol("Character::get_ManualScaling", (void *)Character_GetIgnoreScaling);
-  scAdd_External_Symbol("Character::set_ManualScaling", (void *)Character_SetManualScaling);
-  scAdd_External_Symbol("Character::get_MovementLinkedToAnimation",(void *)Character_GetMovementLinkedToAnimation);
-  scAdd_External_Symbol("Character::set_MovementLinkedToAnimation",(void *)Character_SetMovementLinkedToAnimation);
-  scAdd_External_Symbol("Character::get_Moving", (void *)Character_GetMoving);
-  scAdd_External_Symbol("Character::get_Name", (void *)Character_GetName);
-  scAdd_External_Symbol("Character::set_Name", (void *)Character_SetName);
-  scAdd_External_Symbol("Character::get_NormalView",(void *)Character_GetNormalView);
-  scAdd_External_Symbol("Character::get_PreviousRoom",(void *)Character_GetPreviousRoom);
-  scAdd_External_Symbol("Character::get_Room",(void *)Character_GetRoom);
-  scAdd_External_Symbol("Character::get_ScaleMoveSpeed", (void *)Character_GetScaleMoveSpeed);
-  scAdd_External_Symbol("Character::set_ScaleMoveSpeed", (void *)Character_SetScaleMoveSpeed);
-  scAdd_External_Symbol("Character::get_ScaleVolume", (void *)Character_GetScaleVolume);
-  scAdd_External_Symbol("Character::set_ScaleVolume", (void *)Character_SetScaleVolume);
-  scAdd_External_Symbol("Character::get_Scaling", (void *)Character_GetScaling);
-  scAdd_External_Symbol("Character::set_Scaling", (void *)Character_SetScaling);
-  scAdd_External_Symbol("Character::get_Solid", (void *)Character_GetSolid);
-  scAdd_External_Symbol("Character::set_Solid", (void *)Character_SetSolid);
-  scAdd_External_Symbol("Character::get_Speaking", (void *)Character_GetSpeaking);
-  scAdd_External_Symbol("Character::get_SpeakingFrame", (void *)Character_GetSpeakingFrame);
-  scAdd_External_Symbol("Character::get_SpeechAnimationDelay",(void *)GetCharacterSpeechAnimationDelay);
-  scAdd_External_Symbol("Character::set_SpeechAnimationDelay",(void *)Character_SetSpeechAnimationDelay);
-  scAdd_External_Symbol("Character::get_SpeechColor",(void *)Character_GetSpeechColor);
-  scAdd_External_Symbol("Character::set_SpeechColor",(void *)Character_SetSpeechColor);
-  scAdd_External_Symbol("Character::get_SpeechView",(void *)Character_GetSpeechView);
-  scAdd_External_Symbol("Character::set_SpeechView",(void *)Character_SetSpeechView);
-  scAdd_External_Symbol("Character::get_ThinkView",(void *)Character_GetThinkView);
-  scAdd_External_Symbol("Character::set_ThinkView",(void *)Character_SetThinkView);
-  scAdd_External_Symbol("Character::get_Transparency",(void *)Character_GetTransparency);
-  scAdd_External_Symbol("Character::set_Transparency",(void *)Character_SetTransparency);
-  scAdd_External_Symbol("Character::get_TurnBeforeWalking", (void *)Character_GetTurnBeforeWalking);
-  scAdd_External_Symbol("Character::set_TurnBeforeWalking", (void *)Character_SetTurnBeforeWalking);
-  scAdd_External_Symbol("Character::get_View", (void *)Character_GetView);
-  scAdd_External_Symbol("Character::get_WalkSpeedX", (void *)Character_GetWalkSpeedX);
-  scAdd_External_Symbol("Character::get_WalkSpeedY", (void *)Character_GetWalkSpeedY);
-  scAdd_External_Symbol("Character::get_X", (void *)Character_GetX);
-  scAdd_External_Symbol("Character::set_X", (void *)Character_SetX);
-  scAdd_External_Symbol("Character::get_x", (void *)Character_GetX);
-  scAdd_External_Symbol("Character::set_x", (void *)Character_SetX);
-  scAdd_External_Symbol("Character::get_Y", (void *)Character_GetY);
-  scAdd_External_Symbol("Character::set_Y", (void *)Character_SetY);
-  scAdd_External_Symbol("Character::get_y", (void *)Character_GetY);
-  scAdd_External_Symbol("Character::set_y", (void *)Character_SetY);
-  scAdd_External_Symbol("Character::get_Z", (void *)Character_GetZ);
-  scAdd_External_Symbol("Character::set_Z", (void *)Character_SetZ);
-  scAdd_External_Symbol("Character::get_z", (void *)Character_GetZ);
-  scAdd_External_Symbol("Character::set_z", (void *)Character_SetZ);
-
-  scAdd_External_Symbol("Object::Animate^5", (void *)Object_Animate);
-  scAdd_External_Symbol("Object::IsCollidingWithObject^1", (void *)Object_IsCollidingWithObject);
-  scAdd_External_Symbol("Object::GetName^1", (void *)Object_GetName);
-  scAdd_External_Symbol("Object::GetProperty^1", (void *)Object_GetProperty);
-  scAdd_External_Symbol("Object::GetPropertyText^2", (void *)Object_GetPropertyText);
-  scAdd_External_Symbol("Object::GetTextProperty^1",(void *)Object_GetTextProperty);
-  scAdd_External_Symbol("Object::MergeIntoBackground^0", (void *)Object_MergeIntoBackground);
-  scAdd_External_Symbol("Object::Move^5", (void *)Object_Move);
-  scAdd_External_Symbol("Object::RemoveTint^0", (void *)Object_RemoveTint);
-  scAdd_External_Symbol("Object::RunInteraction^1", (void *)Object_RunInteraction);
-  scAdd_External_Symbol("Object::SetPosition^2", (void *)Object_SetPosition);
-  scAdd_External_Symbol("Object::SetView^3", (void *)Object_SetView);
-  scAdd_External_Symbol("Object::StopAnimating^0", (void *)Object_StopAnimating);
-  scAdd_External_Symbol("Object::StopMoving^0", (void *)Object_StopMoving);
-  scAdd_External_Symbol("Object::Tint^5", (void *)Object_Tint);
-
-  // static
-  scAdd_External_Symbol("Object::GetAtScreenXY^2", (void *)GetObjectAtLocation);
-
-  scAdd_External_Symbol("Object::get_Animating", (void *)Object_GetAnimating);
-  scAdd_External_Symbol("Object::get_Baseline", (void *)Object_GetBaseline);
-  scAdd_External_Symbol("Object::set_Baseline", (void *)Object_SetBaseline);
-  scAdd_External_Symbol("Object::get_BlockingHeight",(void *)Object_GetBlockingHeight);
-  scAdd_External_Symbol("Object::set_BlockingHeight",(void *)Object_SetBlockingHeight);
-  scAdd_External_Symbol("Object::get_BlockingWidth",(void *)Object_GetBlockingWidth);
-  scAdd_External_Symbol("Object::set_BlockingWidth",(void *)Object_SetBlockingWidth);
-  scAdd_External_Symbol("Object::get_Clickable", (void *)Object_GetClickable);
-  scAdd_External_Symbol("Object::set_Clickable", (void *)Object_SetClickable);
-  scAdd_External_Symbol("Object::get_Frame", (void *)Object_GetFrame);
-  scAdd_External_Symbol("Object::get_Graphic", (void *)Object_GetGraphic);
-  scAdd_External_Symbol("Object::set_Graphic", (void *)Object_SetGraphic);
-  scAdd_External_Symbol("Object::get_ID", (void *)Object_GetID);
-  scAdd_External_Symbol("Object::get_IgnoreScaling", (void *)Object_GetIgnoreScaling);
-  scAdd_External_Symbol("Object::set_IgnoreScaling", (void *)Object_SetIgnoreScaling);
-  scAdd_External_Symbol("Object::get_IgnoreWalkbehinds", (void *)Object_GetIgnoreWalkbehinds);
-  scAdd_External_Symbol("Object::set_IgnoreWalkbehinds", (void *)Object_SetIgnoreWalkbehinds);
-  scAdd_External_Symbol("Object::get_Loop", (void *)Object_GetLoop);
-  scAdd_External_Symbol("Object::get_Moving", (void *)Object_GetMoving);
-  scAdd_External_Symbol("Object::get_Name", (void *)Object_GetName_New);
-  scAdd_External_Symbol("Object::get_Solid", (void *)Object_GetSolid);
-  scAdd_External_Symbol("Object::set_Solid", (void *)Object_SetSolid);
-  scAdd_External_Symbol("Object::get_Transparency", (void *)Object_GetTransparency);
-  scAdd_External_Symbol("Object::set_Transparency", (void *)Object_SetTransparency);
-  scAdd_External_Symbol("Object::get_View", (void *)Object_GetView);
-  scAdd_External_Symbol("Object::get_Visible", (void *)Object_GetVisible);
-  scAdd_External_Symbol("Object::set_Visible", (void *)Object_SetVisible);
-  scAdd_External_Symbol("Object::get_X", (void *)Object_GetX);
-  scAdd_External_Symbol("Object::set_X", (void *)Object_SetX);
-  scAdd_External_Symbol("Object::get_Y", (void *)Object_GetY);
-  scAdd_External_Symbol("Object::set_Y", (void *)Object_SetY);
-
-  scAdd_External_Symbol("Dialog::get_ID", (void *)Dialog_GetID);
-  scAdd_External_Symbol("Dialog::get_OptionCount", (void *)Dialog_GetOptionCount);
-  scAdd_External_Symbol("Dialog::get_ShowTextParser", (void *)Dialog_GetShowTextParser);
-  scAdd_External_Symbol("Dialog::DisplayOptions^1", (void *)Dialog_DisplayOptions);
-  scAdd_External_Symbol("Dialog::GetOptionState^1", (void *)Dialog_GetOptionState);
-  scAdd_External_Symbol("Dialog::GetOptionText^1", (void *)Dialog_GetOptionText);
-  scAdd_External_Symbol("Dialog::HasOptionBeenChosen^1", (void *)Dialog_HasOptionBeenChosen);
-  scAdd_External_Symbol("Dialog::SetOptionState^2", (void *)Dialog_SetOptionState);
-  scAdd_External_Symbol("Dialog::Start^0", (void *)Dialog_Start);
-
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_ActiveOptionID", (void *)DialogOptionsRendering_GetActiveOptionID);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_ActiveOptionID", (void *)DialogOptionsRendering_SetActiveOptionID);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_DialogToRender", (void *)DialogOptionsRendering_GetDialogToRender);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_Height", (void *)DialogOptionsRendering_GetHeight);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_Height", (void *)DialogOptionsRendering_SetHeight);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_ParserTextBoxX", (void *)DialogOptionsRendering_GetParserTextboxX);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_ParserTextBoxX", (void *)DialogOptionsRendering_SetParserTextboxX);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_ParserTextBoxY", (void *)DialogOptionsRendering_GetParserTextboxY);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_ParserTextBoxY", (void *)DialogOptionsRendering_SetParserTextboxY);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_ParserTextBoxWidth", (void *)DialogOptionsRendering_GetParserTextboxWidth);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_ParserTextBoxWidth", (void *)DialogOptionsRendering_SetParserTextboxWidth);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_Surface", (void *)DialogOptionsRendering_GetSurface);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_Width", (void *)DialogOptionsRendering_GetWidth);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_Width", (void *)DialogOptionsRendering_SetWidth);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_X", (void *)DialogOptionsRendering_GetX);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_X", (void *)DialogOptionsRendering_SetX);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_Y", (void *)DialogOptionsRendering_GetY);
-  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_Y", (void *)DialogOptionsRendering_SetY);
-
-  scAdd_External_Symbol("File::Delete^1",(void *)File_Delete);
-  scAdd_External_Symbol("File::Exists^1",(void *)File_Exists);
-  scAdd_External_Symbol("File::Open^2",(void *)sc_OpenFile);
-  scAdd_External_Symbol("File::Close^0", (void *)File_Close);
-  scAdd_External_Symbol("File::ReadInt^0", (void *)File_ReadInt);
-  scAdd_External_Symbol("File::ReadRawChar^0", (void *)File_ReadRawChar);
-  scAdd_External_Symbol("File::ReadRawInt^0", (void *)File_ReadRawInt);
-  scAdd_External_Symbol("File::ReadRawLine^1", (void *)File_ReadRawLine);
-  scAdd_External_Symbol("File::ReadRawLineBack^0", (void *)File_ReadRawLineBack);
-  scAdd_External_Symbol("File::ReadString^1", (void *)File_ReadString);
-  scAdd_External_Symbol("File::ReadStringBack^0", (void *)File_ReadStringBack);
-  scAdd_External_Symbol("File::WriteInt^1", (void *)File_WriteInt);
-  scAdd_External_Symbol("File::WriteRawChar^1", (void *)File_WriteRawChar);
-  scAdd_External_Symbol("File::WriteRawLine^1", (void *)File_WriteRawLine);
-  scAdd_External_Symbol("File::WriteString^1", (void *)File_WriteString);
-  scAdd_External_Symbol("File::get_EOF", (void *)File_GetEOF);
-  scAdd_External_Symbol("File::get_Error", (void *)File_GetError);
-
-  scAdd_External_Symbol("Overlay::CreateGraphical^4", (void *)Overlay_CreateGraphical);
-  scAdd_External_Symbol("Overlay::CreateTextual^106", (void *)Overlay_CreateTextual);
-  scAdd_External_Symbol("Overlay::SetText^104", (void *)Overlay_SetText);
-  scAdd_External_Symbol("Overlay::Remove^0", (void *)Overlay_Remove);
-  scAdd_External_Symbol("Overlay::get_Valid", (void *)Overlay_GetValid);
-  scAdd_External_Symbol("Overlay::get_X", (void *)Overlay_GetX);
-  scAdd_External_Symbol("Overlay::set_X", (void *)Overlay_SetX);
-  scAdd_External_Symbol("Overlay::get_Y", (void *)Overlay_GetY);
-  scAdd_External_Symbol("Overlay::set_Y", (void *)Overlay_SetY);
-
-  scAdd_External_Symbol("InventoryItem::GetAtScreenXY^2", (void *)GetInvAtLocation);
-  scAdd_External_Symbol("InventoryItem::IsInteractionAvailable^1", (void *)InventoryItem_CheckInteractionAvailable);
-  scAdd_External_Symbol("InventoryItem::GetName^1", (void *)InventoryItem_GetName);
-  scAdd_External_Symbol("InventoryItem::GetProperty^1", (void *)InventoryItem_GetProperty);
-  scAdd_External_Symbol("InventoryItem::GetPropertyText^2", (void *)InventoryItem_GetPropertyText);
-  scAdd_External_Symbol("InventoryItem::GetTextProperty^1",(void *)InventoryItem_GetTextProperty);
-  scAdd_External_Symbol("InventoryItem::RunInteraction^1", (void *)InventoryItem_RunInteraction);
-  scAdd_External_Symbol("InventoryItem::SetName^1", (void *)InventoryItem_SetName);
-  scAdd_External_Symbol("InventoryItem::get_CursorGraphic", (void *)InventoryItem_GetCursorGraphic);
-  scAdd_External_Symbol("InventoryItem::set_CursorGraphic", (void *)InventoryItem_SetCursorGraphic);
-  scAdd_External_Symbol("InventoryItem::get_Graphic", (void *)InventoryItem_GetGraphic);
-  scAdd_External_Symbol("InventoryItem::set_Graphic", (void *)InventoryItem_SetGraphic);
-  scAdd_External_Symbol("InventoryItem::get_ID", (void *)InventoryItem_GetID);
-  scAdd_External_Symbol("InventoryItem::get_Name", (void *)InventoryItem_GetName_New);
-  scAdd_External_Symbol("InventoryItem::set_Name", (void *)InventoryItem_SetName);
-
-  scAdd_External_Symbol("GUI::Centre^0", (void *)GUI_Centre);
-  scAdd_External_Symbol("GUI::GetAtScreenXY^2", (void *)GetGUIAtLocation);
-  scAdd_External_Symbol("GUI::SetPosition^2", (void *)GUI_SetPosition);
-  scAdd_External_Symbol("GUI::SetSize^2", (void *)GUI_SetSize);
-  scAdd_External_Symbol("GUI::get_BackgroundGraphic", (void *)GUI_GetBackgroundGraphic);
-  scAdd_External_Symbol("GUI::set_BackgroundGraphic", (void *)GUI_SetBackgroundGraphic);
-  scAdd_External_Symbol("GUI::get_Clickable", (void *)GUI_GetClickable);
-  scAdd_External_Symbol("GUI::set_Clickable", (void *)GUI_SetClickable);
-  scAdd_External_Symbol("GUI::get_ControlCount", (void *)GUI_GetControlCount);
-  scAdd_External_Symbol("GUI::geti_Controls", (void *)GUI_GetiControls);
-  scAdd_External_Symbol("GUI::get_Height", (void *)GUI_GetHeight);
-  scAdd_External_Symbol("GUI::set_Height", (void *)GUI_SetHeight);
-  scAdd_External_Symbol("GUI::get_ID", (void *)GUI_GetID);
-  scAdd_External_Symbol("GUI::get_Transparency", (void *)GUI_GetTransparency);
-  scAdd_External_Symbol("GUI::set_Transparency", (void *)GUI_SetTransparency);
-  scAdd_External_Symbol("GUI::get_Visible", (void *)GUI_GetVisible);
-  scAdd_External_Symbol("GUI::set_Visible", (void *)GUI_SetVisible);
-  scAdd_External_Symbol("GUI::get_Width", (void *)GUI_GetWidth);
-  scAdd_External_Symbol("GUI::set_Width", (void *)GUI_SetWidth);
-  scAdd_External_Symbol("GUI::get_X", (void *)GUI_GetX);
-  scAdd_External_Symbol("GUI::set_X", (void *)GUI_SetX);
-  scAdd_External_Symbol("GUI::get_Y", (void *)GUI_GetY);
-  scAdd_External_Symbol("GUI::set_Y", (void *)GUI_SetY);
-  scAdd_External_Symbol("GUI::get_ZOrder", (void *)GUI_GetZOrder);
-  scAdd_External_Symbol("GUI::set_ZOrder", (void *)GUI_SetZOrder);
-
-  scAdd_External_Symbol("GUIControl::BringToFront^0", (void *)GUIControl_BringToFront);
-  scAdd_External_Symbol("GUIControl::GetAtScreenXY^2", (void *)GetGUIControlAtLocation);
-  scAdd_External_Symbol("GUIControl::SendToBack^0", (void *)GUIControl_SendToBack);
-  scAdd_External_Symbol("GUIControl::SetPosition^2", (void *)GUIControl_SetPosition);
-  scAdd_External_Symbol("GUIControl::SetSize^2", (void *)GUIControl_SetSize);
-  scAdd_External_Symbol("GUIControl::get_AsButton", (void *)GUIControl_GetAsButton);
-  scAdd_External_Symbol("GUIControl::get_AsInvWindow", (void *)GUIControl_GetAsInvWindow);
-  scAdd_External_Symbol("GUIControl::get_AsLabel", (void *)GUIControl_GetAsLabel);
-  scAdd_External_Symbol("GUIControl::get_AsListBox", (void *)GUIControl_GetAsListBox);
-  scAdd_External_Symbol("GUIControl::get_AsSlider", (void *)GUIControl_GetAsSlider);
-  scAdd_External_Symbol("GUIControl::get_AsTextBox", (void *)GUIControl_GetAsTextBox);
-  scAdd_External_Symbol("GUIControl::get_Clickable", (void *)GUIControl_GetClickable);
-  scAdd_External_Symbol("GUIControl::set_Clickable", (void *)GUIControl_SetClickable);
-  scAdd_External_Symbol("GUIControl::get_Enabled", (void *)GUIControl_GetEnabled);
-  scAdd_External_Symbol("GUIControl::set_Enabled", (void *)GUIControl_SetEnabled);
-  scAdd_External_Symbol("GUIControl::get_Height", (void *)GUIControl_GetHeight);
-  scAdd_External_Symbol("GUIControl::set_Height", (void *)GUIControl_SetHeight);
-  scAdd_External_Symbol("GUIControl::get_ID", (void *)GUIControl_GetID);
-  scAdd_External_Symbol("GUIControl::get_OwningGUI", (void *)GUIControl_GetOwningGUI);
-  scAdd_External_Symbol("GUIControl::get_Visible", (void *)GUIControl_GetVisible);
-  scAdd_External_Symbol("GUIControl::set_Visible", (void *)GUIControl_SetVisible);
-  scAdd_External_Symbol("GUIControl::get_Width", (void *)GUIControl_GetWidth);
-  scAdd_External_Symbol("GUIControl::set_Width", (void *)GUIControl_SetWidth);
-  scAdd_External_Symbol("GUIControl::get_X", (void *)GUIControl_GetX);
-  scAdd_External_Symbol("GUIControl::set_X", (void *)GUIControl_SetX);
-  scAdd_External_Symbol("GUIControl::get_Y", (void *)GUIControl_GetY);
-  scAdd_External_Symbol("GUIControl::set_Y", (void *)GUIControl_SetY);
-
-  scAdd_External_Symbol("Label::GetText^1", (void *)Label_GetText);
-  scAdd_External_Symbol("Label::SetText^1", (void *)Label_SetText);
-  scAdd_External_Symbol("Label::get_Font", (void *)Label_GetFont);
-  scAdd_External_Symbol("Label::set_Font", (void *)Label_SetFont);
-  scAdd_External_Symbol("Label::get_Text", (void *)Label_GetText_New);
-  scAdd_External_Symbol("Label::set_Text", (void *)Label_SetText);
-  scAdd_External_Symbol("Label::get_TextColor", (void *)Label_GetColor);
-  scAdd_External_Symbol("Label::set_TextColor", (void *)Label_SetColor);
-
-  scAdd_External_Symbol("Button::Animate^4", (void *)Button_Animate);
-  scAdd_External_Symbol("Button::GetText^1", (void *)Button_GetText);
-  scAdd_External_Symbol("Button::SetText^1", (void *)Button_SetText);
-  scAdd_External_Symbol("Button::get_ClipImage", (void *)Button_GetClipImage);
-  scAdd_External_Symbol("Button::set_ClipImage", (void *)Button_SetClipImage);
-  scAdd_External_Symbol("Button::get_Font", (void *)Button_GetFont);
-  scAdd_External_Symbol("Button::set_Font", (void *)Button_SetFont);
-  scAdd_External_Symbol("Button::get_Graphic", (void *)Button_GetGraphic);
-  scAdd_External_Symbol("Button::get_MouseOverGraphic", (void *)Button_GetMouseOverGraphic);
-  scAdd_External_Symbol("Button::set_MouseOverGraphic", (void *)Button_SetMouseOverGraphic);
-  scAdd_External_Symbol("Button::get_NormalGraphic", (void *)Button_GetNormalGraphic);
-  scAdd_External_Symbol("Button::set_NormalGraphic", (void *)Button_SetNormalGraphic);
-  scAdd_External_Symbol("Button::get_PushedGraphic", (void *)Button_GetPushedGraphic);
-  scAdd_External_Symbol("Button::set_PushedGraphic", (void *)Button_SetPushedGraphic);
-  scAdd_External_Symbol("Button::get_Text", (void *)Button_GetText_New);
-  scAdd_External_Symbol("Button::set_Text", (void *)Button_SetText);
-  scAdd_External_Symbol("Button::get_TextColor", (void *)Button_GetTextColor);
-  scAdd_External_Symbol("Button::set_TextColor", (void *)Button_SetTextColor);
-
-  scAdd_External_Symbol("Slider::get_BackgroundGraphic", (void *)Slider_GetBackgroundGraphic);
-  scAdd_External_Symbol("Slider::set_BackgroundGraphic", (void *)Slider_SetBackgroundGraphic);
-  scAdd_External_Symbol("Slider::get_HandleGraphic", (void *)Slider_GetHandleGraphic);
-  scAdd_External_Symbol("Slider::set_HandleGraphic", (void *)Slider_SetHandleGraphic);
-  scAdd_External_Symbol("Slider::get_HandleOffset", (void *)Slider_GetHandleOffset);
-  scAdd_External_Symbol("Slider::set_HandleOffset", (void *)Slider_SetHandleOffset);
-  scAdd_External_Symbol("Slider::get_Max", (void *)Slider_GetMax);
-  scAdd_External_Symbol("Slider::set_Max", (void *)Slider_SetMax);
-  scAdd_External_Symbol("Slider::get_Min", (void *)Slider_GetMin);
-  scAdd_External_Symbol("Slider::set_Min", (void *)Slider_SetMin);
-  scAdd_External_Symbol("Slider::get_Value", (void *)Slider_GetValue);
-  scAdd_External_Symbol("Slider::set_Value", (void *)Slider_SetValue);
-
-  scAdd_External_Symbol("TextBox::GetText^1", (void *)TextBox_GetText);
-  scAdd_External_Symbol("TextBox::SetText^1", (void *)TextBox_SetText);
-  scAdd_External_Symbol("TextBox::get_Font", (void *)TextBox_GetFont);
-  scAdd_External_Symbol("TextBox::set_Font", (void *)TextBox_SetFont);
-  scAdd_External_Symbol("TextBox::get_Text", (void *)TextBox_GetText_New);
-  scAdd_External_Symbol("TextBox::set_Text", (void *)TextBox_SetText);
-  scAdd_External_Symbol("TextBox::get_TextColor", (void *)TextBox_GetTextColor);
-  scAdd_External_Symbol("TextBox::set_TextColor", (void *)TextBox_SetTextColor);
-
-  scAdd_External_Symbol("InvWindow::ScrollDown^0", (void *)InvWindow_ScrollDown);
-  scAdd_External_Symbol("InvWindow::ScrollUp^0", (void *)InvWindow_ScrollUp);
-  scAdd_External_Symbol("InvWindow::get_CharacterToUse", (void *)InvWindow_GetCharacterToUse);
-  scAdd_External_Symbol("InvWindow::set_CharacterToUse", (void *)InvWindow_SetCharacterToUse);
-  scAdd_External_Symbol("InvWindow::geti_ItemAtIndex", (void *)InvWindow_GetItemAtIndex);
-  scAdd_External_Symbol("InvWindow::get_ItemCount", (void *)InvWindow_GetItemCount);
-  scAdd_External_Symbol("InvWindow::get_ItemHeight", (void *)InvWindow_GetItemHeight);
-  scAdd_External_Symbol("InvWindow::set_ItemHeight", (void *)InvWindow_SetItemHeight);
-  scAdd_External_Symbol("InvWindow::get_ItemWidth", (void *)InvWindow_GetItemWidth);
-  scAdd_External_Symbol("InvWindow::set_ItemWidth", (void *)InvWindow_SetItemWidth);
-  scAdd_External_Symbol("InvWindow::get_ItemsPerRow", (void *)InvWindow_GetItemsPerRow);
-  scAdd_External_Symbol("InvWindow::get_RowCount", (void *)InvWindow_GetRowCount);
-  scAdd_External_Symbol("InvWindow::get_TopItem", (void *)InvWindow_GetTopItem);
-  scAdd_External_Symbol("InvWindow::set_TopItem", (void *)InvWindow_SetTopItem);
-
-  scAdd_External_Symbol("ListBox::AddItem^1", (void *)ListBox_AddItem);
-  scAdd_External_Symbol("ListBox::Clear^0", (void *)ListBox_Clear);
-  scAdd_External_Symbol("ListBox::FillDirList^1", (void *)ListBox_FillDirList);
-  scAdd_External_Symbol("ListBox::FillSaveGameList^0", (void *)ListBox_FillSaveGameList);
-  scAdd_External_Symbol("ListBox::GetItemAtLocation^2", (void *)ListBox_GetItemAtLocation);
-  scAdd_External_Symbol("ListBox::GetItemText^2", (void *)ListBox_GetItemText);
-  scAdd_External_Symbol("ListBox::InsertItemAt^2", (void *)ListBox_InsertItemAt);
-  scAdd_External_Symbol("ListBox::RemoveItem^1", (void *)ListBox_RemoveItem);
-  scAdd_External_Symbol("ListBox::ScrollDown^0", (void *)ListBox_ScrollDown);
-  scAdd_External_Symbol("ListBox::ScrollUp^0", (void *)ListBox_ScrollUp);
-  scAdd_External_Symbol("ListBox::SetItemText^2", (void *)ListBox_SetItemText);
-  scAdd_External_Symbol("ListBox::get_Font", (void *)ListBox_GetFont);
-  scAdd_External_Symbol("ListBox::set_Font", (void *)ListBox_SetFont);
-  scAdd_External_Symbol("ListBox::get_HideBorder", (void *)ListBox_GetHideBorder);
-  scAdd_External_Symbol("ListBox::set_HideBorder", (void *)ListBox_SetHideBorder);
-  scAdd_External_Symbol("ListBox::get_HideScrollArrows", (void *)ListBox_GetHideScrollArrows);
-  scAdd_External_Symbol("ListBox::set_HideScrollArrows", (void *)ListBox_SetHideScrollArrows);
-  scAdd_External_Symbol("ListBox::get_ItemCount", (void *)ListBox_GetItemCount);
-  scAdd_External_Symbol("ListBox::geti_Items", (void *)ListBox_GetItems);
-  scAdd_External_Symbol("ListBox::seti_Items", (void *)ListBox_SetItemText);
-  scAdd_External_Symbol("ListBox::get_RowCount", (void *)ListBox_GetRowCount);
-  scAdd_External_Symbol("ListBox::geti_SaveGameSlots", (void *)ListBox_GetSaveGameSlots);
-  scAdd_External_Symbol("ListBox::get_SelectedIndex", (void *)ListBox_GetSelectedIndex);
-  scAdd_External_Symbol("ListBox::set_SelectedIndex", (void *)ListBox_SetSelectedIndex);
-  scAdd_External_Symbol("ListBox::get_TopItem", (void *)ListBox_GetTopItem);
-  scAdd_External_Symbol("ListBox::set_TopItem", (void *)ListBox_SetTopItem);
-
-  scAdd_External_Symbol("Mouse::ChangeModeGraphic^2",(void *)ChangeCursorGraphic);
-  scAdd_External_Symbol("Mouse::ChangeModeHotspot^3",(void *)ChangeCursorHotspot);
-  scAdd_External_Symbol("Mouse::ChangeModeView^2",(void *)Mouse_ChangeModeView);
-  scAdd_External_Symbol("Mouse::DisableMode^1",(void *)disable_cursor_mode);
-  scAdd_External_Symbol("Mouse::EnableMode^1",(void *)enable_cursor_mode);
-  scAdd_External_Symbol("Mouse::GetModeGraphic^1",(void *)Mouse_GetModeGraphic);
-  scAdd_External_Symbol("Mouse::IsButtonDown^1",(void *)IsButtonDown);
-  scAdd_External_Symbol("Mouse::SaveCursorUntilItLeaves^0",(void *)SaveCursorForLocationChange);
-  scAdd_External_Symbol("Mouse::SelectNextMode^0", (void *)SetNextCursor);
-  scAdd_External_Symbol("Mouse::SetBounds^4",(void *)SetMouseBounds);
-  scAdd_External_Symbol("Mouse::SetPosition^2",(void *)SetMousePosition);
-  scAdd_External_Symbol("Mouse::Update^0",(void *)RefreshMouse);
-  scAdd_External_Symbol("Mouse::UseDefaultGraphic^0",(void *)set_default_cursor);
-  scAdd_External_Symbol("Mouse::UseModeGraphic^1",(void *)set_mouse_cursor);
-  scAdd_External_Symbol("Mouse::get_Mode",(void *)GetCursorMode);
-  scAdd_External_Symbol("Mouse::set_Mode",(void *)set_cursor_mode);
-  scAdd_External_Symbol("Mouse::get_Visible", (void *)Mouse_GetVisible);
-  scAdd_External_Symbol("Mouse::set_Visible", (void *)Mouse_SetVisible);
-
-  scAdd_External_Symbol("Maths::ArcCos^1", (void*)Math_ArcCos);
-  scAdd_External_Symbol("Maths::ArcSin^1", (void*)Math_ArcSin);
-  scAdd_External_Symbol("Maths::ArcTan^1", (void*)Math_ArcTan);
-  scAdd_External_Symbol("Maths::ArcTan2^2", (void*)Math_ArcTan2);
-  scAdd_External_Symbol("Maths::Cos^1", (void*)Math_Cos);
-  scAdd_External_Symbol("Maths::Cosh^1", (void*)Math_Cosh);
-  scAdd_External_Symbol("Maths::DegreesToRadians^1", (void*)Math_DegreesToRadians);
-  scAdd_External_Symbol("Maths::Exp^1", (void*)Math_Exp);
-  scAdd_External_Symbol("Maths::Log^1", (void*)Math_Log);
-  scAdd_External_Symbol("Maths::Log10^1", (void*)Math_Log10);
-  scAdd_External_Symbol("Maths::RadiansToDegrees^1", (void*)Math_RadiansToDegrees);
-  scAdd_External_Symbol("Maths::RaiseToPower^2", (void*)Math_RaiseToPower);
-  scAdd_External_Symbol("Maths::Sin^1", (void*)Math_Sin);
-  scAdd_External_Symbol("Maths::Sinh^1", (void*)Math_Sinh);
-  scAdd_External_Symbol("Maths::Sqrt^1", (void*)Math_Sqrt);
-  scAdd_External_Symbol("Maths::Tan^1", (void*)Math_Tan);
-  scAdd_External_Symbol("Maths::Tanh^1", (void*)Math_Tanh);
-  scAdd_External_Symbol("Maths::get_Pi", (void*)Math_GetPi);
-
-  scAdd_External_Symbol("Hotspot::GetAtScreenXY^2",(void *)GetHotspotAtLocation);
-  scAdd_External_Symbol("Hotspot::GetName^1", (void*)Hotspot_GetName);
-  scAdd_External_Symbol("Hotspot::GetProperty^1", (void*)Hotspot_GetProperty);
-  scAdd_External_Symbol("Hotspot::GetPropertyText^2", (void*)Hotspot_GetPropertyText);
-  scAdd_External_Symbol("Hotspot::GetTextProperty^1",(void *)Hotspot_GetTextProperty);
-  scAdd_External_Symbol("Hotspot::RunInteraction^1", (void*)Hotspot_RunInteraction);
-  scAdd_External_Symbol("Hotspot::get_Enabled", (void*)Hotspot_GetEnabled);
-  scAdd_External_Symbol("Hotspot::set_Enabled", (void*)Hotspot_SetEnabled);
-  scAdd_External_Symbol("Hotspot::get_ID", (void*)Hotspot_GetID);
-  scAdd_External_Symbol("Hotspot::get_Name", (void*)Hotspot_GetName_New);
-  scAdd_External_Symbol("Hotspot::get_WalkToX", (void*)Hotspot_GetWalkToX);
-  scAdd_External_Symbol("Hotspot::get_WalkToY", (void*)Hotspot_GetWalkToY);
-
-  scAdd_External_Symbol("Region::GetAtRoomXY^2",(void *)GetRegionAtLocation);
-  scAdd_External_Symbol("Region::Tint^4", (void*)Region_Tint);
-  scAdd_External_Symbol("Region::RunInteraction^1", (void*)Region_RunInteraction);
-  scAdd_External_Symbol("Region::get_Enabled", (void*)Region_GetEnabled);
-  scAdd_External_Symbol("Region::set_Enabled", (void*)Region_SetEnabled);
-  scAdd_External_Symbol("Region::get_ID", (void*)Region_GetID);
-  scAdd_External_Symbol("Region::get_LightLevel", (void*)Region_GetLightLevel);
-  scAdd_External_Symbol("Region::set_LightLevel", (void*)Region_SetLightLevel);
-  scAdd_External_Symbol("Region::get_TintEnabled", (void*)Region_GetTintEnabled);
-  scAdd_External_Symbol("Region::get_TintBlue", (void*)Region_GetTintBlue);
-  scAdd_External_Symbol("Region::get_TintGreen", (void*)Region_GetTintGreen);
-  scAdd_External_Symbol("Region::get_TintRed", (void*)Region_GetTintRed);
-  scAdd_External_Symbol("Region::get_TintSaturation", (void*)Region_GetTintSaturation);
-
-  scAdd_External_Symbol("DateTime::get_Now", (void*)DateTime_Now);
-  scAdd_External_Symbol("DateTime::get_DayOfMonth", (void*)DateTime_GetDayOfMonth);
-  scAdd_External_Symbol("DateTime::get_Hour", (void*)DateTime_GetHour);
-  scAdd_External_Symbol("DateTime::get_Minute", (void*)DateTime_GetMinute);
-  scAdd_External_Symbol("DateTime::get_Month", (void*)DateTime_GetMonth);
-  scAdd_External_Symbol("DateTime::get_RawTime", (void*)DateTime_GetRawTime);
-  scAdd_External_Symbol("DateTime::get_Second", (void*)DateTime_GetSecond);
-  scAdd_External_Symbol("DateTime::get_Year", (void*)DateTime_GetYear);
-
-  scAdd_External_Symbol("DrawingSurface::Clear^1", (void *)DrawingSurface_Clear);
-  scAdd_External_Symbol("DrawingSurface::CreateCopy^0", (void *)DrawingSurface_CreateCopy);
-  scAdd_External_Symbol("DrawingSurface::DrawCircle^3", (void *)DrawingSurface_DrawCircle);
-  scAdd_External_Symbol("DrawingSurface::DrawImage^6", (void *)DrawingSurface_DrawImage);
-  scAdd_External_Symbol("DrawingSurface::DrawLine^5", (void *)DrawingSurface_DrawLine);
-  scAdd_External_Symbol("DrawingSurface::DrawMessageWrapped^5", (void *)DrawingSurface_DrawMessageWrapped);
-  scAdd_External_Symbol("DrawingSurface::DrawPixel^2", (void *)DrawingSurface_DrawPixel);
-  scAdd_External_Symbol("DrawingSurface::DrawRectangle^4", (void *)DrawingSurface_DrawRectangle);
-  scAdd_External_Symbol("DrawingSurface::DrawString^104", (void *)DrawingSurface_DrawString);
-  scAdd_External_Symbol("DrawingSurface::DrawStringWrapped^6", (void *)DrawingSurface_DrawStringWrapped);
-  scAdd_External_Symbol("DrawingSurface::DrawSurface^2", (void *)DrawingSurface_DrawSurface);
-  scAdd_External_Symbol("DrawingSurface::DrawTriangle^6", (void *)DrawingSurface_DrawTriangle);
-  scAdd_External_Symbol("DrawingSurface::GetPixel^2", (void *)DrawingSurface_GetPixel);
-  scAdd_External_Symbol("DrawingSurface::Release^0", (void *)DrawingSurface_Release);
-  scAdd_External_Symbol("DrawingSurface::get_DrawingColor", (void *)DrawingSurface_GetDrawingColor);
-  scAdd_External_Symbol("DrawingSurface::set_DrawingColor", (void *)DrawingSurface_SetDrawingColor);
-  scAdd_External_Symbol("DrawingSurface::get_Height", (void *)DrawingSurface_GetHeight);
-  scAdd_External_Symbol("DrawingSurface::get_UseHighResCoordinates", (void *)DrawingSurface_GetUseHighResCoordinates);
-  scAdd_External_Symbol("DrawingSurface::set_UseHighResCoordinates", (void *)DrawingSurface_SetUseHighResCoordinates);
-  scAdd_External_Symbol("DrawingSurface::get_Width", (void *)DrawingSurface_GetWidth);
-
-  scAdd_External_Symbol("DynamicSprite::ChangeCanvasSize^4", (void*)DynamicSprite_ChangeCanvasSize);
-  scAdd_External_Symbol("DynamicSprite::CopyTransparencyMask^1", (void*)DynamicSprite_CopyTransparencyMask);
-  scAdd_External_Symbol("DynamicSprite::Crop^4", (void*)DynamicSprite_Crop);
-  scAdd_External_Symbol("DynamicSprite::Delete", (void*)DynamicSprite_Delete);
-  scAdd_External_Symbol("DynamicSprite::Flip^1", (void*)DynamicSprite_Flip);
-  scAdd_External_Symbol("DynamicSprite::GetDrawingSurface^0", (void*)DynamicSprite_GetDrawingSurface);
-  scAdd_External_Symbol("DynamicSprite::Resize^2", (void*)DynamicSprite_Resize);
-  scAdd_External_Symbol("DynamicSprite::Rotate^3", (void*)DynamicSprite_Rotate);
-  scAdd_External_Symbol("DynamicSprite::SaveToFile^1", (void*)DynamicSprite_SaveToFile);
-  scAdd_External_Symbol("DynamicSprite::Tint^5", (void*)DynamicSprite_Tint);
-  scAdd_External_Symbol("DynamicSprite::get_ColorDepth", (void*)DynamicSprite_GetColorDepth);
-  scAdd_External_Symbol("DynamicSprite::get_Graphic", (void*)DynamicSprite_GetGraphic);
-  scAdd_External_Symbol("DynamicSprite::get_Height", (void*)DynamicSprite_GetHeight);
-  scAdd_External_Symbol("DynamicSprite::get_Width", (void*)DynamicSprite_GetWidth);
-  
-  scAdd_External_Symbol("DynamicSprite::Create^3", (void*)DynamicSprite_Create);
-  scAdd_External_Symbol("DynamicSprite::CreateFromBackground", (void*)DynamicSprite_CreateFromBackground);
-  scAdd_External_Symbol("DynamicSprite::CreateFromDrawingSurface^5", (void*)DynamicSprite_CreateFromDrawingSurface);
-  scAdd_External_Symbol("DynamicSprite::CreateFromExistingSprite^1", (void*)DynamicSprite_CreateFromExistingSprite_Old);
-  scAdd_External_Symbol("DynamicSprite::CreateFromExistingSprite^2", (void*)DynamicSprite_CreateFromExistingSprite);
-  scAdd_External_Symbol("DynamicSprite::CreateFromFile", (void*)DynamicSprite_CreateFromFile);
-  scAdd_External_Symbol("DynamicSprite::CreateFromSaveGame", (void*)DynamicSprite_CreateFromSaveGame);
-  scAdd_External_Symbol("DynamicSprite::CreateFromScreenShot", (void*)DynamicSprite_CreateFromScreenShot);
-
-  scAdd_External_Symbol("String::IsNullOrEmpty^1", (void*)String_IsNullOrEmpty);
-  scAdd_External_Symbol("String::Append^1", (void*)String_Append);
-  scAdd_External_Symbol("String::AppendChar^1", (void*)String_AppendChar);
-  scAdd_External_Symbol("String::CompareTo^2", (void*)String_CompareTo);
-  scAdd_External_Symbol("String::Contains^1", (void*)StrContains);
-  scAdd_External_Symbol("String::Copy^0", (void*)String_Copy);
-  scAdd_External_Symbol("String::EndsWith^2", (void*)String_EndsWith);
-  scAdd_External_Symbol("String::Format^101", (void*)String_Format);
-  scAdd_External_Symbol("String::IndexOf^1", (void*)StrContains);
-  scAdd_External_Symbol("String::LowerCase^0", (void*)String_LowerCase);
-  scAdd_External_Symbol("String::Replace^3", (void*)String_Replace);
-  scAdd_External_Symbol("String::ReplaceCharAt^2", (void*)String_ReplaceCharAt);
-  scAdd_External_Symbol("String::StartsWith^2", (void*)String_StartsWith);
-  scAdd_External_Symbol("String::Substring^2", (void*)String_Substring);
-  scAdd_External_Symbol("String::Truncate^1", (void*)String_Truncate);
-  scAdd_External_Symbol("String::UpperCase^0", (void*)String_UpperCase);
-  scAdd_External_Symbol("String::get_AsFloat", (void*)StringToFloat);
-  scAdd_External_Symbol("String::get_AsInt", (void*)StringToInt);
-  scAdd_External_Symbol("String::geti_Chars", (void*)String_GetChars);
-  scAdd_External_Symbol("String::get_Length", (void*)String_Len);
-
-  scAdd_External_Symbol("Game::ChangeTranslation^1", (void *)Game_ChangeTranslation);
-  scAdd_External_Symbol("Game::DoOnceOnly^1", (void *)Game_DoOnceOnly);
-  scAdd_External_Symbol("Game::GetColorFromRGB^3", (void *)Game_GetColorFromRGB);
-  scAdd_External_Symbol("Game::GetFrameCountForLoop^2", (void *)Game_GetFrameCountForLoop);
-  scAdd_External_Symbol("Game::GetLocationName^2",(void *)Game_GetLocationName);
-  scAdd_External_Symbol("Game::GetLoopCountForView^1", (void *)Game_GetLoopCountForView);
-  scAdd_External_Symbol("Game::GetMODPattern^0",(void *)Game_GetMODPattern);
-  scAdd_External_Symbol("Game::GetRunNextSettingForLoop^2", (void *)Game_GetRunNextSettingForLoop);
-  scAdd_External_Symbol("Game::GetSaveSlotDescription^1",(void *)Game_GetSaveSlotDescription);
-  scAdd_External_Symbol("Game::GetViewFrame^3",(void *)Game_GetViewFrame);
-  scAdd_External_Symbol("Game::InputBox^1",(void *)Game_InputBox);
-  scAdd_External_Symbol("Game::SetSaveGameDirectory^1", (void *)Game_SetSaveGameDirectory);
-  scAdd_External_Symbol("Game::StopSound^1", (void *)StopAllSounds);
-  scAdd_External_Symbol("Game::get_CharacterCount", (void *)Game_GetCharacterCount);
-  scAdd_External_Symbol("Game::get_DialogCount", (void *)Game_GetDialogCount);
-  scAdd_External_Symbol("Game::get_FileName", (void *)Game_GetFileName);
-  scAdd_External_Symbol("Game::get_FontCount", (void *)Game_GetFontCount);
-  scAdd_External_Symbol("Game::geti_GlobalMessages",(void *)Game_GetGlobalMessages);
-  scAdd_External_Symbol("Game::geti_GlobalStrings",(void *)Game_GetGlobalStrings);
-  scAdd_External_Symbol("Game::seti_GlobalStrings",(void *)SetGlobalString);
-  scAdd_External_Symbol("Game::get_GUICount", (void *)Game_GetGUICount);
-  scAdd_External_Symbol("Game::get_IgnoreUserInputAfterTextTimeoutMs", (void *)Game_GetIgnoreUserInputAfterTextTimeoutMs);
-  scAdd_External_Symbol("Game::set_IgnoreUserInputAfterTextTimeoutMs", (void *)Game_SetIgnoreUserInputAfterTextTimeoutMs);
-  scAdd_External_Symbol("Game::get_InSkippableCutscene", (void *)Game_GetInSkippableCutscene);
-  scAdd_External_Symbol("Game::get_InventoryItemCount", (void *)Game_GetInventoryItemCount);
-  scAdd_External_Symbol("Game::get_MinimumTextDisplayTimeMs", (void *)Game_GetMinimumTextDisplayTimeMs);
-  scAdd_External_Symbol("Game::set_MinimumTextDisplayTimeMs", (void *)Game_SetMinimumTextDisplayTimeMs);
-  scAdd_External_Symbol("Game::get_MouseCursorCount", (void *)Game_GetMouseCursorCount);
-  scAdd_External_Symbol("Game::get_Name", (void *)Game_GetName);
-  scAdd_External_Symbol("Game::set_Name", (void *)Game_SetName);
-  scAdd_External_Symbol("Game::get_NormalFont", (void *)Game_GetNormalFont);
-  scAdd_External_Symbol("Game::set_NormalFont", (void *)SetNormalFont);
-  scAdd_External_Symbol("Game::get_SkippingCutscene", (void *)Game_GetSkippingCutscene);
-  scAdd_External_Symbol("Game::get_SpeechFont", (void *)Game_GetSpeechFont);
-  scAdd_External_Symbol("Game::set_SpeechFont", (void *)SetSpeechFont);
-  scAdd_External_Symbol("Game::geti_SpriteWidth", (void *)Game_GetSpriteWidth);
-  scAdd_External_Symbol("Game::geti_SpriteHeight", (void *)Game_GetSpriteHeight);
-  scAdd_External_Symbol("Game::get_TextReadingSpeed", (void *)Game_GetTextReadingSpeed);
-  scAdd_External_Symbol("Game::set_TextReadingSpeed", (void *)Game_SetTextReadingSpeed);
-  scAdd_External_Symbol("Game::get_TranslationFilename",(void *)Game_GetTranslationFilename);
-  scAdd_External_Symbol("Game::get_UseNativeCoordinates", (void *)Game_GetUseNativeCoordinates);
-  scAdd_External_Symbol("Game::get_ViewCount", (void *)Game_GetViewCount);
-
-  scAdd_External_Symbol("System::get_CapsLock", (void *)System_GetCapsLock);
-  scAdd_External_Symbol("System::get_ColorDepth", (void *)System_GetColorDepth);
-  scAdd_External_Symbol("System::get_Gamma", (void *)System_GetGamma);
-  scAdd_External_Symbol("System::set_Gamma", (void *)System_SetGamma);
-  scAdd_External_Symbol("System::get_HardwareAcceleration", (void *)System_GetHardwareAcceleration);
-  scAdd_External_Symbol("System::get_NumLock", (void *)System_GetNumLock);
-  scAdd_External_Symbol("System::set_NumLock", (void *)System_SetNumLock);
-  scAdd_External_Symbol("System::get_OperatingSystem", (void *)System_GetOS);
-  scAdd_External_Symbol("System::get_ScreenHeight", (void *)System_GetScreenHeight);
-  scAdd_External_Symbol("System::get_ScreenWidth", (void *)System_GetScreenWidth);
-  scAdd_External_Symbol("System::get_ScrollLock", (void *)System_GetScrollLock);
-  scAdd_External_Symbol("System::get_SupportsGammaControl", (void *)System_GetSupportsGammaControl);
-  scAdd_External_Symbol("System::get_Version", (void *)System_GetVersion);
-  scAdd_External_Symbol("SystemInfo::get_Version", (void *)System_GetVersion);
-  scAdd_External_Symbol("System::get_ViewportHeight", (void *)System_GetViewportHeight);
-  scAdd_External_Symbol("System::get_ViewportWidth", (void *)System_GetViewportWidth);
-  scAdd_External_Symbol("System::get_Volume",(void *)System_GetVolume);
-  scAdd_External_Symbol("System::set_Volume",(void *)System_SetVolume);
-  scAdd_External_Symbol("System::get_VSync", (void *)System_GetVsync);
-  scAdd_External_Symbol("System::set_VSync", (void *)System_SetVsync);
-  scAdd_External_Symbol("System::get_Windowed", (void *)System_GetWindowed);
-
-  scAdd_External_Symbol("Room::GetDrawingSurfaceForBackground^1", (void *)Room_GetDrawingSurfaceForBackground);
-  scAdd_External_Symbol("Room::GetTextProperty^1",(void *)Room_GetTextProperty);
-  scAdd_External_Symbol("Room::get_BottomEdge", (void *)Room_GetBottomEdge);
-  scAdd_External_Symbol("Room::get_ColorDepth", (void *)Room_GetColorDepth);
-  scAdd_External_Symbol("Room::get_Height", (void *)Room_GetHeight);
-  scAdd_External_Symbol("Room::get_LeftEdge", (void *)Room_GetLeftEdge);
-  scAdd_External_Symbol("Room::geti_Messages",(void *)Room_GetMessages);
-  scAdd_External_Symbol("Room::get_MusicOnLoad", (void *)Room_GetMusicOnLoad);
-  scAdd_External_Symbol("Room::get_ObjectCount", (void *)Room_GetObjectCount);
-  scAdd_External_Symbol("Room::get_RightEdge", (void *)Room_GetRightEdge);
-  scAdd_External_Symbol("Room::get_TopEdge", (void *)Room_GetTopEdge);
-  scAdd_External_Symbol("Room::get_Width", (void *)Room_GetWidth);
-
-  scAdd_External_Symbol("Parser::FindWordID^1",(void *)Parser_FindWordID);
-  scAdd_External_Symbol("Parser::ParseText^1",(void *)ParseText);
-  scAdd_External_Symbol("Parser::SaidUnknownWord^0",(void *)Parser_SaidUnknownWord);
-  scAdd_External_Symbol("Parser::Said^1",(void *)Said);
-
-  scAdd_External_Symbol("ViewFrame::get_Flipped", (void *)ViewFrame_GetFlipped);
-  scAdd_External_Symbol("ViewFrame::get_Frame", (void *)ViewFrame_GetFrame);
-  scAdd_External_Symbol("ViewFrame::get_Graphic", (void *)ViewFrame_GetGraphic);
-  scAdd_External_Symbol("ViewFrame::set_Graphic", (void *)ViewFrame_SetGraphic);
-  scAdd_External_Symbol("ViewFrame::get_LinkedAudio", (void *)ViewFrame_GetLinkedAudio);
-  scAdd_External_Symbol("ViewFrame::set_LinkedAudio", (void *)ViewFrame_SetLinkedAudio);
-  scAdd_External_Symbol("ViewFrame::get_Loop", (void *)ViewFrame_GetLoop);
-  scAdd_External_Symbol("ViewFrame::get_Sound", (void *)ViewFrame_GetSound);
-  scAdd_External_Symbol("ViewFrame::set_Sound", (void *)ViewFrame_SetSound);
-  scAdd_External_Symbol("ViewFrame::get_Speed", (void *)ViewFrame_GetSpeed);
-  scAdd_External_Symbol("ViewFrame::get_View", (void *)ViewFrame_GetView);
-  
-  scAdd_External_Symbol("AbortGame",(void *)_sc_AbortGame);
-  scAdd_External_Symbol("AddInventory",(void *)add_inventory);
-  scAdd_External_Symbol("AddInventoryToCharacter",(void *)AddInventoryToCharacter);
-  scAdd_External_Symbol("AnimateButton",(void *)AnimateButton);
-  scAdd_External_Symbol("AnimateCharacter",(void *)scAnimateCharacter);
-  scAdd_External_Symbol("AnimateCharacterEx",(void *)AnimateCharacterEx);
-  scAdd_External_Symbol("AnimateObject",(void *)AnimateObject);
-  scAdd_External_Symbol("AnimateObjectEx",(void *)AnimateObjectEx);
-  scAdd_External_Symbol("AreCharactersColliding",(void *)AreCharactersColliding);
-  scAdd_External_Symbol("AreCharObjColliding",(void *)AreCharObjColliding);
-  scAdd_External_Symbol("AreObjectsColliding",(void *)AreObjectsColliding);
-  scAdd_External_Symbol("AreThingsOverlapping",(void *)AreThingsOverlapping);
-  scAdd_External_Symbol("CallRoomScript",(void *)CallRoomScript);
-  scAdd_External_Symbol("CDAudio",(void *)cd_manager);
-  scAdd_External_Symbol("CentreGUI",(void *)CentreGUI);
-  scAdd_External_Symbol("ChangeCharacterView",(void *)ChangeCharacterView);
-  scAdd_External_Symbol("ChangeCursorGraphic",(void *)ChangeCursorGraphic);
-  scAdd_External_Symbol("ChangeCursorHotspot",(void *)ChangeCursorHotspot);
-  scAdd_External_Symbol("ClaimEvent",(void *)ClaimEvent);
-  scAdd_External_Symbol("CreateGraphicOverlay",(void *)CreateGraphicOverlay);
-  scAdd_External_Symbol("CreateTextOverlay",(void *)CreateTextOverlay);
-  scAdd_External_Symbol("CyclePalette",(void *)CyclePalette);
-  scAdd_External_Symbol("Debug",(void *)script_debug);
-  scAdd_External_Symbol("DeleteSaveSlot",(void *)DeleteSaveSlot);
-  scAdd_External_Symbol("DeleteSprite",(void *)free_dynamic_sprite);
-  scAdd_External_Symbol("DisableCursorMode",(void *)disable_cursor_mode);
-  scAdd_External_Symbol("DisableGroundLevelAreas",(void *)DisableGroundLevelAreas);
-  scAdd_External_Symbol("DisableHotspot",(void *)DisableHotspot);
-  scAdd_External_Symbol("DisableInterface",(void *)DisableInterface);
-  scAdd_External_Symbol("DisableRegion",(void *)DisableRegion);
-  scAdd_External_Symbol("Display",(void *)Display);
-  scAdd_External_Symbol("DisplayAt",(void *)DisplayAt);
-  scAdd_External_Symbol("DisplayAtY",(void *)DisplayAtY);
-  scAdd_External_Symbol("DisplayMessage",(void *)DisplayMessage);
-  scAdd_External_Symbol("DisplayMessageAtY",(void *)DisplayMessageAtY);
-  scAdd_External_Symbol("DisplayMessageBar",(void *)DisplayMessageBar);
-  scAdd_External_Symbol("DisplaySpeech",(void *)__sc_displayspeech);
-  scAdd_External_Symbol("DisplaySpeechAt", (void *)DisplaySpeechAt);
-  scAdd_External_Symbol("DisplaySpeechBackground",(void *)DisplaySpeechBackground);
-  scAdd_External_Symbol("DisplayThought",(void *)DisplayThought);
-  scAdd_External_Symbol("DisplayTopBar",(void *)DisplayTopBar);
-  scAdd_External_Symbol("EnableCursorMode",(void *)enable_cursor_mode);
-  scAdd_External_Symbol("EnableGroundLevelAreas",(void *)EnableGroundLevelAreas);
-  scAdd_External_Symbol("EnableHotspot",(void *)EnableHotspot);
-  scAdd_External_Symbol("EnableInterface",(void *)EnableInterface);
-  scAdd_External_Symbol("EnableRegion",(void *)EnableRegion);
-  scAdd_External_Symbol("EndCutscene", (void *)EndCutscene);
-  scAdd_External_Symbol("FaceCharacter",(void *)FaceCharacter);
-  scAdd_External_Symbol("FaceLocation",(void *)FaceLocation);
-  scAdd_External_Symbol("FadeIn",(void *)FadeIn);
-  scAdd_External_Symbol("FadeOut",(void *)my_fade_out);
-  scAdd_External_Symbol("FileClose",(void *)FileClose);
-  scAdd_External_Symbol("FileIsEOF",(void *)FileIsEOF);
-  scAdd_External_Symbol("FileIsError",(void *)FileIsError);
-  scAdd_External_Symbol("FileOpen",(void *)FileOpen);
-  scAdd_External_Symbol("FileRead",(void *)FileRead);
-  scAdd_External_Symbol("FileReadInt",(void *)FileReadInt);
-  scAdd_External_Symbol("FileReadRawChar",(void *)FileReadRawChar);
-  scAdd_External_Symbol("FileReadRawInt",(void *)FileReadRawInt);
-  scAdd_External_Symbol("FileWrite",(void *)FileWrite);
-  scAdd_External_Symbol("FileWriteInt",(void *)FileWriteInt);
-  scAdd_External_Symbol("FileWriteRawChar",(void *)FileWriteRawChar);
-  scAdd_External_Symbol("FileWriteRawLine", (void *)FileWriteRawLine);
-  scAdd_External_Symbol("FindGUIID",(void *)FindGUIID);
-  scAdd_External_Symbol("FlipScreen",(void *)FlipScreen);
-  scAdd_External_Symbol("FloatToInt",(void *)FloatToInt);
-  scAdd_External_Symbol("FollowCharacter",(void *)FollowCharacter);
-  scAdd_External_Symbol("FollowCharacterEx",(void *)FollowCharacterEx);
-  scAdd_External_Symbol("GetBackgroundFrame",(void *)GetBackgroundFrame);
-  scAdd_External_Symbol("GetButtonPic",(void *)GetButtonPic);
-  scAdd_External_Symbol("GetCharacterAt",(void *)GetCharacterAt);
-  scAdd_External_Symbol("GetCharacterProperty",(void *)GetCharacterProperty);
-  scAdd_External_Symbol("GetCharacterPropertyText",(void *)GetCharacterPropertyText);
-  scAdd_External_Symbol("GetCurrentMusic",(void *)GetCurrentMusic);
-  scAdd_External_Symbol("GetCursorMode",(void *)GetCursorMode);
-  scAdd_External_Symbol("GetDialogOption",(void *)GetDialogOption);
-  scAdd_External_Symbol("GetGameOption",(void *)GetGameOption);
-  scAdd_External_Symbol("GetGameParameter",(void *)GetGameParameter);
-  scAdd_External_Symbol("GetGameSpeed",(void *)GetGameSpeed);
-  scAdd_External_Symbol("GetGlobalInt",(void *)GetGlobalInt);
-  scAdd_External_Symbol("GetGlobalString",(void *)GetGlobalString);
-  scAdd_External_Symbol("GetGraphicalVariable",(void *)GetGraphicalVariable);
-  scAdd_External_Symbol("GetGUIAt", (void *)GetGUIAt);
-  scAdd_External_Symbol("GetGUIObjectAt", (void *)GetGUIObjectAt);
-  scAdd_External_Symbol("GetHotspotAt",(void *)GetHotspotAt);
-  scAdd_External_Symbol("GetHotspotName",(void *)GetHotspotName);
-  scAdd_External_Symbol("GetHotspotPointX",(void *)GetHotspotPointX);
-  scAdd_External_Symbol("GetHotspotPointY",(void *)GetHotspotPointY);
-  scAdd_External_Symbol("GetHotspotProperty",(void *)GetHotspotProperty);
-  scAdd_External_Symbol("GetHotspotPropertyText",(void *)GetHotspotPropertyText);
-  scAdd_External_Symbol("GetInvAt",(void *)GetInvAt);
-  scAdd_External_Symbol("GetInvGraphic",(void *)GetInvGraphic);
-  scAdd_External_Symbol("GetInvName",(void *)GetInvName);
-  scAdd_External_Symbol("GetInvProperty",(void *)GetInvProperty);
-  scAdd_External_Symbol("GetInvPropertyText",(void *)GetInvPropertyText);
-  //scAdd_External_Symbol("GetLanguageString",(void *)GetLanguageString);
-  scAdd_External_Symbol("GetLocationName",(void *)GetLocationName);
-  scAdd_External_Symbol("GetLocationType",(void *)GetLocationType);
-  scAdd_External_Symbol("GetMessageText", (void *)GetMessageText);
-  scAdd_External_Symbol("GetMIDIPosition", (void *)GetMIDIPosition);
-  scAdd_External_Symbol("GetMP3PosMillis", (void *)GetMP3PosMillis);
-  scAdd_External_Symbol("GetObjectAt",(void *)GetObjectAt);
-  scAdd_External_Symbol("GetObjectBaseline",(void *)GetObjectBaseline);
-  scAdd_External_Symbol("GetObjectGraphic",(void *)GetObjectGraphic);
-  scAdd_External_Symbol("GetObjectName",(void *)GetObjectName);
-  scAdd_External_Symbol("GetObjectProperty",(void *)GetObjectProperty);
-  scAdd_External_Symbol("GetObjectPropertyText",(void *)GetObjectPropertyText);
-  scAdd_External_Symbol("GetObjectX",(void *)GetObjectX);
-  scAdd_External_Symbol("GetObjectY",(void *)GetObjectY);
-//  scAdd_External_Symbol("GetPalette",(void *)scGetPal);
-  scAdd_External_Symbol("GetPlayerCharacter",(void *)GetPlayerCharacter);
-  scAdd_External_Symbol("GetRawTime",(void *)GetRawTime);
-  scAdd_External_Symbol("GetRegionAt",(void *)GetRegionAt);
-  scAdd_External_Symbol("GetRoomProperty",(void *)GetRoomProperty);
-  scAdd_External_Symbol("GetRoomPropertyText",(void *)GetRoomPropertyText);
-  scAdd_External_Symbol("GetSaveSlotDescription",(void *)GetSaveSlotDescription);
-  scAdd_External_Symbol("GetScalingAt",(void *)GetScalingAt);
-  scAdd_External_Symbol("GetSliderValue",(void *)GetSliderValue);
-  scAdd_External_Symbol("GetTextBoxText",(void *)GetTextBoxText);
-  scAdd_External_Symbol("GetTextHeight",(void *)GetTextHeight);
-  scAdd_External_Symbol("GetTextWidth",(void *)GetTextWidth);
-  scAdd_External_Symbol("GetTime",(void *)sc_GetTime);
-  scAdd_External_Symbol("GetTranslation", (void *)get_translation);
-  scAdd_External_Symbol("GetTranslationName", (void *)GetTranslationName);
-  scAdd_External_Symbol("GetViewportX",(void *)GetViewportX);
-  scAdd_External_Symbol("GetViewportY",(void *)GetViewportY);
-  scAdd_External_Symbol("GetWalkableAreaAt",(void *)GetWalkableAreaAt);
-  scAdd_External_Symbol("GiveScore",(void *)GiveScore);
-  scAdd_External_Symbol("HasPlayerBeenInRoom",(void *)HasPlayerBeenInRoom);
-  scAdd_External_Symbol("HideMouseCursor",(void *)HideMouseCursor);
-  scAdd_External_Symbol("InputBox",(void *)sc_inputbox);
-  scAdd_External_Symbol("InterfaceOff",(void *)InterfaceOff);
-  scAdd_External_Symbol("InterfaceOn",(void *)InterfaceOn);
-  scAdd_External_Symbol("IntToFloat",(void *)IntToFloat);
-  scAdd_External_Symbol("InventoryScreen",(void *)sc_invscreen);
-  scAdd_External_Symbol("IsButtonDown",(void *)IsButtonDown);
-  scAdd_External_Symbol("IsChannelPlaying",(void *)IsChannelPlaying);
-  scAdd_External_Symbol("IsGamePaused",(void *)IsGamePaused);
-  scAdd_External_Symbol("IsGUIOn", (void *)IsGUIOn);
-  scAdd_External_Symbol("IsInteractionAvailable", (void *)IsInteractionAvailable);
-  scAdd_External_Symbol("IsInventoryInteractionAvailable", (void *)IsInventoryInteractionAvailable);
-  scAdd_External_Symbol("IsInterfaceEnabled", (void *)IsInterfaceEnabled);
-  scAdd_External_Symbol("IsKeyPressed",(void *)IsKeyPressed);
-  scAdd_External_Symbol("IsMusicPlaying",(void *)IsMusicPlaying);
-  scAdd_External_Symbol("IsMusicVoxAvailable",(void *)IsMusicVoxAvailable);
-  scAdd_External_Symbol("IsObjectAnimating",(void *)IsObjectAnimating);
-  scAdd_External_Symbol("IsObjectMoving",(void *)IsObjectMoving);
-  scAdd_External_Symbol("IsObjectOn",(void *)IsObjectOn);
-  scAdd_External_Symbol("IsOverlayValid",(void *)IsOverlayValid);
-  scAdd_External_Symbol("IsSoundPlaying",(void *)IsSoundPlaying);
-  scAdd_External_Symbol("IsTimerExpired",(void *)IsTimerExpired);
-  scAdd_External_Symbol("IsTranslationAvailable", (void *)IsTranslationAvailable);
-  scAdd_External_Symbol("IsVoxAvailable",(void *)IsVoxAvailable);
-  scAdd_External_Symbol("ListBoxAdd", (void *)ListBoxAdd);
-  scAdd_External_Symbol("ListBoxClear", (void *)ListBoxClear);
-  scAdd_External_Symbol("ListBoxDirList", (void *)ListBoxDirList);
-  scAdd_External_Symbol("ListBoxGetItemText", (void *)ListBoxGetItemText);
-  scAdd_External_Symbol("ListBoxGetNumItems", (void *)ListBoxGetNumItems);
-  scAdd_External_Symbol("ListBoxGetSelected", (void *)ListBoxGetSelected);
-  scAdd_External_Symbol("ListBoxRemove", (void *)ListBoxRemove);
-  scAdd_External_Symbol("ListBoxSaveGameList", (void *)ListBoxSaveGameList);
-  scAdd_External_Symbol("ListBoxSetSelected", (void *)ListBoxSetSelected);
-  scAdd_External_Symbol("ListBoxSetTopItem", (void *)ListBoxSetTopItem);
-  scAdd_External_Symbol("LoadImageFile",(void *)LoadImageFile);
-  scAdd_External_Symbol("LoadSaveSlotScreenshot",(void *)LoadSaveSlotScreenshot);
-  scAdd_External_Symbol("LoseInventory",(void *)lose_inventory);
-  scAdd_External_Symbol("LoseInventoryFromCharacter",(void *)LoseInventoryFromCharacter);
-  scAdd_External_Symbol("MergeObject",(void *)MergeObject);
-  scAdd_External_Symbol("MoveCharacter",(void *)MoveCharacter);
-  scAdd_External_Symbol("MoveCharacterBlocking",(void *)MoveCharacterBlocking);
-  scAdd_External_Symbol("MoveCharacterDirect",(void *)MoveCharacterDirect);
-  scAdd_External_Symbol("MoveCharacterPath",(void *)MoveCharacterPath);
-  scAdd_External_Symbol("MoveCharacterStraight",(void *)MoveCharacterStraight);
-  scAdd_External_Symbol("MoveCharacterToHotspot",(void *)MoveCharacterToHotspot);
-  scAdd_External_Symbol("MoveCharacterToObject",(void *)MoveCharacterToObject);
-  scAdd_External_Symbol("MoveObject",(void *)MoveObject);
-  scAdd_External_Symbol("MoveObjectDirect",(void *)MoveObjectDirect);
-  scAdd_External_Symbol("MoveOverlay",(void *)MoveOverlay);
-  scAdd_External_Symbol("MoveToWalkableArea", (void *)MoveToWalkableArea);
-  scAdd_External_Symbol("NewRoom",(void *)NewRoom);
-  scAdd_External_Symbol("NewRoomEx",(void *)NewRoomEx);
-  scAdd_External_Symbol("NewRoomNPC",(void *)NewRoomNPC);
-  scAdd_External_Symbol("ObjectOff",(void *)ObjectOff);
-  scAdd_External_Symbol("ObjectOn",(void *)ObjectOn);
-  scAdd_External_Symbol("ParseText",(void *)ParseText);
-  scAdd_External_Symbol("PauseGame",(void *)PauseGame);
-  scAdd_External_Symbol("PlayAmbientSound",(void *)PlayAmbientSound);
-  scAdd_External_Symbol("PlayFlic",(void *)play_flc_file);
-  scAdd_External_Symbol("PlayMP3File",(void *)PlayMP3File);
-  scAdd_External_Symbol("PlayMusic",(void *)PlayMusicResetQueue);
-  scAdd_External_Symbol("PlayMusicQueued",(void *)PlayMusicQueued);
-  scAdd_External_Symbol("PlaySilentMIDI",(void *)PlaySilentMIDI);
-  scAdd_External_Symbol("PlaySound",(void *)play_sound);
-  scAdd_External_Symbol("PlaySoundEx",(void *)PlaySoundEx);
-  scAdd_External_Symbol("PlaySpeech",(void *)__scr_play_speech);
-  scAdd_External_Symbol("PlayVideo",(void *)scrPlayVideo);
-  scAdd_External_Symbol("ProcessClick",(void *)ProcessClick);
-  scAdd_External_Symbol("QuitGame",(void *)QuitGame);
-  scAdd_External_Symbol("Random",(void *)__Rand);
-  scAdd_External_Symbol("RawClearScreen", (void *)RawClear);
-  scAdd_External_Symbol("RawDrawCircle",(void *)RawDrawCircle);
-  scAdd_External_Symbol("RawDrawFrameTransparent",(void *)RawDrawFrameTransparent);
-  scAdd_External_Symbol("RawDrawImage", (void *)RawDrawImage);
-  scAdd_External_Symbol("RawDrawImageOffset", (void *)RawDrawImageOffset);
-  scAdd_External_Symbol("RawDrawImageResized", (void *)RawDrawImageResized);
-  scAdd_External_Symbol("RawDrawImageTransparent", (void *)RawDrawImageTransparent);
-  scAdd_External_Symbol("RawDrawLine", (void *)RawDrawLine);
-  scAdd_External_Symbol("RawDrawRectangle", (void *)RawDrawRectangle);
-  scAdd_External_Symbol("RawDrawTriangle", (void *)RawDrawTriangle);
-  scAdd_External_Symbol("RawPrint", (void *)RawPrint);
-  scAdd_External_Symbol("RawPrintMessageWrapped", (void *)RawPrintMessageWrapped);
-  scAdd_External_Symbol("RawRestoreScreen", (void *)RawRestoreScreen);
-  scAdd_External_Symbol("RawRestoreScreenTinted", (void *)RawRestoreScreenTinted);
-  scAdd_External_Symbol("RawSaveScreen", (void *)RawSaveScreen);
-  scAdd_External_Symbol("RawSetColor", (void *)RawSetColor);
-  scAdd_External_Symbol("RawSetColorRGB", (void *)RawSetColorRGB);
-  scAdd_External_Symbol("RefreshMouse",(void *)RefreshMouse);
-  scAdd_External_Symbol("ReleaseCharacterView",(void *)ReleaseCharacterView);
-  scAdd_External_Symbol("ReleaseViewport",(void *)ReleaseViewport);
-  scAdd_External_Symbol("RemoveObjectTint",(void *)RemoveObjectTint);
-  scAdd_External_Symbol("RemoveOverlay",(void *)RemoveOverlay);
-  scAdd_External_Symbol("RemoveWalkableArea",(void *)RemoveWalkableArea);
-  scAdd_External_Symbol("ResetRoom",(void *)ResetRoom);
-  scAdd_External_Symbol("RestartGame",(void *)restart_game);
-  scAdd_External_Symbol("RestoreGameDialog",(void *)restore_game_dialog);
-  scAdd_External_Symbol("RestoreGameSlot",(void *)RestoreGameSlot);
-  scAdd_External_Symbol("RestoreWalkableArea",(void *)RestoreWalkableArea);
-  scAdd_External_Symbol("RunAGSGame", (void *)RunAGSGame);
-  scAdd_External_Symbol("RunCharacterInteraction",(void *)RunCharacterInteraction);
-  scAdd_External_Symbol("RunDialog",(void *)RunDialog);
-  scAdd_External_Symbol("RunHotspotInteraction", (void *)RunHotspotInteraction);
-  scAdd_External_Symbol("RunInventoryInteraction", (void *)RunInventoryInteraction);
-  scAdd_External_Symbol("RunObjectInteraction", (void *)RunObjectInteraction);
-  scAdd_External_Symbol("RunRegionInteraction", (void *)RunRegionInteraction);
-  scAdd_External_Symbol("Said",(void *)Said);
-  scAdd_External_Symbol("SaidUnknownWord",(void *)SaidUnknownWord);
-  scAdd_External_Symbol("SaveCursorForLocationChange",(void *)SaveCursorForLocationChange);
-  scAdd_External_Symbol("SaveGameDialog",(void *)save_game_dialog);
-  scAdd_External_Symbol("SaveGameSlot",(void *)save_game);
-  scAdd_External_Symbol("SaveScreenShot",(void *)SaveScreenShot);
-  scAdd_External_Symbol("SeekMIDIPosition", (void *)SeekMIDIPosition);
-  scAdd_External_Symbol("SeekMODPattern",(void *)SeekMODPattern);
-  scAdd_External_Symbol("SeekMP3PosMillis", (void *)SeekMP3PosMillis);
-  scAdd_External_Symbol("SetActiveInventory",(void *)SetActiveInventory);
-  scAdd_External_Symbol("SetAmbientTint",(void *)SetAmbientTint);
-  scAdd_External_Symbol("SetAreaLightLevel",(void *)SetAreaLightLevel);
-  scAdd_External_Symbol("SetAreaScaling",(void *)SetAreaScaling);
-  scAdd_External_Symbol("SetBackgroundFrame",(void *)SetBackgroundFrame);
-  scAdd_External_Symbol("SetButtonPic",(void *)SetButtonPic);
-  scAdd_External_Symbol("SetButtonText",(void *)SetButtonText);
-  scAdd_External_Symbol("SetChannelVolume",(void *)SetChannelVolume);
-  scAdd_External_Symbol("SetCharacterBaseline",(void *)SetCharacterBaseline);
-  scAdd_External_Symbol("SetCharacterClickable",(void *)SetCharacterClickable);
-  scAdd_External_Symbol("SetCharacterFrame",(void *)SetCharacterFrame);
-  scAdd_External_Symbol("SetCharacterIdle",(void *)SetCharacterIdle);
-  scAdd_External_Symbol("SetCharacterIgnoreLight",(void *)SetCharacterIgnoreLight);
-  scAdd_External_Symbol("SetCharacterIgnoreWalkbehinds",(void *)SetCharacterIgnoreWalkbehinds);
-  scAdd_External_Symbol("SetCharacterProperty",(void *)SetCharacterProperty);
-  scAdd_External_Symbol("SetCharacterBlinkView",(void *)SetCharacterBlinkView);
-  scAdd_External_Symbol("SetCharacterSpeechView",(void *)SetCharacterSpeechView);
-  scAdd_External_Symbol("SetCharacterSpeed",(void *)SetCharacterSpeed);
-  scAdd_External_Symbol("SetCharacterSpeedEx",(void *)SetCharacterSpeedEx);
-  scAdd_External_Symbol("SetCharacterTransparency",(void *)SetCharacterTransparency);
-  scAdd_External_Symbol("SetCharacterView",(void *)SetCharacterView);
-  scAdd_External_Symbol("SetCharacterViewEx",(void *)SetCharacterViewEx);
-  scAdd_External_Symbol("SetCharacterViewOffset",(void *)SetCharacterViewOffset);
-  scAdd_External_Symbol("SetCursorMode",(void *)set_cursor_mode);
-  scAdd_External_Symbol("SetDefaultCursor",(void *)set_default_cursor);
-  scAdd_External_Symbol("SetDialogOption",(void *)SetDialogOption);
-  scAdd_External_Symbol("SetDigitalMasterVolume",(void *)SetDigitalMasterVolume);
-  scAdd_External_Symbol("SetFadeColor",(void *)SetFadeColor);
-  scAdd_External_Symbol("SetFrameSound",(void *)SetFrameSound);
-  scAdd_External_Symbol("SetGameOption",(void *)SetGameOption);
-  scAdd_External_Symbol("SetGameSpeed",(void *)SetGameSpeed);
-  scAdd_External_Symbol("SetGlobalInt",(void *)SetGlobalInt);
-  scAdd_External_Symbol("SetGlobalString",(void *)SetGlobalString);
-  scAdd_External_Symbol("SetGraphicalVariable",(void *)SetGraphicalVariable);
-  scAdd_External_Symbol("SetGUIBackgroundPic", (void *)SetGUIBackgroundPic);
-  scAdd_External_Symbol("SetGUIClickable", (void *)SetGUIClickable);
-  scAdd_External_Symbol("SetGUIObjectEnabled",(void *)SetGUIObjectEnabled);
-  scAdd_External_Symbol("SetGUIObjectPosition",(void *)SetGUIObjectPosition);
-  scAdd_External_Symbol("SetGUIObjectSize",(void *)SetGUIObjectSize);
-  scAdd_External_Symbol("SetGUIPosition",(void *)SetGUIPosition);
-  scAdd_External_Symbol("SetGUISize",(void *)SetGUISize);
-  scAdd_External_Symbol("SetGUITransparency", (void *)SetGUITransparency);
-  scAdd_External_Symbol("SetGUIZOrder", (void *)SetGUIZOrder);
-  scAdd_External_Symbol("SetInvItemName",(void *)SetInvItemName);
-  scAdd_External_Symbol("SetInvItemPic",(void *)set_inv_item_pic);
-  scAdd_External_Symbol("SetInvDimensions",(void *)SetInvDimensions);
-  scAdd_External_Symbol("SetLabelColor",(void *)SetLabelColor);
-  scAdd_External_Symbol("SetLabelFont",(void *)SetLabelFont);
-  scAdd_External_Symbol("SetLabelText",(void *)SetLabelText);
-  scAdd_External_Symbol("SetMouseBounds",(void *)SetMouseBounds);
-  scAdd_External_Symbol("SetMouseCursor",(void *)set_mouse_cursor);
-  scAdd_External_Symbol("SetMousePosition",(void *)SetMousePosition);
-  scAdd_External_Symbol("SetMultitaskingMode",(void *)SetMultitasking);
-  scAdd_External_Symbol("SetMusicMasterVolume",(void *)SetMusicMasterVolume);
-  scAdd_External_Symbol("SetMusicRepeat",(void *)SetMusicRepeat);
-  scAdd_External_Symbol("SetMusicVolume",(void *)SetMusicVolume);
-  scAdd_External_Symbol("SetNextCursorMode", (void *)SetNextCursor);
-  scAdd_External_Symbol("SetNextScreenTransition",(void *)SetNextScreenTransition);
-  scAdd_External_Symbol("SetNormalFont", (void *)SetNormalFont);
-  scAdd_External_Symbol("SetObjectBaseline",(void *)SetObjectBaseline);
-  scAdd_External_Symbol("SetObjectClickable",(void *)SetObjectClickable);
-  scAdd_External_Symbol("SetObjectFrame",(void *)SetObjectFrame);
-  scAdd_External_Symbol("SetObjectGraphic",(void *)SetObjectGraphic);
-  scAdd_External_Symbol("SetObjectIgnoreWalkbehinds",(void *)SetObjectIgnoreWalkbehinds);
-  scAdd_External_Symbol("SetObjectPosition",(void *)SetObjectPosition);
-  scAdd_External_Symbol("SetObjectTint",(void *)SetObjectTint);
-  scAdd_External_Symbol("SetObjectTransparency",(void *)SetObjectTransparency);
-  scAdd_External_Symbol("SetObjectView",(void *)SetObjectView);
-//  scAdd_External_Symbol("SetPalette",scSetPal);
-  scAdd_External_Symbol("SetPalRGB",(void *)SetPalRGB);
-  scAdd_External_Symbol("SetPlayerCharacter",(void *)SetPlayerCharacter);
-  scAdd_External_Symbol("SetRegionTint",(void *)SetRegionTint);
-  scAdd_External_Symbol("SetRestartPoint",(void *)SetRestartPoint);
-  scAdd_External_Symbol("SetScreenTransition",(void *)SetScreenTransition);
-  scAdd_External_Symbol("SetSkipSpeech",(void *)SetSkipSpeech);
-  scAdd_External_Symbol("SetSliderValue",(void *)SetSliderValue);
-  scAdd_External_Symbol("SetSoundVolume",(void *)SetSoundVolume);
-  scAdd_External_Symbol("SetSpeechFont", (void *)SetSpeechFont);
-  scAdd_External_Symbol("SetSpeechStyle", (void *)SetSpeechStyle);
-  scAdd_External_Symbol("SetSpeechVolume",(void *)SetSpeechVolume);
-  scAdd_External_Symbol("SetTalkingColor",(void *)SetTalkingColor);
-  scAdd_External_Symbol("SetTextBoxFont",(void *)SetTextBoxFont);
-  scAdd_External_Symbol("SetTextBoxText",(void *)SetTextBoxText);
-  scAdd_External_Symbol("SetTextOverlay",(void *)SetTextOverlay);
-  scAdd_External_Symbol("SetTextWindowGUI",(void *)SetTextWindowGUI);
-  scAdd_External_Symbol("SetTimer",(void *)script_SetTimer);
-  scAdd_External_Symbol("SetViewport",(void *)SetViewport);
-  scAdd_External_Symbol("SetVoiceMode",(void *)SetVoiceMode);
-  scAdd_External_Symbol("SetWalkBehindBase",(void *)SetWalkBehindBase);
-  scAdd_External_Symbol("ShakeScreen",(void *)ShakeScreen);
-  scAdd_External_Symbol("ShakeScreenBackground",(void *)ShakeScreenBackground);
-  scAdd_External_Symbol("ShowMouseCursor",(void *)ShowMouseCursor);
-  scAdd_External_Symbol("SkipUntilCharacterStops",(void *)SkipUntilCharacterStops);
-  scAdd_External_Symbol("StartCutscene", (void *)StartCutscene);
-  scAdd_External_Symbol("StartRecording", (void *)scStartRecording);
-  scAdd_External_Symbol("StopAmbientSound",(void *)StopAmbientSound);
-  scAdd_External_Symbol("StopChannel",(void *)stop_and_destroy_channel);
-  scAdd_External_Symbol("StopDialog",(void *)StopDialog);
-  scAdd_External_Symbol("StopMoving",(void *)StopMoving);
-  scAdd_External_Symbol("StopMusic", (void *)scr_StopMusic);
-  scAdd_External_Symbol("StopObjectMoving",(void *)StopObjectMoving);
-  scAdd_External_Symbol("StrCat",(void *)_sc_strcat);
-  scAdd_External_Symbol("StrCaseComp",(void *)stricmp);
-  scAdd_External_Symbol("StrComp",(void *)strcmp);
-  scAdd_External_Symbol("StrContains",(void *)StrContains);
-  scAdd_External_Symbol("StrCopy",(void *)_sc_strcpy);
-  scAdd_External_Symbol("StrFormat",(void *)_sc_sprintf);
-  scAdd_External_Symbol("StrGetCharAt", (void *)StrGetCharAt);
-  scAdd_External_Symbol("StringToInt",(void *)StringToInt);
-  scAdd_External_Symbol("StrLen",(void *)strlen);
-  scAdd_External_Symbol("StrSetCharAt", (void *)StrSetCharAt);
-  scAdd_External_Symbol("StrToLowerCase", (void *)_sc_strlower);
-  scAdd_External_Symbol("StrToUpperCase", (void *)_sc_strupper);
-  scAdd_External_Symbol("TintScreen",(void *)TintScreen);
-  scAdd_External_Symbol("UnPauseGame",(void *)UnPauseGame);
-  scAdd_External_Symbol("UpdateInventory", (void *)update_invorder);
-  scAdd_External_Symbol("UpdatePalette",(void *)UpdatePalette);
-  scAdd_External_Symbol("Wait",(void *)scrWait);
-  scAdd_External_Symbol("WaitKey",(void *)WaitKey);
-  scAdd_External_Symbol("WaitMouseKey",(void *)WaitMouseKey);
-
-  // Stubs for plugin functions.
-
-  // ags_shell.dll
-  scAdd_External_Symbol("ShellExecute", (void*)ScriptStub_ShellExecute);
-
-  // ags_snowrain.dll
-  scAdd_External_Symbol("srSetSnowDriftRange",(void *)srSetSnowDriftRange);
-  scAdd_External_Symbol("srSetSnowDriftSpeed",(void *)srSetSnowDriftSpeed);
-  scAdd_External_Symbol("srSetSnowFallSpeed",(void *)srSetSnowFallSpeed);
-  scAdd_External_Symbol("srChangeSnowAmount",(void *)srChangeSnowAmount);
-  scAdd_External_Symbol("srSetSnowBaseline",(void *)srSetSnowBaseline);
-  scAdd_External_Symbol("srSetSnowTransparency",(void *)srSetSnowTransparency);
-  scAdd_External_Symbol("srSetSnowDefaultView",(void *)srSetSnowDefaultView);
-  scAdd_External_Symbol("srSetSnowWindSpeed",(void *)srSetSnowWindSpeed);
-  scAdd_External_Symbol("srSetSnowAmount",(void *)srSetSnowAmount);
-  scAdd_External_Symbol("srSetSnowView",(void *)srSetSnowView);
-  scAdd_External_Symbol("srChangeRainAmount",(void *)srChangeRainAmount);
-  scAdd_External_Symbol("srSetRainView",(void *)srSetRainView);
-  scAdd_External_Symbol("srSetRainDefaultView",(void *)srSetRainDefaultView);
-  scAdd_External_Symbol("srSetRainTransparency",(void *)srSetRainTransparency);
-  scAdd_External_Symbol("srSetRainWindSpeed",(void *)srSetRainWindSpeed);
-  scAdd_External_Symbol("srSetRainBaseline",(void *)srSetRainBaseline);
-  scAdd_External_Symbol("srSetRainAmount",(void *)srSetRainAmount);
-  scAdd_External_Symbol("srSetRainFallSpeed",(void *)srSetRainFallSpeed);
-  scAdd_External_Symbol("srSetWindSpeed",(void *)srSetWindSpeed);
-  scAdd_External_Symbol("srSetBaseline",(void *)srSetBaseline);
-
-  // agsjoy.dll
-  scAdd_External_Symbol("JoystickCount",(void *)JoystickCount);
-  scAdd_External_Symbol("Joystick::Open^1",(void *)Joystick_Open);
-  scAdd_External_Symbol("Joystick::IsButtonDown^1",(void *)Joystick_IsButtonDown);
-  scAdd_External_Symbol("Joystick::EnableEvents^1",(void *)Joystick_EnableEvents);
-  scAdd_External_Symbol("Joystick::DisableEvents^0",(void *)Joystick_DisableEvents);
-  scAdd_External_Symbol("Joystick::Click^1",(void *)Joystick_Click);
-  scAdd_External_Symbol("Joystick::Valid^0",(void *)Joystick_Valid);
-  scAdd_External_Symbol("Joystick::Unplugged^0",(void *)Joystick_Unplugged);
-
-  // agsblend.dll
-  scAdd_External_Symbol("DrawAlpha",(void *)DrawAlpha);
-  scAdd_External_Symbol("GetAlpha",(void *)GetAlpha);
-  scAdd_External_Symbol("PutAlpha",(void *)PutAlpha);
-  scAdd_External_Symbol("Blur",(void *)Blur);
-  scAdd_External_Symbol("HighPass",(void *)HighPass);
-  scAdd_External_Symbol("DrawAdd",(void *)DrawAdd);
-
-  // agsflashlight.dll
-  scAdd_External_Symbol("SetFlashlightTint",(void *)SetFlashlightInt3);
-  scAdd_External_Symbol("GetFlashlightTintRed",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("GetFlashlightTintGreen",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("GetFlashlightTintBlue",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("GetFlashlightMinLightLevel",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("GetFlashlightMaxLightLevel",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("SetFlashlightDarkness",(void *)SetFlashlightInt1);
-  scAdd_External_Symbol("GetFlashlightDarkness",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("SetFlashlightDarknessSize",(void *)SetFlashlightInt1);
-  scAdd_External_Symbol("GetFlashlightDarknessSize",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("SetFlashlightBrightness",(void *)SetFlashlightInt1);
-  scAdd_External_Symbol("GetFlashlightBrightness",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("SetFlashlightBrightnessSize",(void *)SetFlashlightInt1);
-  scAdd_External_Symbol("GetFlashlightBrightnessSize",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("SetFlashlightPosition",(void *)SetFlashlightInt2);
-  scAdd_External_Symbol("GetFlashlightPositionX",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("GetFlashlightPositionY",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("SetFlashlightFollowMouse",(void *)SetFlashlightInt1);
-  scAdd_External_Symbol("GetFlashlightFollowMouse",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("SetFlashlightFollowCharacter",(void *)SetFlashlightInt5);
-  scAdd_External_Symbol("GetFlashlightFollowCharacter",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("GetFlashlightCharacterDX",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("GetFlashlightCharacterDY",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("GetFlashlightCharacterHorz",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("GetFlashlightCharacterVert",(void *)GetFlashlightInt);
-  scAdd_External_Symbol("SetFlashlightMask",(void *)SetFlashlightInt1);
-  scAdd_External_Symbol("GetFlashlightMask",(void *)GetFlashlightInt);
 }
 
 
@@ -28648,3 +27577,1090 @@ short int __getshort__bigendian(FILE* file)
   return temp;
 }
 #endif
+
+
+#define scAdd_External_Symbol ccAddExternalSymbol
+void setup_script_exports() {
+	/* these are variable pointers */
+	scAdd_External_Symbol("game",&play);
+	scAdd_External_Symbol("gs_globals",&play.globalvars[0]);
+	scAdd_External_Symbol("mouse",&scmouse);
+	scAdd_External_Symbol("palette",&palette[0]);
+	scAdd_External_Symbol("system",&scsystem);
+	scAdd_External_Symbol("savegameindex",&play.filenumbers[0]);
+	
+  // the ^5 after the function name is the number of params
+  // this is to allow an extra parameter to be added in a later
+  // version without screwing up the stack in previous versions
+  // (just export both the ^5 and the ^6 as seperate funcs)
+  register_audio_script_functions();
+  scAdd_External_Symbol("Character::AddInventory^2",(void *)Character_AddInventory);
+  scAdd_External_Symbol("Character::AddWaypoint^2",(void *)Character_AddWaypoint);
+  scAdd_External_Symbol("Character::Animate^5",(void *)Character_Animate);
+  scAdd_External_Symbol("Character::ChangeRoom^3",(void *)Character_ChangeRoom);
+  scAdd_External_Symbol("Character::ChangeRoomAutoPosition^2",(void *)Character_ChangeRoomAutoPosition);
+  scAdd_External_Symbol("Character::ChangeView^1",(void *)Character_ChangeView);
+  scAdd_External_Symbol("Character::FaceCharacter^2",(void *)Character_FaceCharacter);
+  scAdd_External_Symbol("Character::FaceLocation^3",(void *)Character_FaceLocation);
+  scAdd_External_Symbol("Character::FaceObject^2",(void *)Character_FaceObject);
+  scAdd_External_Symbol("Character::FollowCharacter^3",(void *)Character_FollowCharacter);
+  scAdd_External_Symbol("Character::GetProperty^1",(void *)Character_GetProperty);
+  scAdd_External_Symbol("Character::GetPropertyText^2",(void *)Character_GetPropertyText);
+  scAdd_External_Symbol("Character::GetTextProperty^1",(void *)Character_GetTextProperty);
+  scAdd_External_Symbol("Character::HasInventory^1",(void *)Character_HasInventory);
+  scAdd_External_Symbol("Character::IsCollidingWithChar^1",(void *)Character_IsCollidingWithChar);
+  scAdd_External_Symbol("Character::IsCollidingWithObject^1",(void *)Character_IsCollidingWithObject);
+  scAdd_External_Symbol("Character::LockView^1",(void *)Character_LockView);
+  scAdd_External_Symbol("Character::LockViewAligned^3",(void *)Character_LockViewAligned);
+  scAdd_External_Symbol("Character::LockViewFrame^3",(void *)Character_LockViewFrame);
+  scAdd_External_Symbol("Character::LockViewOffset^3",(void *)Character_LockViewOffset);
+  scAdd_External_Symbol("Character::LoseInventory^1",(void *)Character_LoseInventory);
+  scAdd_External_Symbol("Character::Move^4",(void *)Character_Move);
+  scAdd_External_Symbol("Character::PlaceOnWalkableArea^0",(void *)Character_PlaceOnWalkableArea);
+  scAdd_External_Symbol("Character::RemoveTint^0",(void *)Character_RemoveTint);
+  scAdd_External_Symbol("Character::RunInteraction^1",(void *)Character_RunInteraction);
+  scAdd_External_Symbol("Character::Say^101",(void *)Character_Say);
+  scAdd_External_Symbol("Character::SayAt^4",(void *)Character_SayAt);
+  scAdd_External_Symbol("Character::SayBackground^1",(void *)Character_SayBackground);
+  scAdd_External_Symbol("Character::SetAsPlayer^0",(void *)Character_SetAsPlayer);
+  scAdd_External_Symbol("Character::SetIdleView^2",(void *)Character_SetIdleView);
+  //scAdd_External_Symbol("Character::SetOption^2",(void *)Character_SetOption);
+  scAdd_External_Symbol("Character::SetWalkSpeed^2",(void *)Character_SetSpeed);
+  scAdd_External_Symbol("Character::StopMoving^0",(void *)Character_StopMoving);
+  scAdd_External_Symbol("Character::Think^101",(void *)Character_Think);
+  scAdd_External_Symbol("Character::Tint^5",(void *)Character_Tint);
+  scAdd_External_Symbol("Character::UnlockView^0",(void *)Character_UnlockView);
+  scAdd_External_Symbol("Character::Walk^4",(void *)Character_Walk);
+  scAdd_External_Symbol("Character::WalkStraight^3",(void *)Character_WalkStraight);
+
+  // static
+  scAdd_External_Symbol("Character::GetAtScreenXY^2", (void *)GetCharacterAtLocation);
+
+  scAdd_External_Symbol("Character::get_ActiveInventory",(void *)Character_GetActiveInventory);
+  scAdd_External_Symbol("Character::set_ActiveInventory",(void *)Character_SetActiveInventory);
+  scAdd_External_Symbol("Character::get_Animating", (void *)Character_GetAnimating);
+  scAdd_External_Symbol("Character::get_AnimationSpeed", (void *)Character_GetAnimationSpeed);
+  scAdd_External_Symbol("Character::set_AnimationSpeed", (void *)Character_SetAnimationSpeed);
+  scAdd_External_Symbol("Character::get_Baseline",(void *)Character_GetBaseline);
+  scAdd_External_Symbol("Character::set_Baseline",(void *)Character_SetBaseline);
+  scAdd_External_Symbol("Character::get_BlinkInterval",(void *)Character_GetBlinkInterval);
+  scAdd_External_Symbol("Character::set_BlinkInterval",(void *)Character_SetBlinkInterval);
+  scAdd_External_Symbol("Character::get_BlinkView",(void *)Character_GetBlinkView);
+  scAdd_External_Symbol("Character::set_BlinkView",(void *)Character_SetBlinkView);
+  scAdd_External_Symbol("Character::get_BlinkWhileThinking",(void *)Character_GetBlinkWhileThinking);
+  scAdd_External_Symbol("Character::set_BlinkWhileThinking",(void *)Character_SetBlinkWhileThinking);
+  scAdd_External_Symbol("Character::get_BlockingHeight",(void *)Character_GetBlockingHeight);
+  scAdd_External_Symbol("Character::set_BlockingHeight",(void *)Character_SetBlockingHeight);
+  scAdd_External_Symbol("Character::get_BlockingWidth",(void *)Character_GetBlockingWidth);
+  scAdd_External_Symbol("Character::set_BlockingWidth",(void *)Character_SetBlockingWidth);
+  scAdd_External_Symbol("Character::get_Clickable",(void *)Character_GetClickable);
+  scAdd_External_Symbol("Character::set_Clickable",(void *)Character_SetClickable);
+  scAdd_External_Symbol("Character::get_DiagonalLoops", (void *)Character_GetDiagonalWalking);
+  scAdd_External_Symbol("Character::set_DiagonalLoops", (void *)Character_SetDiagonalWalking);
+  scAdd_External_Symbol("Character::get_Frame", (void *)Character_GetFrame);
+  scAdd_External_Symbol("Character::set_Frame", (void *)Character_SetFrame);
+  scAdd_External_Symbol("Character::get_HasExplicitTint", (void *)Character_GetHasExplicitTint);
+  scAdd_External_Symbol("Character::get_ID", (void *)Character_GetID);
+  scAdd_External_Symbol("Character::get_IdleView", (void *)Character_GetIdleView);
+  scAdd_External_Symbol("Character::geti_InventoryQuantity", (void *)Character_GetIInventoryQuantity);
+  scAdd_External_Symbol("Character::seti_InventoryQuantity", (void *)Character_SetIInventoryQuantity);
+  scAdd_External_Symbol("Character::get_IgnoreLighting",(void *)Character_GetIgnoreLighting);
+  scAdd_External_Symbol("Character::set_IgnoreLighting",(void *)Character_SetIgnoreLighting);
+  scAdd_External_Symbol("Character::get_IgnoreScaling", (void *)Character_GetIgnoreScaling);
+  scAdd_External_Symbol("Character::set_IgnoreScaling", (void *)Character_SetIgnoreScaling);
+  scAdd_External_Symbol("Character::get_IgnoreWalkbehinds",(void *)Character_GetIgnoreWalkbehinds);
+  scAdd_External_Symbol("Character::set_IgnoreWalkbehinds",(void *)Character_SetIgnoreWalkbehinds);
+  scAdd_External_Symbol("Character::get_Loop", (void *)Character_GetLoop);
+  scAdd_External_Symbol("Character::set_Loop", (void *)Character_SetLoop);
+  scAdd_External_Symbol("Character::get_ManualScaling", (void *)Character_GetIgnoreScaling);
+  scAdd_External_Symbol("Character::set_ManualScaling", (void *)Character_SetManualScaling);
+  scAdd_External_Symbol("Character::get_MovementLinkedToAnimation",(void *)Character_GetMovementLinkedToAnimation);
+  scAdd_External_Symbol("Character::set_MovementLinkedToAnimation",(void *)Character_SetMovementLinkedToAnimation);
+  scAdd_External_Symbol("Character::get_Moving", (void *)Character_GetMoving);
+  scAdd_External_Symbol("Character::get_Name", (void *)Character_GetName);
+  scAdd_External_Symbol("Character::set_Name", (void *)Character_SetName);
+  scAdd_External_Symbol("Character::get_NormalView",(void *)Character_GetNormalView);
+  scAdd_External_Symbol("Character::get_PreviousRoom",(void *)Character_GetPreviousRoom);
+  scAdd_External_Symbol("Character::get_Room",(void *)Character_GetRoom);
+  scAdd_External_Symbol("Character::get_ScaleMoveSpeed", (void *)Character_GetScaleMoveSpeed);
+  scAdd_External_Symbol("Character::set_ScaleMoveSpeed", (void *)Character_SetScaleMoveSpeed);
+  scAdd_External_Symbol("Character::get_ScaleVolume", (void *)Character_GetScaleVolume);
+  scAdd_External_Symbol("Character::set_ScaleVolume", (void *)Character_SetScaleVolume);
+  scAdd_External_Symbol("Character::get_Scaling", (void *)Character_GetScaling);
+  scAdd_External_Symbol("Character::set_Scaling", (void *)Character_SetScaling);
+  scAdd_External_Symbol("Character::get_Solid", (void *)Character_GetSolid);
+  scAdd_External_Symbol("Character::set_Solid", (void *)Character_SetSolid);
+  scAdd_External_Symbol("Character::get_Speaking", (void *)Character_GetSpeaking);
+  scAdd_External_Symbol("Character::get_SpeakingFrame", (void *)Character_GetSpeakingFrame);
+  scAdd_External_Symbol("Character::get_SpeechAnimationDelay",(void *)GetCharacterSpeechAnimationDelay);
+  scAdd_External_Symbol("Character::set_SpeechAnimationDelay",(void *)Character_SetSpeechAnimationDelay);
+  scAdd_External_Symbol("Character::get_SpeechColor",(void *)Character_GetSpeechColor);
+  scAdd_External_Symbol("Character::set_SpeechColor",(void *)Character_SetSpeechColor);
+  scAdd_External_Symbol("Character::get_SpeechView",(void *)Character_GetSpeechView);
+  scAdd_External_Symbol("Character::set_SpeechView",(void *)Character_SetSpeechView);
+  scAdd_External_Symbol("Character::get_ThinkView",(void *)Character_GetThinkView);
+  scAdd_External_Symbol("Character::set_ThinkView",(void *)Character_SetThinkView);
+  scAdd_External_Symbol("Character::get_Transparency",(void *)Character_GetTransparency);
+  scAdd_External_Symbol("Character::set_Transparency",(void *)Character_SetTransparency);
+  scAdd_External_Symbol("Character::get_TurnBeforeWalking", (void *)Character_GetTurnBeforeWalking);
+  scAdd_External_Symbol("Character::set_TurnBeforeWalking", (void *)Character_SetTurnBeforeWalking);
+  scAdd_External_Symbol("Character::get_View", (void *)Character_GetView);
+  scAdd_External_Symbol("Character::get_WalkSpeedX", (void *)Character_GetWalkSpeedX);
+  scAdd_External_Symbol("Character::get_WalkSpeedY", (void *)Character_GetWalkSpeedY);
+  scAdd_External_Symbol("Character::get_X", (void *)Character_GetX);
+  scAdd_External_Symbol("Character::set_X", (void *)Character_SetX);
+  scAdd_External_Symbol("Character::get_x", (void *)Character_GetX);
+  scAdd_External_Symbol("Character::set_x", (void *)Character_SetX);
+  scAdd_External_Symbol("Character::get_Y", (void *)Character_GetY);
+  scAdd_External_Symbol("Character::set_Y", (void *)Character_SetY);
+  scAdd_External_Symbol("Character::get_y", (void *)Character_GetY);
+  scAdd_External_Symbol("Character::set_y", (void *)Character_SetY);
+  scAdd_External_Symbol("Character::get_Z", (void *)Character_GetZ);
+  scAdd_External_Symbol("Character::set_Z", (void *)Character_SetZ);
+  scAdd_External_Symbol("Character::get_z", (void *)Character_GetZ);
+  scAdd_External_Symbol("Character::set_z", (void *)Character_SetZ);
+
+  scAdd_External_Symbol("Object::Animate^5", (void *)Object_Animate);
+  scAdd_External_Symbol("Object::IsCollidingWithObject^1", (void *)Object_IsCollidingWithObject);
+  scAdd_External_Symbol("Object::GetName^1", (void *)Object_GetName);
+  scAdd_External_Symbol("Object::GetProperty^1", (void *)Object_GetProperty);
+  scAdd_External_Symbol("Object::GetPropertyText^2", (void *)Object_GetPropertyText);
+  scAdd_External_Symbol("Object::GetTextProperty^1",(void *)Object_GetTextProperty);
+  scAdd_External_Symbol("Object::MergeIntoBackground^0", (void *)Object_MergeIntoBackground);
+  scAdd_External_Symbol("Object::Move^5", (void *)Object_Move);
+  scAdd_External_Symbol("Object::RemoveTint^0", (void *)Object_RemoveTint);
+  scAdd_External_Symbol("Object::RunInteraction^1", (void *)Object_RunInteraction);
+  scAdd_External_Symbol("Object::SetPosition^2", (void *)Object_SetPosition);
+  scAdd_External_Symbol("Object::SetView^3", (void *)Object_SetView);
+  scAdd_External_Symbol("Object::StopAnimating^0", (void *)Object_StopAnimating);
+  scAdd_External_Symbol("Object::StopMoving^0", (void *)Object_StopMoving);
+  scAdd_External_Symbol("Object::Tint^5", (void *)Object_Tint);
+
+  // static
+  scAdd_External_Symbol("Object::GetAtScreenXY^2", (void *)GetObjectAtLocation);
+
+  scAdd_External_Symbol("Object::get_Animating", (void *)Object_GetAnimating);
+  scAdd_External_Symbol("Object::get_Baseline", (void *)Object_GetBaseline);
+  scAdd_External_Symbol("Object::set_Baseline", (void *)Object_SetBaseline);
+  scAdd_External_Symbol("Object::get_BlockingHeight",(void *)Object_GetBlockingHeight);
+  scAdd_External_Symbol("Object::set_BlockingHeight",(void *)Object_SetBlockingHeight);
+  scAdd_External_Symbol("Object::get_BlockingWidth",(void *)Object_GetBlockingWidth);
+  scAdd_External_Symbol("Object::set_BlockingWidth",(void *)Object_SetBlockingWidth);
+  scAdd_External_Symbol("Object::get_Clickable", (void *)Object_GetClickable);
+  scAdd_External_Symbol("Object::set_Clickable", (void *)Object_SetClickable);
+  scAdd_External_Symbol("Object::get_Frame", (void *)Object_GetFrame);
+  scAdd_External_Symbol("Object::get_Graphic", (void *)Object_GetGraphic);
+  scAdd_External_Symbol("Object::set_Graphic", (void *)Object_SetGraphic);
+  scAdd_External_Symbol("Object::get_ID", (void *)Object_GetID);
+  scAdd_External_Symbol("Object::get_IgnoreScaling", (void *)Object_GetIgnoreScaling);
+  scAdd_External_Symbol("Object::set_IgnoreScaling", (void *)Object_SetIgnoreScaling);
+  scAdd_External_Symbol("Object::get_IgnoreWalkbehinds", (void *)Object_GetIgnoreWalkbehinds);
+  scAdd_External_Symbol("Object::set_IgnoreWalkbehinds", (void *)Object_SetIgnoreWalkbehinds);
+  scAdd_External_Symbol("Object::get_Loop", (void *)Object_GetLoop);
+  scAdd_External_Symbol("Object::get_Moving", (void *)Object_GetMoving);
+  scAdd_External_Symbol("Object::get_Name", (void *)Object_GetName_New);
+  scAdd_External_Symbol("Object::get_Solid", (void *)Object_GetSolid);
+  scAdd_External_Symbol("Object::set_Solid", (void *)Object_SetSolid);
+  scAdd_External_Symbol("Object::get_Transparency", (void *)Object_GetTransparency);
+  scAdd_External_Symbol("Object::set_Transparency", (void *)Object_SetTransparency);
+  scAdd_External_Symbol("Object::get_View", (void *)Object_GetView);
+  scAdd_External_Symbol("Object::get_Visible", (void *)Object_GetVisible);
+  scAdd_External_Symbol("Object::set_Visible", (void *)Object_SetVisible);
+  scAdd_External_Symbol("Object::get_X", (void *)Object_GetX);
+  scAdd_External_Symbol("Object::set_X", (void *)Object_SetX);
+  scAdd_External_Symbol("Object::get_Y", (void *)Object_GetY);
+  scAdd_External_Symbol("Object::set_Y", (void *)Object_SetY);
+
+  scAdd_External_Symbol("Dialog::get_ID", (void *)Dialog_GetID);
+  scAdd_External_Symbol("Dialog::get_OptionCount", (void *)Dialog_GetOptionCount);
+  scAdd_External_Symbol("Dialog::get_ShowTextParser", (void *)Dialog_GetShowTextParser);
+  scAdd_External_Symbol("Dialog::DisplayOptions^1", (void *)Dialog_DisplayOptions);
+  scAdd_External_Symbol("Dialog::GetOptionState^1", (void *)Dialog_GetOptionState);
+  scAdd_External_Symbol("Dialog::GetOptionText^1", (void *)Dialog_GetOptionText);
+  scAdd_External_Symbol("Dialog::HasOptionBeenChosen^1", (void *)Dialog_HasOptionBeenChosen);
+  scAdd_External_Symbol("Dialog::SetOptionState^2", (void *)Dialog_SetOptionState);
+  scAdd_External_Symbol("Dialog::Start^0", (void *)Dialog_Start);
+
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_ActiveOptionID", (void *)DialogOptionsRendering_GetActiveOptionID);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_ActiveOptionID", (void *)DialogOptionsRendering_SetActiveOptionID);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_DialogToRender", (void *)DialogOptionsRendering_GetDialogToRender);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_Height", (void *)DialogOptionsRendering_GetHeight);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_Height", (void *)DialogOptionsRendering_SetHeight);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_ParserTextBoxX", (void *)DialogOptionsRendering_GetParserTextboxX);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_ParserTextBoxX", (void *)DialogOptionsRendering_SetParserTextboxX);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_ParserTextBoxY", (void *)DialogOptionsRendering_GetParserTextboxY);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_ParserTextBoxY", (void *)DialogOptionsRendering_SetParserTextboxY);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_ParserTextBoxWidth", (void *)DialogOptionsRendering_GetParserTextboxWidth);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_ParserTextBoxWidth", (void *)DialogOptionsRendering_SetParserTextboxWidth);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_Surface", (void *)DialogOptionsRendering_GetSurface);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_Width", (void *)DialogOptionsRendering_GetWidth);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_Width", (void *)DialogOptionsRendering_SetWidth);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_X", (void *)DialogOptionsRendering_GetX);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_X", (void *)DialogOptionsRendering_SetX);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::get_Y", (void *)DialogOptionsRendering_GetY);
+  scAdd_External_Symbol("DialogOptionsRenderingInfo::set_Y", (void *)DialogOptionsRendering_SetY);
+
+  scAdd_External_Symbol("File::Delete^1",(void *)File_Delete);
+  scAdd_External_Symbol("File::Exists^1",(void *)File_Exists);
+  scAdd_External_Symbol("File::Open^2",(void *)sc_OpenFile);
+  scAdd_External_Symbol("File::Close^0", (void *)File_Close);
+  scAdd_External_Symbol("File::ReadInt^0", (void *)File_ReadInt);
+  scAdd_External_Symbol("File::ReadRawChar^0", (void *)File_ReadRawChar);
+  scAdd_External_Symbol("File::ReadRawInt^0", (void *)File_ReadRawInt);
+  scAdd_External_Symbol("File::ReadRawLine^1", (void *)File_ReadRawLine);
+  scAdd_External_Symbol("File::ReadRawLineBack^0", (void *)File_ReadRawLineBack);
+  scAdd_External_Symbol("File::ReadString^1", (void *)File_ReadString);
+  scAdd_External_Symbol("File::ReadStringBack^0", (void *)File_ReadStringBack);
+  scAdd_External_Symbol("File::WriteInt^1", (void *)File_WriteInt);
+  scAdd_External_Symbol("File::WriteRawChar^1", (void *)File_WriteRawChar);
+  scAdd_External_Symbol("File::WriteRawLine^1", (void *)File_WriteRawLine);
+  scAdd_External_Symbol("File::WriteString^1", (void *)File_WriteString);
+  scAdd_External_Symbol("File::get_EOF", (void *)File_GetEOF);
+  scAdd_External_Symbol("File::get_Error", (void *)File_GetError);
+
+  scAdd_External_Symbol("Overlay::CreateGraphical^4", (void *)Overlay_CreateGraphical);
+  scAdd_External_Symbol("Overlay::CreateTextual^106", (void *)Overlay_CreateTextual);
+  scAdd_External_Symbol("Overlay::SetText^104", (void *)Overlay_SetText);
+  scAdd_External_Symbol("Overlay::Remove^0", (void *)Overlay_Remove);
+  scAdd_External_Symbol("Overlay::get_Valid", (void *)Overlay_GetValid);
+  scAdd_External_Symbol("Overlay::get_X", (void *)Overlay_GetX);
+  scAdd_External_Symbol("Overlay::set_X", (void *)Overlay_SetX);
+  scAdd_External_Symbol("Overlay::get_Y", (void *)Overlay_GetY);
+  scAdd_External_Symbol("Overlay::set_Y", (void *)Overlay_SetY);
+
+  scAdd_External_Symbol("InventoryItem::GetAtScreenXY^2", (void *)GetInvAtLocation);
+  scAdd_External_Symbol("InventoryItem::IsInteractionAvailable^1", (void *)InventoryItem_CheckInteractionAvailable);
+  scAdd_External_Symbol("InventoryItem::GetName^1", (void *)InventoryItem_GetName);
+  scAdd_External_Symbol("InventoryItem::GetProperty^1", (void *)InventoryItem_GetProperty);
+  scAdd_External_Symbol("InventoryItem::GetPropertyText^2", (void *)InventoryItem_GetPropertyText);
+  scAdd_External_Symbol("InventoryItem::GetTextProperty^1",(void *)InventoryItem_GetTextProperty);
+  scAdd_External_Symbol("InventoryItem::RunInteraction^1", (void *)InventoryItem_RunInteraction);
+  scAdd_External_Symbol("InventoryItem::SetName^1", (void *)InventoryItem_SetName);
+  scAdd_External_Symbol("InventoryItem::get_CursorGraphic", (void *)InventoryItem_GetCursorGraphic);
+  scAdd_External_Symbol("InventoryItem::set_CursorGraphic", (void *)InventoryItem_SetCursorGraphic);
+  scAdd_External_Symbol("InventoryItem::get_Graphic", (void *)InventoryItem_GetGraphic);
+  scAdd_External_Symbol("InventoryItem::set_Graphic", (void *)InventoryItem_SetGraphic);
+  scAdd_External_Symbol("InventoryItem::get_ID", (void *)InventoryItem_GetID);
+  scAdd_External_Symbol("InventoryItem::get_Name", (void *)InventoryItem_GetName_New);
+  scAdd_External_Symbol("InventoryItem::set_Name", (void *)InventoryItem_SetName);
+
+  scAdd_External_Symbol("GUI::Centre^0", (void *)GUI_Centre);
+  scAdd_External_Symbol("GUI::GetAtScreenXY^2", (void *)GetGUIAtLocation);
+  scAdd_External_Symbol("GUI::SetPosition^2", (void *)GUI_SetPosition);
+  scAdd_External_Symbol("GUI::SetSize^2", (void *)GUI_SetSize);
+  scAdd_External_Symbol("GUI::get_BackgroundGraphic", (void *)GUI_GetBackgroundGraphic);
+  scAdd_External_Symbol("GUI::set_BackgroundGraphic", (void *)GUI_SetBackgroundGraphic);
+  scAdd_External_Symbol("GUI::get_Clickable", (void *)GUI_GetClickable);
+  scAdd_External_Symbol("GUI::set_Clickable", (void *)GUI_SetClickable);
+  scAdd_External_Symbol("GUI::get_ControlCount", (void *)GUI_GetControlCount);
+  scAdd_External_Symbol("GUI::geti_Controls", (void *)GUI_GetiControls);
+  scAdd_External_Symbol("GUI::get_Height", (void *)GUI_GetHeight);
+  scAdd_External_Symbol("GUI::set_Height", (void *)GUI_SetHeight);
+  scAdd_External_Symbol("GUI::get_ID", (void *)GUI_GetID);
+  scAdd_External_Symbol("GUI::get_Transparency", (void *)GUI_GetTransparency);
+  scAdd_External_Symbol("GUI::set_Transparency", (void *)GUI_SetTransparency);
+  scAdd_External_Symbol("GUI::get_Visible", (void *)GUI_GetVisible);
+  scAdd_External_Symbol("GUI::set_Visible", (void *)GUI_SetVisible);
+  scAdd_External_Symbol("GUI::get_Width", (void *)GUI_GetWidth);
+  scAdd_External_Symbol("GUI::set_Width", (void *)GUI_SetWidth);
+  scAdd_External_Symbol("GUI::get_X", (void *)GUI_GetX);
+  scAdd_External_Symbol("GUI::set_X", (void *)GUI_SetX);
+  scAdd_External_Symbol("GUI::get_Y", (void *)GUI_GetY);
+  scAdd_External_Symbol("GUI::set_Y", (void *)GUI_SetY);
+  scAdd_External_Symbol("GUI::get_ZOrder", (void *)GUI_GetZOrder);
+  scAdd_External_Symbol("GUI::set_ZOrder", (void *)GUI_SetZOrder);
+
+  scAdd_External_Symbol("GUIControl::BringToFront^0", (void *)GUIControl_BringToFront);
+  scAdd_External_Symbol("GUIControl::GetAtScreenXY^2", (void *)GetGUIControlAtLocation);
+  scAdd_External_Symbol("GUIControl::SendToBack^0", (void *)GUIControl_SendToBack);
+  scAdd_External_Symbol("GUIControl::SetPosition^2", (void *)GUIControl_SetPosition);
+  scAdd_External_Symbol("GUIControl::SetSize^2", (void *)GUIControl_SetSize);
+  scAdd_External_Symbol("GUIControl::get_AsButton", (void *)GUIControl_GetAsButton);
+  scAdd_External_Symbol("GUIControl::get_AsInvWindow", (void *)GUIControl_GetAsInvWindow);
+  scAdd_External_Symbol("GUIControl::get_AsLabel", (void *)GUIControl_GetAsLabel);
+  scAdd_External_Symbol("GUIControl::get_AsListBox", (void *)GUIControl_GetAsListBox);
+  scAdd_External_Symbol("GUIControl::get_AsSlider", (void *)GUIControl_GetAsSlider);
+  scAdd_External_Symbol("GUIControl::get_AsTextBox", (void *)GUIControl_GetAsTextBox);
+  scAdd_External_Symbol("GUIControl::get_Clickable", (void *)GUIControl_GetClickable);
+  scAdd_External_Symbol("GUIControl::set_Clickable", (void *)GUIControl_SetClickable);
+  scAdd_External_Symbol("GUIControl::get_Enabled", (void *)GUIControl_GetEnabled);
+  scAdd_External_Symbol("GUIControl::set_Enabled", (void *)GUIControl_SetEnabled);
+  scAdd_External_Symbol("GUIControl::get_Height", (void *)GUIControl_GetHeight);
+  scAdd_External_Symbol("GUIControl::set_Height", (void *)GUIControl_SetHeight);
+  scAdd_External_Symbol("GUIControl::get_ID", (void *)GUIControl_GetID);
+  scAdd_External_Symbol("GUIControl::get_OwningGUI", (void *)GUIControl_GetOwningGUI);
+  scAdd_External_Symbol("GUIControl::get_Visible", (void *)GUIControl_GetVisible);
+  scAdd_External_Symbol("GUIControl::set_Visible", (void *)GUIControl_SetVisible);
+  scAdd_External_Symbol("GUIControl::get_Width", (void *)GUIControl_GetWidth);
+  scAdd_External_Symbol("GUIControl::set_Width", (void *)GUIControl_SetWidth);
+  scAdd_External_Symbol("GUIControl::get_X", (void *)GUIControl_GetX);
+  scAdd_External_Symbol("GUIControl::set_X", (void *)GUIControl_SetX);
+  scAdd_External_Symbol("GUIControl::get_Y", (void *)GUIControl_GetY);
+  scAdd_External_Symbol("GUIControl::set_Y", (void *)GUIControl_SetY);
+
+  scAdd_External_Symbol("Label::GetText^1", (void *)Label_GetText);
+  scAdd_External_Symbol("Label::SetText^1", (void *)Label_SetText);
+  scAdd_External_Symbol("Label::get_Font", (void *)Label_GetFont);
+  scAdd_External_Symbol("Label::set_Font", (void *)Label_SetFont);
+  scAdd_External_Symbol("Label::get_Text", (void *)Label_GetText_New);
+  scAdd_External_Symbol("Label::set_Text", (void *)Label_SetText);
+  scAdd_External_Symbol("Label::get_TextColor", (void *)Label_GetColor);
+  scAdd_External_Symbol("Label::set_TextColor", (void *)Label_SetColor);
+
+  scAdd_External_Symbol("Button::Animate^4", (void *)Button_Animate);
+  scAdd_External_Symbol("Button::GetText^1", (void *)Button_GetText);
+  scAdd_External_Symbol("Button::SetText^1", (void *)Button_SetText);
+  scAdd_External_Symbol("Button::get_ClipImage", (void *)Button_GetClipImage);
+  scAdd_External_Symbol("Button::set_ClipImage", (void *)Button_SetClipImage);
+  scAdd_External_Symbol("Button::get_Font", (void *)Button_GetFont);
+  scAdd_External_Symbol("Button::set_Font", (void *)Button_SetFont);
+  scAdd_External_Symbol("Button::get_Graphic", (void *)Button_GetGraphic);
+  scAdd_External_Symbol("Button::get_MouseOverGraphic", (void *)Button_GetMouseOverGraphic);
+  scAdd_External_Symbol("Button::set_MouseOverGraphic", (void *)Button_SetMouseOverGraphic);
+  scAdd_External_Symbol("Button::get_NormalGraphic", (void *)Button_GetNormalGraphic);
+  scAdd_External_Symbol("Button::set_NormalGraphic", (void *)Button_SetNormalGraphic);
+  scAdd_External_Symbol("Button::get_PushedGraphic", (void *)Button_GetPushedGraphic);
+  scAdd_External_Symbol("Button::set_PushedGraphic", (void *)Button_SetPushedGraphic);
+  scAdd_External_Symbol("Button::get_Text", (void *)Button_GetText_New);
+  scAdd_External_Symbol("Button::set_Text", (void *)Button_SetText);
+  scAdd_External_Symbol("Button::get_TextColor", (void *)Button_GetTextColor);
+  scAdd_External_Symbol("Button::set_TextColor", (void *)Button_SetTextColor);
+
+  scAdd_External_Symbol("Slider::get_BackgroundGraphic", (void *)Slider_GetBackgroundGraphic);
+  scAdd_External_Symbol("Slider::set_BackgroundGraphic", (void *)Slider_SetBackgroundGraphic);
+  scAdd_External_Symbol("Slider::get_HandleGraphic", (void *)Slider_GetHandleGraphic);
+  scAdd_External_Symbol("Slider::set_HandleGraphic", (void *)Slider_SetHandleGraphic);
+  scAdd_External_Symbol("Slider::get_HandleOffset", (void *)Slider_GetHandleOffset);
+  scAdd_External_Symbol("Slider::set_HandleOffset", (void *)Slider_SetHandleOffset);
+  scAdd_External_Symbol("Slider::get_Max", (void *)Slider_GetMax);
+  scAdd_External_Symbol("Slider::set_Max", (void *)Slider_SetMax);
+  scAdd_External_Symbol("Slider::get_Min", (void *)Slider_GetMin);
+  scAdd_External_Symbol("Slider::set_Min", (void *)Slider_SetMin);
+  scAdd_External_Symbol("Slider::get_Value", (void *)Slider_GetValue);
+  scAdd_External_Symbol("Slider::set_Value", (void *)Slider_SetValue);
+
+  scAdd_External_Symbol("TextBox::GetText^1", (void *)TextBox_GetText);
+  scAdd_External_Symbol("TextBox::SetText^1", (void *)TextBox_SetText);
+  scAdd_External_Symbol("TextBox::get_Font", (void *)TextBox_GetFont);
+  scAdd_External_Symbol("TextBox::set_Font", (void *)TextBox_SetFont);
+  scAdd_External_Symbol("TextBox::get_Text", (void *)TextBox_GetText_New);
+  scAdd_External_Symbol("TextBox::set_Text", (void *)TextBox_SetText);
+  scAdd_External_Symbol("TextBox::get_TextColor", (void *)TextBox_GetTextColor);
+  scAdd_External_Symbol("TextBox::set_TextColor", (void *)TextBox_SetTextColor);
+
+  scAdd_External_Symbol("InvWindow::ScrollDown^0", (void *)InvWindow_ScrollDown);
+  scAdd_External_Symbol("InvWindow::ScrollUp^0", (void *)InvWindow_ScrollUp);
+  scAdd_External_Symbol("InvWindow::get_CharacterToUse", (void *)InvWindow_GetCharacterToUse);
+  scAdd_External_Symbol("InvWindow::set_CharacterToUse", (void *)InvWindow_SetCharacterToUse);
+  scAdd_External_Symbol("InvWindow::geti_ItemAtIndex", (void *)InvWindow_GetItemAtIndex);
+  scAdd_External_Symbol("InvWindow::get_ItemCount", (void *)InvWindow_GetItemCount);
+  scAdd_External_Symbol("InvWindow::get_ItemHeight", (void *)InvWindow_GetItemHeight);
+  scAdd_External_Symbol("InvWindow::set_ItemHeight", (void *)InvWindow_SetItemHeight);
+  scAdd_External_Symbol("InvWindow::get_ItemWidth", (void *)InvWindow_GetItemWidth);
+  scAdd_External_Symbol("InvWindow::set_ItemWidth", (void *)InvWindow_SetItemWidth);
+  scAdd_External_Symbol("InvWindow::get_ItemsPerRow", (void *)InvWindow_GetItemsPerRow);
+  scAdd_External_Symbol("InvWindow::get_RowCount", (void *)InvWindow_GetRowCount);
+  scAdd_External_Symbol("InvWindow::get_TopItem", (void *)InvWindow_GetTopItem);
+  scAdd_External_Symbol("InvWindow::set_TopItem", (void *)InvWindow_SetTopItem);
+
+  scAdd_External_Symbol("ListBox::AddItem^1", (void *)ListBox_AddItem);
+  scAdd_External_Symbol("ListBox::Clear^0", (void *)ListBox_Clear);
+  scAdd_External_Symbol("ListBox::FillDirList^1", (void *)ListBox_FillDirList);
+  scAdd_External_Symbol("ListBox::FillSaveGameList^0", (void *)ListBox_FillSaveGameList);
+  scAdd_External_Symbol("ListBox::GetItemAtLocation^2", (void *)ListBox_GetItemAtLocation);
+  scAdd_External_Symbol("ListBox::GetItemText^2", (void *)ListBox_GetItemText);
+  scAdd_External_Symbol("ListBox::InsertItemAt^2", (void *)ListBox_InsertItemAt);
+  scAdd_External_Symbol("ListBox::RemoveItem^1", (void *)ListBox_RemoveItem);
+  scAdd_External_Symbol("ListBox::ScrollDown^0", (void *)ListBox_ScrollDown);
+  scAdd_External_Symbol("ListBox::ScrollUp^0", (void *)ListBox_ScrollUp);
+  scAdd_External_Symbol("ListBox::SetItemText^2", (void *)ListBox_SetItemText);
+  scAdd_External_Symbol("ListBox::get_Font", (void *)ListBox_GetFont);
+  scAdd_External_Symbol("ListBox::set_Font", (void *)ListBox_SetFont);
+  scAdd_External_Symbol("ListBox::get_HideBorder", (void *)ListBox_GetHideBorder);
+  scAdd_External_Symbol("ListBox::set_HideBorder", (void *)ListBox_SetHideBorder);
+  scAdd_External_Symbol("ListBox::get_HideScrollArrows", (void *)ListBox_GetHideScrollArrows);
+  scAdd_External_Symbol("ListBox::set_HideScrollArrows", (void *)ListBox_SetHideScrollArrows);
+  scAdd_External_Symbol("ListBox::get_ItemCount", (void *)ListBox_GetItemCount);
+  scAdd_External_Symbol("ListBox::geti_Items", (void *)ListBox_GetItems);
+  scAdd_External_Symbol("ListBox::seti_Items", (void *)ListBox_SetItemText);
+  scAdd_External_Symbol("ListBox::get_RowCount", (void *)ListBox_GetRowCount);
+  scAdd_External_Symbol("ListBox::geti_SaveGameSlots", (void *)ListBox_GetSaveGameSlots);
+  scAdd_External_Symbol("ListBox::get_SelectedIndex", (void *)ListBox_GetSelectedIndex);
+  scAdd_External_Symbol("ListBox::set_SelectedIndex", (void *)ListBox_SetSelectedIndex);
+  scAdd_External_Symbol("ListBox::get_TopItem", (void *)ListBox_GetTopItem);
+  scAdd_External_Symbol("ListBox::set_TopItem", (void *)ListBox_SetTopItem);
+
+  scAdd_External_Symbol("Mouse::ChangeModeGraphic^2",(void *)ChangeCursorGraphic);
+  scAdd_External_Symbol("Mouse::ChangeModeHotspot^3",(void *)ChangeCursorHotspot);
+  scAdd_External_Symbol("Mouse::ChangeModeView^2",(void *)Mouse_ChangeModeView);
+  scAdd_External_Symbol("Mouse::DisableMode^1",(void *)disable_cursor_mode);
+  scAdd_External_Symbol("Mouse::EnableMode^1",(void *)enable_cursor_mode);
+  scAdd_External_Symbol("Mouse::GetModeGraphic^1",(void *)Mouse_GetModeGraphic);
+  scAdd_External_Symbol("Mouse::IsButtonDown^1",(void *)IsButtonDown);
+  scAdd_External_Symbol("Mouse::SaveCursorUntilItLeaves^0",(void *)SaveCursorForLocationChange);
+  scAdd_External_Symbol("Mouse::SelectNextMode^0", (void *)SetNextCursor);
+  scAdd_External_Symbol("Mouse::SetBounds^4",(void *)SetMouseBounds);
+  scAdd_External_Symbol("Mouse::SetPosition^2",(void *)SetMousePosition);
+  scAdd_External_Symbol("Mouse::Update^0",(void *)RefreshMouse);
+  scAdd_External_Symbol("Mouse::UseDefaultGraphic^0",(void *)set_default_cursor);
+  scAdd_External_Symbol("Mouse::UseModeGraphic^1",(void *)set_mouse_cursor);
+  scAdd_External_Symbol("Mouse::get_Mode",(void *)GetCursorMode);
+  scAdd_External_Symbol("Mouse::set_Mode",(void *)set_cursor_mode);
+  scAdd_External_Symbol("Mouse::get_Visible", (void *)Mouse_GetVisible);
+  scAdd_External_Symbol("Mouse::set_Visible", (void *)Mouse_SetVisible);
+
+  scAdd_External_Symbol("Maths::ArcCos^1", (void*)Math_ArcCos);
+  scAdd_External_Symbol("Maths::ArcSin^1", (void*)Math_ArcSin);
+  scAdd_External_Symbol("Maths::ArcTan^1", (void*)Math_ArcTan);
+  scAdd_External_Symbol("Maths::ArcTan2^2", (void*)Math_ArcTan2);
+  scAdd_External_Symbol("Maths::Cos^1", (void*)Math_Cos);
+  scAdd_External_Symbol("Maths::Cosh^1", (void*)Math_Cosh);
+  scAdd_External_Symbol("Maths::DegreesToRadians^1", (void*)Math_DegreesToRadians);
+  scAdd_External_Symbol("Maths::Exp^1", (void*)Math_Exp);
+  scAdd_External_Symbol("Maths::Log^1", (void*)Math_Log);
+  scAdd_External_Symbol("Maths::Log10^1", (void*)Math_Log10);
+  scAdd_External_Symbol("Maths::RadiansToDegrees^1", (void*)Math_RadiansToDegrees);
+  scAdd_External_Symbol("Maths::RaiseToPower^2", (void*)Math_RaiseToPower);
+  scAdd_External_Symbol("Maths::Sin^1", (void*)Math_Sin);
+  scAdd_External_Symbol("Maths::Sinh^1", (void*)Math_Sinh);
+  scAdd_External_Symbol("Maths::Sqrt^1", (void*)Math_Sqrt);
+  scAdd_External_Symbol("Maths::Tan^1", (void*)Math_Tan);
+  scAdd_External_Symbol("Maths::Tanh^1", (void*)Math_Tanh);
+  scAdd_External_Symbol("Maths::get_Pi", (void*)Math_GetPi);
+
+  scAdd_External_Symbol("Hotspot::GetAtScreenXY^2",(void *)GetHotspotAtLocation);
+  scAdd_External_Symbol("Hotspot::GetName^1", (void*)Hotspot_GetName);
+  scAdd_External_Symbol("Hotspot::GetProperty^1", (void*)Hotspot_GetProperty);
+  scAdd_External_Symbol("Hotspot::GetPropertyText^2", (void*)Hotspot_GetPropertyText);
+  scAdd_External_Symbol("Hotspot::GetTextProperty^1",(void *)Hotspot_GetTextProperty);
+  scAdd_External_Symbol("Hotspot::RunInteraction^1", (void*)Hotspot_RunInteraction);
+  scAdd_External_Symbol("Hotspot::get_Enabled", (void*)Hotspot_GetEnabled);
+  scAdd_External_Symbol("Hotspot::set_Enabled", (void*)Hotspot_SetEnabled);
+  scAdd_External_Symbol("Hotspot::get_ID", (void*)Hotspot_GetID);
+  scAdd_External_Symbol("Hotspot::get_Name", (void*)Hotspot_GetName_New);
+  scAdd_External_Symbol("Hotspot::get_WalkToX", (void*)Hotspot_GetWalkToX);
+  scAdd_External_Symbol("Hotspot::get_WalkToY", (void*)Hotspot_GetWalkToY);
+
+  scAdd_External_Symbol("Region::GetAtRoomXY^2",(void *)GetRegionAtLocation);
+  scAdd_External_Symbol("Region::Tint^4", (void*)Region_Tint);
+  scAdd_External_Symbol("Region::RunInteraction^1", (void*)Region_RunInteraction);
+  scAdd_External_Symbol("Region::get_Enabled", (void*)Region_GetEnabled);
+  scAdd_External_Symbol("Region::set_Enabled", (void*)Region_SetEnabled);
+  scAdd_External_Symbol("Region::get_ID", (void*)Region_GetID);
+  scAdd_External_Symbol("Region::get_LightLevel", (void*)Region_GetLightLevel);
+  scAdd_External_Symbol("Region::set_LightLevel", (void*)Region_SetLightLevel);
+  scAdd_External_Symbol("Region::get_TintEnabled", (void*)Region_GetTintEnabled);
+  scAdd_External_Symbol("Region::get_TintBlue", (void*)Region_GetTintBlue);
+  scAdd_External_Symbol("Region::get_TintGreen", (void*)Region_GetTintGreen);
+  scAdd_External_Symbol("Region::get_TintRed", (void*)Region_GetTintRed);
+  scAdd_External_Symbol("Region::get_TintSaturation", (void*)Region_GetTintSaturation);
+
+  scAdd_External_Symbol("DateTime::get_Now", (void*)DateTime_Now);
+  scAdd_External_Symbol("DateTime::get_DayOfMonth", (void*)DateTime_GetDayOfMonth);
+  scAdd_External_Symbol("DateTime::get_Hour", (void*)DateTime_GetHour);
+  scAdd_External_Symbol("DateTime::get_Minute", (void*)DateTime_GetMinute);
+  scAdd_External_Symbol("DateTime::get_Month", (void*)DateTime_GetMonth);
+  scAdd_External_Symbol("DateTime::get_RawTime", (void*)DateTime_GetRawTime);
+  scAdd_External_Symbol("DateTime::get_Second", (void*)DateTime_GetSecond);
+  scAdd_External_Symbol("DateTime::get_Year", (void*)DateTime_GetYear);
+
+  scAdd_External_Symbol("DrawingSurface::Clear^1", (void *)DrawingSurface_Clear);
+  scAdd_External_Symbol("DrawingSurface::CreateCopy^0", (void *)DrawingSurface_CreateCopy);
+  scAdd_External_Symbol("DrawingSurface::DrawCircle^3", (void *)DrawingSurface_DrawCircle);
+  scAdd_External_Symbol("DrawingSurface::DrawImage^6", (void *)DrawingSurface_DrawImage);
+  scAdd_External_Symbol("DrawingSurface::DrawLine^5", (void *)DrawingSurface_DrawLine);
+  scAdd_External_Symbol("DrawingSurface::DrawMessageWrapped^5", (void *)DrawingSurface_DrawMessageWrapped);
+  scAdd_External_Symbol("DrawingSurface::DrawPixel^2", (void *)DrawingSurface_DrawPixel);
+  scAdd_External_Symbol("DrawingSurface::DrawRectangle^4", (void *)DrawingSurface_DrawRectangle);
+  scAdd_External_Symbol("DrawingSurface::DrawString^104", (void *)DrawingSurface_DrawString);
+  scAdd_External_Symbol("DrawingSurface::DrawStringWrapped^6", (void *)DrawingSurface_DrawStringWrapped);
+  scAdd_External_Symbol("DrawingSurface::DrawSurface^2", (void *)DrawingSurface_DrawSurface);
+  scAdd_External_Symbol("DrawingSurface::DrawTriangle^6", (void *)DrawingSurface_DrawTriangle);
+  scAdd_External_Symbol("DrawingSurface::GetPixel^2", (void *)DrawingSurface_GetPixel);
+  scAdd_External_Symbol("DrawingSurface::Release^0", (void *)DrawingSurface_Release);
+  scAdd_External_Symbol("DrawingSurface::get_DrawingColor", (void *)DrawingSurface_GetDrawingColor);
+  scAdd_External_Symbol("DrawingSurface::set_DrawingColor", (void *)DrawingSurface_SetDrawingColor);
+  scAdd_External_Symbol("DrawingSurface::get_Height", (void *)DrawingSurface_GetHeight);
+  scAdd_External_Symbol("DrawingSurface::get_UseHighResCoordinates", (void *)DrawingSurface_GetUseHighResCoordinates);
+  scAdd_External_Symbol("DrawingSurface::set_UseHighResCoordinates", (void *)DrawingSurface_SetUseHighResCoordinates);
+  scAdd_External_Symbol("DrawingSurface::get_Width", (void *)DrawingSurface_GetWidth);
+
+  scAdd_External_Symbol("DynamicSprite::ChangeCanvasSize^4", (void*)DynamicSprite_ChangeCanvasSize);
+  scAdd_External_Symbol("DynamicSprite::CopyTransparencyMask^1", (void*)DynamicSprite_CopyTransparencyMask);
+  scAdd_External_Symbol("DynamicSprite::Crop^4", (void*)DynamicSprite_Crop);
+  scAdd_External_Symbol("DynamicSprite::Delete", (void*)DynamicSprite_Delete);
+  scAdd_External_Symbol("DynamicSprite::Flip^1", (void*)DynamicSprite_Flip);
+  scAdd_External_Symbol("DynamicSprite::GetDrawingSurface^0", (void*)DynamicSprite_GetDrawingSurface);
+  scAdd_External_Symbol("DynamicSprite::Resize^2", (void*)DynamicSprite_Resize);
+  scAdd_External_Symbol("DynamicSprite::Rotate^3", (void*)DynamicSprite_Rotate);
+  scAdd_External_Symbol("DynamicSprite::SaveToFile^1", (void*)DynamicSprite_SaveToFile);
+  scAdd_External_Symbol("DynamicSprite::Tint^5", (void*)DynamicSprite_Tint);
+  scAdd_External_Symbol("DynamicSprite::get_ColorDepth", (void*)DynamicSprite_GetColorDepth);
+  scAdd_External_Symbol("DynamicSprite::get_Graphic", (void*)DynamicSprite_GetGraphic);
+  scAdd_External_Symbol("DynamicSprite::get_Height", (void*)DynamicSprite_GetHeight);
+  scAdd_External_Symbol("DynamicSprite::get_Width", (void*)DynamicSprite_GetWidth);
+  
+  scAdd_External_Symbol("DynamicSprite::Create^3", (void*)DynamicSprite_Create);
+  scAdd_External_Symbol("DynamicSprite::CreateFromBackground", (void*)DynamicSprite_CreateFromBackground);
+  scAdd_External_Symbol("DynamicSprite::CreateFromDrawingSurface^5", (void*)DynamicSprite_CreateFromDrawingSurface);
+  scAdd_External_Symbol("DynamicSprite::CreateFromExistingSprite^1", (void*)DynamicSprite_CreateFromExistingSprite_Old);
+  scAdd_External_Symbol("DynamicSprite::CreateFromExistingSprite^2", (void*)DynamicSprite_CreateFromExistingSprite);
+  scAdd_External_Symbol("DynamicSprite::CreateFromFile", (void*)DynamicSprite_CreateFromFile);
+  scAdd_External_Symbol("DynamicSprite::CreateFromSaveGame", (void*)DynamicSprite_CreateFromSaveGame);
+  scAdd_External_Symbol("DynamicSprite::CreateFromScreenShot", (void*)DynamicSprite_CreateFromScreenShot);
+
+  scAdd_External_Symbol("String::IsNullOrEmpty^1", (void*)String_IsNullOrEmpty);
+  scAdd_External_Symbol("String::Append^1", (void*)String_Append);
+  scAdd_External_Symbol("String::AppendChar^1", (void*)String_AppendChar);
+  scAdd_External_Symbol("String::CompareTo^2", (void*)String_CompareTo);
+  scAdd_External_Symbol("String::Contains^1", (void*)StrContains);
+  scAdd_External_Symbol("String::Copy^0", (void*)String_Copy);
+  scAdd_External_Symbol("String::EndsWith^2", (void*)String_EndsWith);
+  scAdd_External_Symbol("String::Format^101", (void*)String_Format);
+  scAdd_External_Symbol("String::IndexOf^1", (void*)StrContains);
+  scAdd_External_Symbol("String::LowerCase^0", (void*)String_LowerCase);
+  scAdd_External_Symbol("String::Replace^3", (void*)String_Replace);
+  scAdd_External_Symbol("String::ReplaceCharAt^2", (void*)String_ReplaceCharAt);
+  scAdd_External_Symbol("String::StartsWith^2", (void*)String_StartsWith);
+  scAdd_External_Symbol("String::Substring^2", (void*)String_Substring);
+  scAdd_External_Symbol("String::Truncate^1", (void*)String_Truncate);
+  scAdd_External_Symbol("String::UpperCase^0", (void*)String_UpperCase);
+  scAdd_External_Symbol("String::get_AsFloat", (void*)StringToFloat);
+  scAdd_External_Symbol("String::get_AsInt", (void*)StringToInt);
+  scAdd_External_Symbol("String::geti_Chars", (void*)String_GetChars);
+  scAdd_External_Symbol("String::get_Length", (void*)String_Len);
+
+  scAdd_External_Symbol("Game::ChangeTranslation^1", (void *)Game_ChangeTranslation);
+  scAdd_External_Symbol("Game::DoOnceOnly^1", (void *)Game_DoOnceOnly);
+  scAdd_External_Symbol("Game::GetColorFromRGB^3", (void *)Game_GetColorFromRGB);
+  scAdd_External_Symbol("Game::GetFrameCountForLoop^2", (void *)Game_GetFrameCountForLoop);
+  scAdd_External_Symbol("Game::GetLocationName^2",(void *)Game_GetLocationName);
+  scAdd_External_Symbol("Game::GetLoopCountForView^1", (void *)Game_GetLoopCountForView);
+  scAdd_External_Symbol("Game::GetMODPattern^0",(void *)Game_GetMODPattern);
+  scAdd_External_Symbol("Game::GetRunNextSettingForLoop^2", (void *)Game_GetRunNextSettingForLoop);
+  scAdd_External_Symbol("Game::GetSaveSlotDescription^1",(void *)Game_GetSaveSlotDescription);
+  scAdd_External_Symbol("Game::GetViewFrame^3",(void *)Game_GetViewFrame);
+  scAdd_External_Symbol("Game::InputBox^1",(void *)Game_InputBox);
+  scAdd_External_Symbol("Game::SetSaveGameDirectory^1", (void *)Game_SetSaveGameDirectory);
+  scAdd_External_Symbol("Game::StopSound^1", (void *)StopAllSounds);
+  scAdd_External_Symbol("Game::get_CharacterCount", (void *)Game_GetCharacterCount);
+  scAdd_External_Symbol("Game::get_DialogCount", (void *)Game_GetDialogCount);
+  scAdd_External_Symbol("Game::get_FileName", (void *)Game_GetFileName);
+  scAdd_External_Symbol("Game::get_FontCount", (void *)Game_GetFontCount);
+  scAdd_External_Symbol("Game::geti_GlobalMessages",(void *)Game_GetGlobalMessages);
+  scAdd_External_Symbol("Game::geti_GlobalStrings",(void *)Game_GetGlobalStrings);
+  scAdd_External_Symbol("Game::seti_GlobalStrings",(void *)SetGlobalString);
+  scAdd_External_Symbol("Game::get_GUICount", (void *)Game_GetGUICount);
+  scAdd_External_Symbol("Game::get_IgnoreUserInputAfterTextTimeoutMs", (void *)Game_GetIgnoreUserInputAfterTextTimeoutMs);
+  scAdd_External_Symbol("Game::set_IgnoreUserInputAfterTextTimeoutMs", (void *)Game_SetIgnoreUserInputAfterTextTimeoutMs);
+  scAdd_External_Symbol("Game::get_InSkippableCutscene", (void *)Game_GetInSkippableCutscene);
+  scAdd_External_Symbol("Game::get_InventoryItemCount", (void *)Game_GetInventoryItemCount);
+  scAdd_External_Symbol("Game::get_MinimumTextDisplayTimeMs", (void *)Game_GetMinimumTextDisplayTimeMs);
+  scAdd_External_Symbol("Game::set_MinimumTextDisplayTimeMs", (void *)Game_SetMinimumTextDisplayTimeMs);
+  scAdd_External_Symbol("Game::get_MouseCursorCount", (void *)Game_GetMouseCursorCount);
+  scAdd_External_Symbol("Game::get_Name", (void *)Game_GetName);
+  scAdd_External_Symbol("Game::set_Name", (void *)Game_SetName);
+  scAdd_External_Symbol("Game::get_NormalFont", (void *)Game_GetNormalFont);
+  scAdd_External_Symbol("Game::set_NormalFont", (void *)SetNormalFont);
+  scAdd_External_Symbol("Game::get_SkippingCutscene", (void *)Game_GetSkippingCutscene);
+  scAdd_External_Symbol("Game::get_SpeechFont", (void *)Game_GetSpeechFont);
+  scAdd_External_Symbol("Game::set_SpeechFont", (void *)SetSpeechFont);
+  scAdd_External_Symbol("Game::geti_SpriteWidth", (void *)Game_GetSpriteWidth);
+  scAdd_External_Symbol("Game::geti_SpriteHeight", (void *)Game_GetSpriteHeight);
+  scAdd_External_Symbol("Game::get_TextReadingSpeed", (void *)Game_GetTextReadingSpeed);
+  scAdd_External_Symbol("Game::set_TextReadingSpeed", (void *)Game_SetTextReadingSpeed);
+  scAdd_External_Symbol("Game::get_TranslationFilename",(void *)Game_GetTranslationFilename);
+  scAdd_External_Symbol("Game::get_UseNativeCoordinates", (void *)Game_GetUseNativeCoordinates);
+  scAdd_External_Symbol("Game::get_ViewCount", (void *)Game_GetViewCount);
+
+  scAdd_External_Symbol("System::get_CapsLock", (void *)System_GetCapsLock);
+  scAdd_External_Symbol("System::get_ColorDepth", (void *)System_GetColorDepth);
+  scAdd_External_Symbol("System::get_Gamma", (void *)System_GetGamma);
+  scAdd_External_Symbol("System::set_Gamma", (void *)System_SetGamma);
+  scAdd_External_Symbol("System::get_HardwareAcceleration", (void *)System_GetHardwareAcceleration);
+  scAdd_External_Symbol("System::get_NumLock", (void *)System_GetNumLock);
+  scAdd_External_Symbol("System::set_NumLock", (void *)System_SetNumLock);
+  scAdd_External_Symbol("System::get_OperatingSystem", (void *)System_GetOS);
+  scAdd_External_Symbol("System::get_ScreenHeight", (void *)System_GetScreenHeight);
+  scAdd_External_Symbol("System::get_ScreenWidth", (void *)System_GetScreenWidth);
+  scAdd_External_Symbol("System::get_ScrollLock", (void *)System_GetScrollLock);
+  scAdd_External_Symbol("System::get_SupportsGammaControl", (void *)System_GetSupportsGammaControl);
+  scAdd_External_Symbol("System::get_Version", (void *)System_GetVersion);
+  scAdd_External_Symbol("SystemInfo::get_Version", (void *)System_GetVersion);
+  scAdd_External_Symbol("System::get_ViewportHeight", (void *)System_GetViewportHeight);
+  scAdd_External_Symbol("System::get_ViewportWidth", (void *)System_GetViewportWidth);
+  scAdd_External_Symbol("System::get_Volume",(void *)System_GetVolume);
+  scAdd_External_Symbol("System::set_Volume",(void *)System_SetVolume);
+  scAdd_External_Symbol("System::get_VSync", (void *)System_GetVsync);
+  scAdd_External_Symbol("System::set_VSync", (void *)System_SetVsync);
+  scAdd_External_Symbol("System::get_Windowed", (void *)System_GetWindowed);
+
+  scAdd_External_Symbol("Room::GetDrawingSurfaceForBackground^1", (void *)Room_GetDrawingSurfaceForBackground);
+  scAdd_External_Symbol("Room::GetTextProperty^1",(void *)Room_GetTextProperty);
+  scAdd_External_Symbol("Room::get_BottomEdge", (void *)Room_GetBottomEdge);
+  scAdd_External_Symbol("Room::get_ColorDepth", (void *)Room_GetColorDepth);
+  scAdd_External_Symbol("Room::get_Height", (void *)Room_GetHeight);
+  scAdd_External_Symbol("Room::get_LeftEdge", (void *)Room_GetLeftEdge);
+  scAdd_External_Symbol("Room::geti_Messages",(void *)Room_GetMessages);
+  scAdd_External_Symbol("Room::get_MusicOnLoad", (void *)Room_GetMusicOnLoad);
+  scAdd_External_Symbol("Room::get_ObjectCount", (void *)Room_GetObjectCount);
+  scAdd_External_Symbol("Room::get_RightEdge", (void *)Room_GetRightEdge);
+  scAdd_External_Symbol("Room::get_TopEdge", (void *)Room_GetTopEdge);
+  scAdd_External_Symbol("Room::get_Width", (void *)Room_GetWidth);
+
+  scAdd_External_Symbol("Parser::FindWordID^1",(void *)Parser_FindWordID);
+  scAdd_External_Symbol("Parser::ParseText^1",(void *)ParseText);
+  scAdd_External_Symbol("Parser::SaidUnknownWord^0",(void *)Parser_SaidUnknownWord);
+  scAdd_External_Symbol("Parser::Said^1",(void *)Said);
+
+  scAdd_External_Symbol("ViewFrame::get_Flipped", (void *)ViewFrame_GetFlipped);
+  scAdd_External_Symbol("ViewFrame::get_Frame", (void *)ViewFrame_GetFrame);
+  scAdd_External_Symbol("ViewFrame::get_Graphic", (void *)ViewFrame_GetGraphic);
+  scAdd_External_Symbol("ViewFrame::set_Graphic", (void *)ViewFrame_SetGraphic);
+  scAdd_External_Symbol("ViewFrame::get_LinkedAudio", (void *)ViewFrame_GetLinkedAudio);
+  scAdd_External_Symbol("ViewFrame::set_LinkedAudio", (void *)ViewFrame_SetLinkedAudio);
+  scAdd_External_Symbol("ViewFrame::get_Loop", (void *)ViewFrame_GetLoop);
+  scAdd_External_Symbol("ViewFrame::get_Sound", (void *)ViewFrame_GetSound);
+  scAdd_External_Symbol("ViewFrame::set_Sound", (void *)ViewFrame_SetSound);
+  scAdd_External_Symbol("ViewFrame::get_Speed", (void *)ViewFrame_GetSpeed);
+  scAdd_External_Symbol("ViewFrame::get_View", (void *)ViewFrame_GetView);
+  
+  scAdd_External_Symbol("AbortGame",(void *)_sc_AbortGame);
+  scAdd_External_Symbol("AddInventory",(void *)add_inventory);
+  scAdd_External_Symbol("AddInventoryToCharacter",(void *)AddInventoryToCharacter);
+  scAdd_External_Symbol("AnimateButton",(void *)AnimateButton);
+  scAdd_External_Symbol("AnimateCharacter",(void *)scAnimateCharacter);
+  scAdd_External_Symbol("AnimateCharacterEx",(void *)AnimateCharacterEx);
+  scAdd_External_Symbol("AnimateObject",(void *)AnimateObject);
+  scAdd_External_Symbol("AnimateObjectEx",(void *)AnimateObjectEx);
+  scAdd_External_Symbol("AreCharactersColliding",(void *)AreCharactersColliding);
+  scAdd_External_Symbol("AreCharObjColliding",(void *)AreCharObjColliding);
+  scAdd_External_Symbol("AreObjectsColliding",(void *)AreObjectsColliding);
+  scAdd_External_Symbol("AreThingsOverlapping",(void *)AreThingsOverlapping);
+  scAdd_External_Symbol("CallRoomScript",(void *)CallRoomScript);
+  scAdd_External_Symbol("CDAudio",(void *)cd_manager);
+  scAdd_External_Symbol("CentreGUI",(void *)CentreGUI);
+  scAdd_External_Symbol("ChangeCharacterView",(void *)ChangeCharacterView);
+  scAdd_External_Symbol("ChangeCursorGraphic",(void *)ChangeCursorGraphic);
+  scAdd_External_Symbol("ChangeCursorHotspot",(void *)ChangeCursorHotspot);
+  scAdd_External_Symbol("ClaimEvent",(void *)ClaimEvent);
+  scAdd_External_Symbol("CreateGraphicOverlay",(void *)CreateGraphicOverlay);
+  scAdd_External_Symbol("CreateTextOverlay",(void *)CreateTextOverlay);
+  scAdd_External_Symbol("CyclePalette",(void *)CyclePalette);
+  scAdd_External_Symbol("Debug",(void *)script_debug);
+  scAdd_External_Symbol("DeleteSaveSlot",(void *)DeleteSaveSlot);
+  scAdd_External_Symbol("DeleteSprite",(void *)free_dynamic_sprite);
+  scAdd_External_Symbol("DisableCursorMode",(void *)disable_cursor_mode);
+  scAdd_External_Symbol("DisableGroundLevelAreas",(void *)DisableGroundLevelAreas);
+  scAdd_External_Symbol("DisableHotspot",(void *)DisableHotspot);
+  scAdd_External_Symbol("DisableInterface",(void *)DisableInterface);
+  scAdd_External_Symbol("DisableRegion",(void *)DisableRegion);
+  scAdd_External_Symbol("Display",(void *)Display);
+  scAdd_External_Symbol("DisplayAt",(void *)DisplayAt);
+  scAdd_External_Symbol("DisplayAtY",(void *)DisplayAtY);
+  scAdd_External_Symbol("DisplayMessage",(void *)DisplayMessage);
+  scAdd_External_Symbol("DisplayMessageAtY",(void *)DisplayMessageAtY);
+  scAdd_External_Symbol("DisplayMessageBar",(void *)DisplayMessageBar);
+  scAdd_External_Symbol("DisplaySpeech",(void *)__sc_displayspeech);
+  scAdd_External_Symbol("DisplaySpeechAt", (void *)DisplaySpeechAt);
+  scAdd_External_Symbol("DisplaySpeechBackground",(void *)DisplaySpeechBackground);
+  scAdd_External_Symbol("DisplayThought",(void *)DisplayThought);
+  scAdd_External_Symbol("DisplayTopBar",(void *)DisplayTopBar);
+  scAdd_External_Symbol("EnableCursorMode",(void *)enable_cursor_mode);
+  scAdd_External_Symbol("EnableGroundLevelAreas",(void *)EnableGroundLevelAreas);
+  scAdd_External_Symbol("EnableHotspot",(void *)EnableHotspot);
+  scAdd_External_Symbol("EnableInterface",(void *)EnableInterface);
+  scAdd_External_Symbol("EnableRegion",(void *)EnableRegion);
+  scAdd_External_Symbol("EndCutscene", (void *)EndCutscene);
+  scAdd_External_Symbol("FaceCharacter",(void *)FaceCharacter);
+  scAdd_External_Symbol("FaceLocation",(void *)FaceLocation);
+  scAdd_External_Symbol("FadeIn",(void *)FadeIn);
+  scAdd_External_Symbol("FadeOut",(void *)my_fade_out);
+  scAdd_External_Symbol("FileClose",(void *)FileClose);
+  scAdd_External_Symbol("FileIsEOF",(void *)FileIsEOF);
+  scAdd_External_Symbol("FileIsError",(void *)FileIsError);
+  scAdd_External_Symbol("FileOpen",(void *)FileOpen);
+  scAdd_External_Symbol("FileRead",(void *)FileRead);
+  scAdd_External_Symbol("FileReadInt",(void *)FileReadInt);
+  scAdd_External_Symbol("FileReadRawChar",(void *)FileReadRawChar);
+  scAdd_External_Symbol("FileReadRawInt",(void *)FileReadRawInt);
+  scAdd_External_Symbol("FileWrite",(void *)FileWrite);
+  scAdd_External_Symbol("FileWriteInt",(void *)FileWriteInt);
+  scAdd_External_Symbol("FileWriteRawChar",(void *)FileWriteRawChar);
+  scAdd_External_Symbol("FileWriteRawLine", (void *)FileWriteRawLine);
+  scAdd_External_Symbol("FindGUIID",(void *)FindGUIID);
+  scAdd_External_Symbol("FlipScreen",(void *)FlipScreen);
+  scAdd_External_Symbol("FloatToInt",(void *)FloatToInt);
+  scAdd_External_Symbol("FollowCharacter",(void *)FollowCharacter);
+  scAdd_External_Symbol("FollowCharacterEx",(void *)FollowCharacterEx);
+  scAdd_External_Symbol("GetBackgroundFrame",(void *)GetBackgroundFrame);
+  scAdd_External_Symbol("GetButtonPic",(void *)GetButtonPic);
+  scAdd_External_Symbol("GetCharacterAt",(void *)GetCharacterAt);
+  scAdd_External_Symbol("GetCharacterProperty",(void *)GetCharacterProperty);
+  scAdd_External_Symbol("GetCharacterPropertyText",(void *)GetCharacterPropertyText);
+  scAdd_External_Symbol("GetCurrentMusic",(void *)GetCurrentMusic);
+  scAdd_External_Symbol("GetCursorMode",(void *)GetCursorMode);
+  scAdd_External_Symbol("GetDialogOption",(void *)GetDialogOption);
+  scAdd_External_Symbol("GetGameOption",(void *)GetGameOption);
+  scAdd_External_Symbol("GetGameParameter",(void *)GetGameParameter);
+  scAdd_External_Symbol("GetGameSpeed",(void *)GetGameSpeed);
+  scAdd_External_Symbol("GetGlobalInt",(void *)GetGlobalInt);
+  scAdd_External_Symbol("GetGlobalString",(void *)GetGlobalString);
+  scAdd_External_Symbol("GetGraphicalVariable",(void *)GetGraphicalVariable);
+  scAdd_External_Symbol("GetGUIAt", (void *)GetGUIAt);
+  scAdd_External_Symbol("GetGUIObjectAt", (void *)GetGUIObjectAt);
+  scAdd_External_Symbol("GetHotspotAt",(void *)GetHotspotAt);
+  scAdd_External_Symbol("GetHotspotName",(void *)GetHotspotName);
+  scAdd_External_Symbol("GetHotspotPointX",(void *)GetHotspotPointX);
+  scAdd_External_Symbol("GetHotspotPointY",(void *)GetHotspotPointY);
+  scAdd_External_Symbol("GetHotspotProperty",(void *)GetHotspotProperty);
+  scAdd_External_Symbol("GetHotspotPropertyText",(void *)GetHotspotPropertyText);
+  scAdd_External_Symbol("GetInvAt",(void *)GetInvAt);
+  scAdd_External_Symbol("GetInvGraphic",(void *)GetInvGraphic);
+  scAdd_External_Symbol("GetInvName",(void *)GetInvName);
+  scAdd_External_Symbol("GetInvProperty",(void *)GetInvProperty);
+  scAdd_External_Symbol("GetInvPropertyText",(void *)GetInvPropertyText);
+  //scAdd_External_Symbol("GetLanguageString",(void *)GetLanguageString);
+  scAdd_External_Symbol("GetLocationName",(void *)GetLocationName);
+  scAdd_External_Symbol("GetLocationType",(void *)GetLocationType);
+  scAdd_External_Symbol("GetMessageText", (void *)GetMessageText);
+  scAdd_External_Symbol("GetMIDIPosition", (void *)GetMIDIPosition);
+  scAdd_External_Symbol("GetMP3PosMillis", (void *)GetMP3PosMillis);
+  scAdd_External_Symbol("GetObjectAt",(void *)GetObjectAt);
+  scAdd_External_Symbol("GetObjectBaseline",(void *)GetObjectBaseline);
+  scAdd_External_Symbol("GetObjectGraphic",(void *)GetObjectGraphic);
+  scAdd_External_Symbol("GetObjectName",(void *)GetObjectName);
+  scAdd_External_Symbol("GetObjectProperty",(void *)GetObjectProperty);
+  scAdd_External_Symbol("GetObjectPropertyText",(void *)GetObjectPropertyText);
+  scAdd_External_Symbol("GetObjectX",(void *)GetObjectX);
+  scAdd_External_Symbol("GetObjectY",(void *)GetObjectY);
+//  scAdd_External_Symbol("GetPalette",(void *)scGetPal);
+  scAdd_External_Symbol("GetPlayerCharacter",(void *)GetPlayerCharacter);
+  scAdd_External_Symbol("GetRawTime",(void *)GetRawTime);
+  scAdd_External_Symbol("GetRegionAt",(void *)GetRegionAt);
+  scAdd_External_Symbol("GetRoomProperty",(void *)GetRoomProperty);
+  scAdd_External_Symbol("GetRoomPropertyText",(void *)GetRoomPropertyText);
+  scAdd_External_Symbol("GetSaveSlotDescription",(void *)GetSaveSlotDescription);
+  scAdd_External_Symbol("GetScalingAt",(void *)GetScalingAt);
+  scAdd_External_Symbol("GetSliderValue",(void *)GetSliderValue);
+  scAdd_External_Symbol("GetTextBoxText",(void *)GetTextBoxText);
+  scAdd_External_Symbol("GetTextHeight",(void *)GetTextHeight);
+  scAdd_External_Symbol("GetTextWidth",(void *)GetTextWidth);
+  scAdd_External_Symbol("GetTime",(void *)sc_GetTime);
+  scAdd_External_Symbol("GetTranslation", (void *)get_translation);
+  scAdd_External_Symbol("GetTranslationName", (void *)GetTranslationName);
+  scAdd_External_Symbol("GetViewportX",(void *)GetViewportX);
+  scAdd_External_Symbol("GetViewportY",(void *)GetViewportY);
+  scAdd_External_Symbol("GetWalkableAreaAt",(void *)GetWalkableAreaAt);
+  scAdd_External_Symbol("GiveScore",(void *)GiveScore);
+  scAdd_External_Symbol("HasPlayerBeenInRoom",(void *)HasPlayerBeenInRoom);
+  scAdd_External_Symbol("HideMouseCursor",(void *)HideMouseCursor);
+  scAdd_External_Symbol("InputBox",(void *)sc_inputbox);
+  scAdd_External_Symbol("InterfaceOff",(void *)InterfaceOff);
+  scAdd_External_Symbol("InterfaceOn",(void *)InterfaceOn);
+  scAdd_External_Symbol("IntToFloat",(void *)IntToFloat);
+  scAdd_External_Symbol("InventoryScreen",(void *)sc_invscreen);
+  scAdd_External_Symbol("IsButtonDown",(void *)IsButtonDown);
+  scAdd_External_Symbol("IsChannelPlaying",(void *)IsChannelPlaying);
+  scAdd_External_Symbol("IsGamePaused",(void *)IsGamePaused);
+  scAdd_External_Symbol("IsGUIOn", (void *)IsGUIOn);
+  scAdd_External_Symbol("IsInteractionAvailable", (void *)IsInteractionAvailable);
+  scAdd_External_Symbol("IsInventoryInteractionAvailable", (void *)IsInventoryInteractionAvailable);
+  scAdd_External_Symbol("IsInterfaceEnabled", (void *)IsInterfaceEnabled);
+  scAdd_External_Symbol("IsKeyPressed",(void *)IsKeyPressed);
+  scAdd_External_Symbol("IsMusicPlaying",(void *)IsMusicPlaying);
+  scAdd_External_Symbol("IsMusicVoxAvailable",(void *)IsMusicVoxAvailable);
+  scAdd_External_Symbol("IsObjectAnimating",(void *)IsObjectAnimating);
+  scAdd_External_Symbol("IsObjectMoving",(void *)IsObjectMoving);
+  scAdd_External_Symbol("IsObjectOn",(void *)IsObjectOn);
+  scAdd_External_Symbol("IsOverlayValid",(void *)IsOverlayValid);
+  scAdd_External_Symbol("IsSoundPlaying",(void *)IsSoundPlaying);
+  scAdd_External_Symbol("IsTimerExpired",(void *)IsTimerExpired);
+  scAdd_External_Symbol("IsTranslationAvailable", (void *)IsTranslationAvailable);
+  scAdd_External_Symbol("IsVoxAvailable",(void *)IsVoxAvailable);
+  scAdd_External_Symbol("ListBoxAdd", (void *)ListBoxAdd);
+  scAdd_External_Symbol("ListBoxClear", (void *)ListBoxClear);
+  scAdd_External_Symbol("ListBoxDirList", (void *)ListBoxDirList);
+  scAdd_External_Symbol("ListBoxGetItemText", (void *)ListBoxGetItemText);
+  scAdd_External_Symbol("ListBoxGetNumItems", (void *)ListBoxGetNumItems);
+  scAdd_External_Symbol("ListBoxGetSelected", (void *)ListBoxGetSelected);
+  scAdd_External_Symbol("ListBoxRemove", (void *)ListBoxRemove);
+  scAdd_External_Symbol("ListBoxSaveGameList", (void *)ListBoxSaveGameList);
+  scAdd_External_Symbol("ListBoxSetSelected", (void *)ListBoxSetSelected);
+  scAdd_External_Symbol("ListBoxSetTopItem", (void *)ListBoxSetTopItem);
+  scAdd_External_Symbol("LoadImageFile",(void *)LoadImageFile);
+  scAdd_External_Symbol("LoadSaveSlotScreenshot",(void *)LoadSaveSlotScreenshot);
+  scAdd_External_Symbol("LoseInventory",(void *)lose_inventory);
+  scAdd_External_Symbol("LoseInventoryFromCharacter",(void *)LoseInventoryFromCharacter);
+  scAdd_External_Symbol("MergeObject",(void *)MergeObject);
+  scAdd_External_Symbol("MoveCharacter",(void *)MoveCharacter);
+  scAdd_External_Symbol("MoveCharacterBlocking",(void *)MoveCharacterBlocking);
+  scAdd_External_Symbol("MoveCharacterDirect",(void *)MoveCharacterDirect);
+  scAdd_External_Symbol("MoveCharacterPath",(void *)MoveCharacterPath);
+  scAdd_External_Symbol("MoveCharacterStraight",(void *)MoveCharacterStraight);
+  scAdd_External_Symbol("MoveCharacterToHotspot",(void *)MoveCharacterToHotspot);
+  scAdd_External_Symbol("MoveCharacterToObject",(void *)MoveCharacterToObject);
+  scAdd_External_Symbol("MoveObject",(void *)MoveObject);
+  scAdd_External_Symbol("MoveObjectDirect",(void *)MoveObjectDirect);
+  scAdd_External_Symbol("MoveOverlay",(void *)MoveOverlay);
+  scAdd_External_Symbol("MoveToWalkableArea", (void *)MoveToWalkableArea);
+  scAdd_External_Symbol("NewRoom",(void *)NewRoom);
+  scAdd_External_Symbol("NewRoomEx",(void *)NewRoomEx);
+  scAdd_External_Symbol("NewRoomNPC",(void *)NewRoomNPC);
+  scAdd_External_Symbol("ObjectOff",(void *)ObjectOff);
+  scAdd_External_Symbol("ObjectOn",(void *)ObjectOn);
+  scAdd_External_Symbol("ParseText",(void *)ParseText);
+  scAdd_External_Symbol("PauseGame",(void *)PauseGame);
+  scAdd_External_Symbol("PlayAmbientSound",(void *)PlayAmbientSound);
+  scAdd_External_Symbol("PlayFlic",(void *)play_flc_file);
+  scAdd_External_Symbol("PlayMP3File",(void *)PlayMP3File);
+  scAdd_External_Symbol("PlayMusic",(void *)PlayMusicResetQueue);
+  scAdd_External_Symbol("PlayMusicQueued",(void *)PlayMusicQueued);
+  scAdd_External_Symbol("PlaySilentMIDI",(void *)PlaySilentMIDI);
+  scAdd_External_Symbol("PlaySound",(void *)play_sound);
+  scAdd_External_Symbol("PlaySoundEx",(void *)PlaySoundEx);
+  scAdd_External_Symbol("PlaySpeech",(void *)__scr_play_speech);
+  scAdd_External_Symbol("PlayVideo",(void *)scrPlayVideo);
+  scAdd_External_Symbol("ProcessClick",(void *)ProcessClick);
+  scAdd_External_Symbol("QuitGame",(void *)QuitGame);
+  scAdd_External_Symbol("Random",(void *)__Rand);
+  scAdd_External_Symbol("RawClearScreen", (void *)RawClear);
+  scAdd_External_Symbol("RawDrawCircle",(void *)RawDrawCircle);
+  scAdd_External_Symbol("RawDrawFrameTransparent",(void *)RawDrawFrameTransparent);
+  scAdd_External_Symbol("RawDrawImage", (void *)RawDrawImage);
+  scAdd_External_Symbol("RawDrawImageOffset", (void *)RawDrawImageOffset);
+  scAdd_External_Symbol("RawDrawImageResized", (void *)RawDrawImageResized);
+  scAdd_External_Symbol("RawDrawImageTransparent", (void *)RawDrawImageTransparent);
+  scAdd_External_Symbol("RawDrawLine", (void *)RawDrawLine);
+  scAdd_External_Symbol("RawDrawRectangle", (void *)RawDrawRectangle);
+  scAdd_External_Symbol("RawDrawTriangle", (void *)RawDrawTriangle);
+  scAdd_External_Symbol("RawPrint", (void *)RawPrint);
+  scAdd_External_Symbol("RawPrintMessageWrapped", (void *)RawPrintMessageWrapped);
+  scAdd_External_Symbol("RawRestoreScreen", (void *)RawRestoreScreen);
+  scAdd_External_Symbol("RawRestoreScreenTinted", (void *)RawRestoreScreenTinted);
+  scAdd_External_Symbol("RawSaveScreen", (void *)RawSaveScreen);
+  scAdd_External_Symbol("RawSetColor", (void *)RawSetColor);
+  scAdd_External_Symbol("RawSetColorRGB", (void *)RawSetColorRGB);
+  scAdd_External_Symbol("RefreshMouse",(void *)RefreshMouse);
+  scAdd_External_Symbol("ReleaseCharacterView",(void *)ReleaseCharacterView);
+  scAdd_External_Symbol("ReleaseViewport",(void *)ReleaseViewport);
+  scAdd_External_Symbol("RemoveObjectTint",(void *)RemoveObjectTint);
+  scAdd_External_Symbol("RemoveOverlay",(void *)RemoveOverlay);
+  scAdd_External_Symbol("RemoveWalkableArea",(void *)RemoveWalkableArea);
+  scAdd_External_Symbol("ResetRoom",(void *)ResetRoom);
+  scAdd_External_Symbol("RestartGame",(void *)restart_game);
+  scAdd_External_Symbol("RestoreGameDialog",(void *)restore_game_dialog);
+  scAdd_External_Symbol("RestoreGameSlot",(void *)RestoreGameSlot);
+  scAdd_External_Symbol("RestoreWalkableArea",(void *)RestoreWalkableArea);
+  scAdd_External_Symbol("RunAGSGame", (void *)RunAGSGame);
+  scAdd_External_Symbol("RunCharacterInteraction",(void *)RunCharacterInteraction);
+  scAdd_External_Symbol("RunDialog",(void *)RunDialog);
+  scAdd_External_Symbol("RunHotspotInteraction", (void *)RunHotspotInteraction);
+  scAdd_External_Symbol("RunInventoryInteraction", (void *)RunInventoryInteraction);
+  scAdd_External_Symbol("RunObjectInteraction", (void *)RunObjectInteraction);
+  scAdd_External_Symbol("RunRegionInteraction", (void *)RunRegionInteraction);
+  scAdd_External_Symbol("Said",(void *)Said);
+  scAdd_External_Symbol("SaidUnknownWord",(void *)SaidUnknownWord);
+  scAdd_External_Symbol("SaveCursorForLocationChange",(void *)SaveCursorForLocationChange);
+  scAdd_External_Symbol("SaveGameDialog",(void *)save_game_dialog);
+  scAdd_External_Symbol("SaveGameSlot",(void *)save_game);
+  scAdd_External_Symbol("SaveScreenShot",(void *)SaveScreenShot);
+  scAdd_External_Symbol("SeekMIDIPosition", (void *)SeekMIDIPosition);
+  scAdd_External_Symbol("SeekMODPattern",(void *)SeekMODPattern);
+  scAdd_External_Symbol("SeekMP3PosMillis", (void *)SeekMP3PosMillis);
+  scAdd_External_Symbol("SetActiveInventory",(void *)SetActiveInventory);
+  scAdd_External_Symbol("SetAmbientTint",(void *)SetAmbientTint);
+  scAdd_External_Symbol("SetAreaLightLevel",(void *)SetAreaLightLevel);
+  scAdd_External_Symbol("SetAreaScaling",(void *)SetAreaScaling);
+  scAdd_External_Symbol("SetBackgroundFrame",(void *)SetBackgroundFrame);
+  scAdd_External_Symbol("SetButtonPic",(void *)SetButtonPic);
+  scAdd_External_Symbol("SetButtonText",(void *)SetButtonText);
+  scAdd_External_Symbol("SetChannelVolume",(void *)SetChannelVolume);
+  scAdd_External_Symbol("SetCharacterBaseline",(void *)SetCharacterBaseline);
+  scAdd_External_Symbol("SetCharacterClickable",(void *)SetCharacterClickable);
+  scAdd_External_Symbol("SetCharacterFrame",(void *)SetCharacterFrame);
+  scAdd_External_Symbol("SetCharacterIdle",(void *)SetCharacterIdle);
+  scAdd_External_Symbol("SetCharacterIgnoreLight",(void *)SetCharacterIgnoreLight);
+  scAdd_External_Symbol("SetCharacterIgnoreWalkbehinds",(void *)SetCharacterIgnoreWalkbehinds);
+  scAdd_External_Symbol("SetCharacterProperty",(void *)SetCharacterProperty);
+  scAdd_External_Symbol("SetCharacterBlinkView",(void *)SetCharacterBlinkView);
+  scAdd_External_Symbol("SetCharacterSpeechView",(void *)SetCharacterSpeechView);
+  scAdd_External_Symbol("SetCharacterSpeed",(void *)SetCharacterSpeed);
+  scAdd_External_Symbol("SetCharacterSpeedEx",(void *)SetCharacterSpeedEx);
+  scAdd_External_Symbol("SetCharacterTransparency",(void *)SetCharacterTransparency);
+  scAdd_External_Symbol("SetCharacterView",(void *)SetCharacterView);
+  scAdd_External_Symbol("SetCharacterViewEx",(void *)SetCharacterViewEx);
+  scAdd_External_Symbol("SetCharacterViewOffset",(void *)SetCharacterViewOffset);
+  scAdd_External_Symbol("SetCursorMode",(void *)set_cursor_mode);
+  scAdd_External_Symbol("SetDefaultCursor",(void *)set_default_cursor);
+  scAdd_External_Symbol("SetDialogOption",(void *)SetDialogOption);
+  scAdd_External_Symbol("SetDigitalMasterVolume",(void *)SetDigitalMasterVolume);
+  scAdd_External_Symbol("SetFadeColor",(void *)SetFadeColor);
+  scAdd_External_Symbol("SetFrameSound",(void *)SetFrameSound);
+  scAdd_External_Symbol("SetGameOption",(void *)SetGameOption);
+  scAdd_External_Symbol("SetGameSpeed",(void *)SetGameSpeed);
+  scAdd_External_Symbol("SetGlobalInt",(void *)SetGlobalInt);
+  scAdd_External_Symbol("SetGlobalString",(void *)SetGlobalString);
+  scAdd_External_Symbol("SetGraphicalVariable",(void *)SetGraphicalVariable);
+  scAdd_External_Symbol("SetGUIBackgroundPic", (void *)SetGUIBackgroundPic);
+  scAdd_External_Symbol("SetGUIClickable", (void *)SetGUIClickable);
+  scAdd_External_Symbol("SetGUIObjectEnabled",(void *)SetGUIObjectEnabled);
+  scAdd_External_Symbol("SetGUIObjectPosition",(void *)SetGUIObjectPosition);
+  scAdd_External_Symbol("SetGUIObjectSize",(void *)SetGUIObjectSize);
+  scAdd_External_Symbol("SetGUIPosition",(void *)SetGUIPosition);
+  scAdd_External_Symbol("SetGUISize",(void *)SetGUISize);
+  scAdd_External_Symbol("SetGUITransparency", (void *)SetGUITransparency);
+  scAdd_External_Symbol("SetGUIZOrder", (void *)SetGUIZOrder);
+  scAdd_External_Symbol("SetInvItemName",(void *)SetInvItemName);
+  scAdd_External_Symbol("SetInvItemPic",(void *)set_inv_item_pic);
+  scAdd_External_Symbol("SetInvDimensions",(void *)SetInvDimensions);
+  scAdd_External_Symbol("SetLabelColor",(void *)SetLabelColor);
+  scAdd_External_Symbol("SetLabelFont",(void *)SetLabelFont);
+  scAdd_External_Symbol("SetLabelText",(void *)SetLabelText);
+  scAdd_External_Symbol("SetMouseBounds",(void *)SetMouseBounds);
+  scAdd_External_Symbol("SetMouseCursor",(void *)set_mouse_cursor);
+  scAdd_External_Symbol("SetMousePosition",(void *)SetMousePosition);
+  scAdd_External_Symbol("SetMultitaskingMode",(void *)SetMultitasking);
+  scAdd_External_Symbol("SetMusicMasterVolume",(void *)SetMusicMasterVolume);
+  scAdd_External_Symbol("SetMusicRepeat",(void *)SetMusicRepeat);
+  scAdd_External_Symbol("SetMusicVolume",(void *)SetMusicVolume);
+  scAdd_External_Symbol("SetNextCursorMode", (void *)SetNextCursor);
+  scAdd_External_Symbol("SetNextScreenTransition",(void *)SetNextScreenTransition);
+  scAdd_External_Symbol("SetNormalFont", (void *)SetNormalFont);
+  scAdd_External_Symbol("SetObjectBaseline",(void *)SetObjectBaseline);
+  scAdd_External_Symbol("SetObjectClickable",(void *)SetObjectClickable);
+  scAdd_External_Symbol("SetObjectFrame",(void *)SetObjectFrame);
+  scAdd_External_Symbol("SetObjectGraphic",(void *)SetObjectGraphic);
+  scAdd_External_Symbol("SetObjectIgnoreWalkbehinds",(void *)SetObjectIgnoreWalkbehinds);
+  scAdd_External_Symbol("SetObjectPosition",(void *)SetObjectPosition);
+  scAdd_External_Symbol("SetObjectTint",(void *)SetObjectTint);
+  scAdd_External_Symbol("SetObjectTransparency",(void *)SetObjectTransparency);
+  scAdd_External_Symbol("SetObjectView",(void *)SetObjectView);
+//  scAdd_External_Symbol("SetPalette",scSetPal);
+  scAdd_External_Symbol("SetPalRGB",(void *)SetPalRGB);
+  scAdd_External_Symbol("SetPlayerCharacter",(void *)SetPlayerCharacter);
+  scAdd_External_Symbol("SetRegionTint",(void *)SetRegionTint);
+  scAdd_External_Symbol("SetRestartPoint",(void *)SetRestartPoint);
+  scAdd_External_Symbol("SetScreenTransition",(void *)SetScreenTransition);
+  scAdd_External_Symbol("SetSkipSpeech",(void *)SetSkipSpeech);
+  scAdd_External_Symbol("SetSliderValue",(void *)SetSliderValue);
+  scAdd_External_Symbol("SetSoundVolume",(void *)SetSoundVolume);
+  scAdd_External_Symbol("SetSpeechFont", (void *)SetSpeechFont);
+  scAdd_External_Symbol("SetSpeechStyle", (void *)SetSpeechStyle);
+  scAdd_External_Symbol("SetSpeechVolume",(void *)SetSpeechVolume);
+  scAdd_External_Symbol("SetTalkingColor",(void *)SetTalkingColor);
+  scAdd_External_Symbol("SetTextBoxFont",(void *)SetTextBoxFont);
+  scAdd_External_Symbol("SetTextBoxText",(void *)SetTextBoxText);
+  scAdd_External_Symbol("SetTextOverlay",(void *)SetTextOverlay);
+  scAdd_External_Symbol("SetTextWindowGUI",(void *)SetTextWindowGUI);
+  scAdd_External_Symbol("SetTimer",(void *)script_SetTimer);
+  scAdd_External_Symbol("SetViewport",(void *)SetViewport);
+  scAdd_External_Symbol("SetVoiceMode",(void *)SetVoiceMode);
+  scAdd_External_Symbol("SetWalkBehindBase",(void *)SetWalkBehindBase);
+  scAdd_External_Symbol("ShakeScreen",(void *)ShakeScreen);
+  scAdd_External_Symbol("ShakeScreenBackground",(void *)ShakeScreenBackground);
+  scAdd_External_Symbol("ShowMouseCursor",(void *)ShowMouseCursor);
+  scAdd_External_Symbol("SkipUntilCharacterStops",(void *)SkipUntilCharacterStops);
+  scAdd_External_Symbol("StartCutscene", (void *)StartCutscene);
+  scAdd_External_Symbol("StartRecording", (void *)scStartRecording);
+  scAdd_External_Symbol("StopAmbientSound",(void *)StopAmbientSound);
+  scAdd_External_Symbol("StopChannel",(void *)stop_and_destroy_channel);
+  scAdd_External_Symbol("StopDialog",(void *)StopDialog);
+  scAdd_External_Symbol("StopMoving",(void *)StopMoving);
+  scAdd_External_Symbol("StopMusic", (void *)scr_StopMusic);
+  scAdd_External_Symbol("StopObjectMoving",(void *)StopObjectMoving);
+  scAdd_External_Symbol("StrCat",(void *)_sc_strcat);
+  scAdd_External_Symbol("StrCaseComp",(void *)stricmp);
+  scAdd_External_Symbol("StrComp",(void *)strcmp);
+  scAdd_External_Symbol("StrContains",(void *)StrContains);
+  scAdd_External_Symbol("StrCopy",(void *)_sc_strcpy);
+  scAdd_External_Symbol("StrFormat",(void *)_sc_sprintf);
+  scAdd_External_Symbol("StrGetCharAt", (void *)StrGetCharAt);
+  scAdd_External_Symbol("StringToInt",(void *)StringToInt);
+  scAdd_External_Symbol("StrLen",(void *)strlen);
+  scAdd_External_Symbol("StrSetCharAt", (void *)StrSetCharAt);
+  scAdd_External_Symbol("StrToLowerCase", (void *)_sc_strlower);
+  scAdd_External_Symbol("StrToUpperCase", (void *)_sc_strupper);
+  scAdd_External_Symbol("TintScreen",(void *)TintScreen);
+  scAdd_External_Symbol("UnPauseGame",(void *)UnPauseGame);
+  scAdd_External_Symbol("UpdateInventory", (void *)update_invorder);
+  scAdd_External_Symbol("UpdatePalette",(void *)UpdatePalette);
+  scAdd_External_Symbol("Wait",(void *)scrWait);
+  scAdd_External_Symbol("WaitKey",(void *)WaitKey);
+  scAdd_External_Symbol("WaitMouseKey",(void *)WaitMouseKey);
+
+  // Stubs for plugin functions.
+
+  // ags_shell.dll
+  scAdd_External_Symbol("ShellExecute", (void*)ScriptStub_ShellExecute);
+
+  // ags_snowrain.dll
+  scAdd_External_Symbol("srSetSnowDriftRange",(void *)srSetSnowDriftRange);
+  scAdd_External_Symbol("srSetSnowDriftSpeed",(void *)srSetSnowDriftSpeed);
+  scAdd_External_Symbol("srSetSnowFallSpeed",(void *)srSetSnowFallSpeed);
+  scAdd_External_Symbol("srChangeSnowAmount",(void *)srChangeSnowAmount);
+  scAdd_External_Symbol("srSetSnowBaseline",(void *)srSetSnowBaseline);
+  scAdd_External_Symbol("srSetSnowTransparency",(void *)srSetSnowTransparency);
+  scAdd_External_Symbol("srSetSnowDefaultView",(void *)srSetSnowDefaultView);
+  scAdd_External_Symbol("srSetSnowWindSpeed",(void *)srSetSnowWindSpeed);
+  scAdd_External_Symbol("srSetSnowAmount",(void *)srSetSnowAmount);
+  scAdd_External_Symbol("srSetSnowView",(void *)srSetSnowView);
+  scAdd_External_Symbol("srChangeRainAmount",(void *)srChangeRainAmount);
+  scAdd_External_Symbol("srSetRainView",(void *)srSetRainView);
+  scAdd_External_Symbol("srSetRainDefaultView",(void *)srSetRainDefaultView);
+  scAdd_External_Symbol("srSetRainTransparency",(void *)srSetRainTransparency);
+  scAdd_External_Symbol("srSetRainWindSpeed",(void *)srSetRainWindSpeed);
+  scAdd_External_Symbol("srSetRainBaseline",(void *)srSetRainBaseline);
+  scAdd_External_Symbol("srSetRainAmount",(void *)srSetRainAmount);
+  scAdd_External_Symbol("srSetRainFallSpeed",(void *)srSetRainFallSpeed);
+  scAdd_External_Symbol("srSetWindSpeed",(void *)srSetWindSpeed);
+  scAdd_External_Symbol("srSetBaseline",(void *)srSetBaseline);
+
+  // agsjoy.dll
+  scAdd_External_Symbol("JoystickCount",(void *)JoystickCount);
+  scAdd_External_Symbol("Joystick::Open^1",(void *)Joystick_Open);
+  scAdd_External_Symbol("Joystick::IsButtonDown^1",(void *)Joystick_IsButtonDown);
+  scAdd_External_Symbol("Joystick::EnableEvents^1",(void *)Joystick_EnableEvents);
+  scAdd_External_Symbol("Joystick::DisableEvents^0",(void *)Joystick_DisableEvents);
+  scAdd_External_Symbol("Joystick::Click^1",(void *)Joystick_Click);
+  scAdd_External_Symbol("Joystick::Valid^0",(void *)Joystick_Valid);
+  scAdd_External_Symbol("Joystick::Unplugged^0",(void *)Joystick_Unplugged);
+
+  // agsblend.dll
+  scAdd_External_Symbol("DrawAlpha",(void *)DrawAlpha);
+  scAdd_External_Symbol("GetAlpha",(void *)GetAlpha);
+  scAdd_External_Symbol("PutAlpha",(void *)PutAlpha);
+  scAdd_External_Symbol("Blur",(void *)Blur);
+  scAdd_External_Symbol("HighPass",(void *)HighPass);
+  scAdd_External_Symbol("DrawAdd",(void *)DrawAdd);
+
+  // agsflashlight.dll
+  scAdd_External_Symbol("SetFlashlightTint",(void *)SetFlashlightInt3);
+  scAdd_External_Symbol("GetFlashlightTintRed",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("GetFlashlightTintGreen",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("GetFlashlightTintBlue",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("GetFlashlightMinLightLevel",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("GetFlashlightMaxLightLevel",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("SetFlashlightDarkness",(void *)SetFlashlightInt1);
+  scAdd_External_Symbol("GetFlashlightDarkness",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("SetFlashlightDarknessSize",(void *)SetFlashlightInt1);
+  scAdd_External_Symbol("GetFlashlightDarknessSize",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("SetFlashlightBrightness",(void *)SetFlashlightInt1);
+  scAdd_External_Symbol("GetFlashlightBrightness",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("SetFlashlightBrightnessSize",(void *)SetFlashlightInt1);
+  scAdd_External_Symbol("GetFlashlightBrightnessSize",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("SetFlashlightPosition",(void *)SetFlashlightInt2);
+  scAdd_External_Symbol("GetFlashlightPositionX",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("GetFlashlightPositionY",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("SetFlashlightFollowMouse",(void *)SetFlashlightInt1);
+  scAdd_External_Symbol("GetFlashlightFollowMouse",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("SetFlashlightFollowCharacter",(void *)SetFlashlightInt5);
+  scAdd_External_Symbol("GetFlashlightFollowCharacter",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("GetFlashlightCharacterDX",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("GetFlashlightCharacterDY",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("GetFlashlightCharacterHorz",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("GetFlashlightCharacterVert",(void *)GetFlashlightInt);
+  scAdd_External_Symbol("SetFlashlightMask",(void *)SetFlashlightInt1);
+  scAdd_External_Symbol("GetFlashlightMask",(void *)GetFlashlightInt);
+}
+

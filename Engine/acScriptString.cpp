@@ -102,7 +102,7 @@ ScriptString::ScriptString(const char *fromText) {
 	text = strdup(fromText);
 }
 
-int String_IsNullOrEmpty(const char *thisString) {
+long String_IsNullOrEmpty(const char *thisString) {
 	if ((thisString == NULL) || (thisString[0] == 0))
 		return 1;
 	return 0;
@@ -131,7 +131,7 @@ const char* String_AppendChar(const char *thisString, char extraOne) {
 	return CreateNewScriptString(buffer, false);
 }
 
-const char* String_ReplaceCharAt(const char *thisString, int index, char newChar) {
+const char* String_ReplaceCharAt(const char *thisString, long index, long newChar) {
 	if(!thisString) return 0;
 	size_t l = strlen(thisString);
 	if ((index < 0) || ((unsigned) index >= l))
@@ -144,7 +144,7 @@ const char* String_ReplaceCharAt(const char *thisString, int index, char newChar
 	return CreateNewScriptString(buffer, false);
 }
 
-const char* String_Truncate(const char *thisString, int length) {
+const char* String_Truncate(const char *thisString, long length) {
 	if (length < 0)
 		quit("!String.Truncate: invalid length");
 	if(!thisString) return 0;
@@ -159,7 +159,7 @@ const char* String_Truncate(const char *thisString, int length) {
 	return CreateNewScriptString(buffer, false);
 }
 
-const char* String_Substring(const char *thisString, int index, int length) {
+const char* String_Substring(const char *thisString, long index, long length) {
 	if (length < 0)
 		quit("!String.Substring: invalid length");
 	if(!thisString) return 0;
@@ -177,14 +177,14 @@ const char* String_Substring(const char *thisString, int index, int length) {
 	return CreateNewScriptString(buffer, false);
 }
 
-static int mystreq(const char* cmp1, const char *cmp2, bool caseSensitive) {
+static int mystreq(const char* cmp1, const char *cmp2, long caseSensitive) {
 	if (caseSensitive) 
 		return strcmp (cmp1, cmp2) == 0 ? 1 : 0;
 	else
 		return stricmp(cmp1, cmp2) == 0 ? 1 : 0;
 }
 
-int String_CompareTo(const char *thisString, const char *otherString, bool caseSensitive) {
+long String_CompareTo(const char *thisString, const char *otherString, long caseSensitive) {
 	const char *cmp1 = thisString ? thisString : "";
 	const char *cmp2 = otherString ? otherString : "";
 	if (caseSensitive) 
@@ -193,14 +193,14 @@ int String_CompareTo(const char *thisString, const char *otherString, bool caseS
 		return stricmp(cmp1, cmp2);
 }
 
-int String_StartsWith(const char *thisString, const char *checkForString, bool caseSensitive) {
+long String_StartsWith(const char *thisString, const char *checkForString, long caseSensitive) {
 	const char *cmp1 = thisString ? thisString : "";
 	const char *cmp2 = checkForString ? checkForString : "";
 	size_t l = strlen(cmp2);
 	return mystreq(cmp1, cmp2, l);
 }
 
-int String_EndsWith(const char *thisString, const char *checkForString, bool caseSensitive) {
+long String_EndsWith(const char *thisString, const char *checkForString, long caseSensitive) {
 	if (!thisString || !checkForString) return 0;
 	
 	ptrdiff_t checkAtOffset = strlen(thisString) - strlen(checkForString);
@@ -208,7 +208,7 @@ int String_EndsWith(const char *thisString, const char *checkForString, bool cas
 	return mystreq(thisString + checkAtOffset, checkForString, caseSensitive);
 }
 
-const char* String_Replace(const char *thisString, const char *lookForText, const char *replaceWithText, bool caseSensitive) {
+const char* String_Replace(const char *thisString, const char *lookForText, const char *replaceWithText, long caseSensitive) {
 	char resultBuffer[STD_BUFFER_SIZE] = "";
 	size_t i, thisStringLen = strlen(thisString), 
 	       l = strlen(lookForText), r = strlen(replaceWithText),
@@ -261,11 +261,11 @@ const char* String_Format(const char *texx, ...) {
 	return CreateNewScriptString(displbuf);
 }
 
-int String_Len(const char* texx) {
+long String_Len(const char* texx) {
 	return strlen(texx);
 }
 
-int String_GetChars(const char *texx, int index) {
+long String_GetChars(const char *texx, long index) {
 	if ((index < 0) || ((unsigned) index >= strlen(texx)))
 		return 0;
 	return texx[index];
