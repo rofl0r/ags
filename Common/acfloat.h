@@ -10,32 +10,27 @@ typedef union {
 	long l;
 } longfloat;
 
-#define RETURN_FLOAT(x) return (longfloat){.f = (x)}
-#define SCRIPT_FLOAT(x) longfloat __script_float##x
-#define INIT_SCRIPT_FLOAT(x) float x = __script_float##x.f
-#define FLOAT_RETURN_TYPE longfloat
-
-int FloatToInt(SCRIPT_FLOAT(value), int roundDirection);
-FLOAT_RETURN_TYPE IntToFloat(int value);
-FLOAT_RETURN_TYPE StringToFloat(const char *theString);
-FLOAT_RETURN_TYPE Math_Cos(SCRIPT_FLOAT(value));
-FLOAT_RETURN_TYPE Math_Sin(SCRIPT_FLOAT(value));
-FLOAT_RETURN_TYPE Math_Tan(SCRIPT_FLOAT(value));
-FLOAT_RETURN_TYPE Math_ArcCos(SCRIPT_FLOAT(value));
-FLOAT_RETURN_TYPE Math_ArcSin(SCRIPT_FLOAT(value));
-FLOAT_RETURN_TYPE Math_ArcTan(SCRIPT_FLOAT(value));
-FLOAT_RETURN_TYPE Math_ArcTan2(SCRIPT_FLOAT(yval), SCRIPT_FLOAT(xval));
-FLOAT_RETURN_TYPE Math_Log(SCRIPT_FLOAT(num));
-FLOAT_RETURN_TYPE Math_Log10(SCRIPT_FLOAT(num));
-FLOAT_RETURN_TYPE Math_Exp(SCRIPT_FLOAT(num));
-FLOAT_RETURN_TYPE Math_Cosh(SCRIPT_FLOAT(num));
-FLOAT_RETURN_TYPE Math_Sinh(SCRIPT_FLOAT(num));
-FLOAT_RETURN_TYPE Math_Tanh(SCRIPT_FLOAT(num));
-FLOAT_RETURN_TYPE Math_RaiseToPower(SCRIPT_FLOAT(base), SCRIPT_FLOAT(exp));
-FLOAT_RETURN_TYPE Math_DegreesToRadians(SCRIPT_FLOAT(value));
-FLOAT_RETURN_TYPE Math_RadiansToDegrees(SCRIPT_FLOAT(value));
-FLOAT_RETURN_TYPE Math_GetPi(void);
-FLOAT_RETURN_TYPE Math_Sqrt(SCRIPT_FLOAT(value));
+long FloatToInt(longfloat fl_value, long roundDirection);
+longfloat IntToFloat(long value);
+longfloat StringToFloat(const char *theString);
+longfloat Math_Cos(longfloat fl_value);
+longfloat Math_Sin(longfloat fl_value);
+longfloat Math_Tan(longfloat fl_value);
+longfloat Math_ArcCos(longfloat fl_value);
+longfloat Math_ArcSin(longfloat fl_value);
+longfloat Math_ArcTan(longfloat fl_value);
+longfloat Math_ArcTan2(longfloat fl_yval, longfloat fl_xval);
+longfloat Math_Log(longfloat fl_num);
+longfloat Math_Log10(longfloat fl_num);
+longfloat Math_Exp(longfloat fl_num);
+longfloat Math_Cosh(longfloat fl_num);
+longfloat Math_Sinh(longfloat fl_num);
+longfloat Math_Tanh(longfloat fl_num);
+longfloat Math_RaiseToPower(longfloat fl_base, longfloat fl_exp);
+longfloat Math_DegreesToRadians(longfloat fl_value);
+longfloat Math_RadiansToDegrees(longfloat fl_value);
+longfloat Math_GetPi(void);
+longfloat Math_Sqrt(longfloat fl_value);
 
 #ifdef __cplusplus
 }
