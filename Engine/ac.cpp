@@ -15753,7 +15753,7 @@ long GetRawTime () {
 char gamefilenamebuf[200];
 #define RAGMODE_PRESERVEGLOBALINT 1
 #define RAGMODE_LOADNOW 0x8000000  // just to make sure it's non-zero
-long RunAGSGame (char *newgame,long mode,long data) {
+long RunAGSGame (char *newgame, unsigned long mode,long data) {
 
   can_run_delayed_command();
 
