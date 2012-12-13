@@ -28,6 +28,12 @@ sub get_container_and_func {
 	return ($a[0], $a[1]);
 }
 
+sub sed_escape {
+	my $s = shift;
+	$s =~ s/\*/\\\*/g;
+	return $s;
+}
+
 sub func {
 	my ($game, $real) = @_;
 #	print "$game, $real\n";
@@ -77,10 +83,10 @@ EOF
 				print "$real:$save:$container:$decl xxx $returnsize $returntype\n";
 				die("oopsie1" . $returntype);
 			}
-			print $_;
+			#print $_;
 # void createFunctionImport(char* gamefunc, void* fp, size_t returnsize, size_t numargs, ... /* size of each arg */);
-			printf 'createFunctionImport("%s", (void*) %s, %d, %d', $game, $real, $returnsize, $numparams; 
-			print");\n";
+			#printf 'createFunctionImport("%s", (void*) %s, %d, %d', $game, $real, $returnsize, $numparams; 
+			#print");\n";
 			my @args = split /,/, $params;
 			for(@args) {
 				next if /\.\.\./;
@@ -101,9 +107,14 @@ EOF
 					} else { die("oopsie4" . $t); }
 				} else { die("oopise3"); }
 			}
-
-			my $sedcmd = sprintf 'sed -i s\'@%s@%s@\' %s'. "\n", $newdecl, $decl, $container;
-			system($sedcmd);
+			if($decl ne $newdecl) {
+				my $sedcmd = sprintf 'sed -i s\'@%s@%s@\' %s'. "\n", sed_escape($newdecl), sed_escape($decl), $container;
+				system($sedcmd);
+				#print $sedcmd . "\n";
+				print "need to change $real: $newdecl to $decl in $container !\n";
+			} else {
+				#print "no changes needed for $real : $newdecl\n";
+			}
 			$found = 1;
 			last;
 		}
