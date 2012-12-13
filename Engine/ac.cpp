@@ -25410,7 +25410,7 @@ void setup_script_exports() {
   scAdd_External_Symbol("String::get_AsFloat", (void*)StringToFloat);
   scAdd_External_Symbol("String::get_AsInt", (void*)StringToInt);
   scAdd_External_Symbol("String::geti_Chars", (void*)String_GetChars);
-  scAdd_External_Symbol("String::get_Length", (void*)strlen);
+  scAdd_External_Symbol("String::get_Length", (void*)String_Len);
 
   scAdd_External_Symbol("Game::ChangeTranslation^1", (void *)Game_ChangeTranslation);
   scAdd_External_Symbol("Game::DoOnceOnly^1", (void *)Game_DoOnceOnly);

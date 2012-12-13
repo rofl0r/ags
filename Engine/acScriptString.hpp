@@ -31,6 +31,7 @@ const char* String_Replace(const char *thisString, const char *lookForText,
 const char* String_LowerCase(const char *thisString);
 const char* String_UpperCase(const char *thisString);
 const char* String_Format(const char *texx, ...);
+unsigned String_Len(const char* texx);
 int String_GetChars(const char *texx, int index);
 int String_IsNullOrEmpty(const char *thisString);
 

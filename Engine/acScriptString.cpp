@@ -262,6 +262,10 @@ const char* String_Format(const char *texx, ...) {
 	return CreateNewScriptString(displbuf);
 }
 
+unsigned String_Len(const char* texx) {
+	return strlen(texx);
+}
+
 int String_GetChars(const char *texx, int index) {
 	if ((index < 0) || ((unsigned) index >= strlen(texx)))
 		return 0;
