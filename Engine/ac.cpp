@@ -1499,8 +1499,7 @@ struct Breakpoint
 DynamicArray<Breakpoint> breakpoints;
 int numBreakpoints = 0;
 
-bool send_message_to_editor(const char *msg, const char *errorMsg) 
-{
+bool send_message_to_editor(const char *msg, const char *errorMsg) {
   const char *callStack = get_cur_script(25);
   if (callStack[0] == 0)
     return false;
@@ -1522,13 +1521,11 @@ bool send_message_to_editor(const char *msg, const char *errorMsg)
   return true;
 }
 
-bool send_message_to_editor(const char *msg) 
-{
+bool send_message_to_editor(const char *msg) {
   return send_message_to_editor(msg, NULL);
 }
 
-bool init_editor_debugging() 
-{
+bool init_editor_debugging() {
 #ifdef WINDOWS_VERSION
   editor_debugger = GetEditorDebugger(editor_debugger_instance_token);
 #else
@@ -1557,8 +1554,7 @@ bool init_editor_debugging()
   return false;
 }
 
-int check_for_messages_from_editor()
-{
+int check_for_messages_from_editor() {
   if (editor_debugger->IsMessageAvailable())
   {
     char *msg = editor_debugger->GetNextMessage();
@@ -1672,8 +1668,7 @@ void force_audiostream_include() {
 
 AmbientSound ambient[MAX_SOUND_CHANNELS + 1];  // + 1 just for safety on array iterations
 
-int get_volume_adjusted_for_distance(int volume, int sndX, int sndY, int sndMaxDist)
-{
+int get_volume_adjusted_for_distance(int volume, int sndX, int sndY, int sndMaxDist) {
   int distx = playerchar->x - sndX;
   int disty = playerchar->y - sndY;
   // it uses Allegro's "fix" sqrt without the ::
@@ -1693,8 +1688,7 @@ int get_volume_adjusted_for_distance(int volume, int sndX, int sndY, int sndMaxD
   return wantvol;
 }
 
-void update_directional_sound_vol()
-{
+void update_directional_sound_vol() {
   for (int chan = 1; chan < MAX_SOUND_CHANNELS; chan++) 
   {
     if ((channels[chan] != NULL) && (channels[chan]->done == 0) &&
@@ -1781,8 +1775,7 @@ void stop_and_destroy_channel_ex(int chid, bool resetLegacyMusicSettings) {
   }
 }
 
-void stop_and_destroy_channel (int chid) 
-{
+void stop_and_destroy_channel (int chid) {
 	stop_and_destroy_channel_ex(chid, true);
 }
 
@@ -2306,8 +2299,7 @@ const char* Game_GetTranslationFilename() {
   return CreateNewScriptString(buffer);
 }
 
-int Game_ChangeTranslation(const char *newFilename)
-{
+int Game_ChangeTranslation(const char *newFilename) {
   if ((newFilename == NULL) || (newFilename[0] == 0))
   {
     close_translation();
@@ -5512,8 +5504,7 @@ void set_cursor_mode(int newmode) {
   DEBUG_CONSOLE("Cursor mode set to %d", newmode);
 }
 
-void set_inv_item_cursorpic(int invItemId, int piccy) 
-{
+void set_inv_item_cursorpic(int invItemId, int piccy) {
   game.invinfo[invItemId].cursorPic = piccy;
 
   if ((cur_cursor == MODE_USE) && (playerchar->activeinv == invItemId)) 
@@ -5523,13 +5514,11 @@ void set_inv_item_cursorpic(int invItemId, int piccy)
   }
 }
 
-void InventoryItem_SetCursorGraphic(ScriptInvItem *iitem, int newSprite) 
-{
+void InventoryItem_SetCursorGraphic(ScriptInvItem *iitem, int newSprite) {
   set_inv_item_cursorpic(iitem->id, newSprite);
 }
 
-int InventoryItem_GetCursorGraphic(ScriptInvItem *iitem) 
-{
+int InventoryItem_GetCursorGraphic(ScriptInvItem *iitem) {
   return game.invinfo[iitem->id].cursorPic;
 }
 
@@ -10097,8 +10086,7 @@ struct CCObject : AGSCCDynamicObject {
 
 // ** SCRIPT DRAWINGSURFACE OBJECT
 
-void DrawingSurface_Release(ScriptDrawingSurface* sds)
-{
+void DrawingSurface_Release(ScriptDrawingSurface* sds) {
   if (sds->roomBackgroundNumber >= 0)
   {
     if (sds->modified)
@@ -10154,8 +10142,7 @@ void DrawingSurface_Release(ScriptDrawingSurface* sds)
   sds->modified = 0;
 }
 
-void ScriptDrawingSurface::MultiplyCoordinates(int *xcoord, int *ycoord)
-{
+void ScriptDrawingSurface::MultiplyCoordinates(int *xcoord, int *ycoord) {
   if (this->highResCoordinates)
   {
     if (current_screen_resolution_multiplier == 1) 
@@ -10176,8 +10163,7 @@ void ScriptDrawingSurface::MultiplyCoordinates(int *xcoord, int *ycoord)
   }
 }
 
-void ScriptDrawingSurface::MultiplyThickness(int *valueToAdjust)
-{
+void ScriptDrawingSurface::MultiplyThickness(int *valueToAdjust) {
   if (this->highResCoordinates)
   {
     if (current_screen_resolution_multiplier == 1) 
@@ -10197,8 +10183,7 @@ void ScriptDrawingSurface::MultiplyThickness(int *valueToAdjust)
 }
 
 // convert actual co-ordinate back to what the script is expecting
-void ScriptDrawingSurface::UnMultiplyThickness(int *valueToAdjust)
-{
+void ScriptDrawingSurface::UnMultiplyThickness(int *valueToAdjust) {
   if (this->highResCoordinates)
   {
     if (current_screen_resolution_multiplier == 1) 
@@ -10217,8 +10202,7 @@ void ScriptDrawingSurface::UnMultiplyThickness(int *valueToAdjust)
   }
 }
 
-ScriptDrawingSurface* DrawingSurface_CreateCopy(ScriptDrawingSurface *sds)
-{
+ScriptDrawingSurface* DrawingSurface_CreateCopy(ScriptDrawingSurface *sds) {
   BITMAP *sourceBitmap = sds->GetBitmapSurface();
 
   for (int i = 0; i < MAX_DYNAMIC_SURFACES; i++)
@@ -10265,8 +10249,7 @@ void DrawingSurface_DrawSurface(ScriptDrawingSurface* target, ScriptDrawingSurfa
   target->FinishedDrawing();
 }
 
-void DrawingSurface_DrawImage(ScriptDrawingSurface* sds, int xx, int yy, int slot, int trans, int width, int height)
-{
+void DrawingSurface_DrawImage(ScriptDrawingSurface* sds, int xx, int yy, int slot, int trans, int width, int height) {
   if ((slot < 0) || (slot >= MAX_SPRITES) || (spriteset[slot] == NULL))
     quit("!DrawingSurface.DrawImage: invalid sprite slot number specified");
 
@@ -10337,8 +10320,7 @@ int Game_GetColorFromRGB(int red, int grn, int blu) {
   return agscolor;
 }
 
-void DrawingSurface_SetDrawingColor(ScriptDrawingSurface *sds, int newColour) 
-{
+void DrawingSurface_SetDrawingColor(ScriptDrawingSurface *sds, int newColour) {
   sds->currentColourScript = newColour;
   // StartDrawing to set up abuf to set the colour at the appropriate
   // depth for the background
@@ -10354,23 +10336,19 @@ void DrawingSurface_SetDrawingColor(ScriptDrawingSurface *sds, int newColour)
   sds->FinishedDrawingReadOnly();
 }
 
-int DrawingSurface_GetDrawingColor(ScriptDrawingSurface *sds) 
-{
+int DrawingSurface_GetDrawingColor(ScriptDrawingSurface *sds) {
   return sds->currentColourScript;
 }
 
-void DrawingSurface_SetUseHighResCoordinates(ScriptDrawingSurface *sds, int highRes) 
-{
+void DrawingSurface_SetUseHighResCoordinates(ScriptDrawingSurface *sds, int highRes) {
   sds->highResCoordinates = (highRes) ? 1 : 0;
 }
 
-int DrawingSurface_GetUseHighResCoordinates(ScriptDrawingSurface *sds) 
-{
+int DrawingSurface_GetUseHighResCoordinates(ScriptDrawingSurface *sds) {
   return sds->highResCoordinates;
 }
 
-int DrawingSurface_GetHeight(ScriptDrawingSurface *sds) 
-{
+int DrawingSurface_GetHeight(ScriptDrawingSurface *sds) {
   sds->StartDrawing();
   int height = abuf->h;
   sds->FinishedDrawingReadOnly();
@@ -10378,8 +10356,7 @@ int DrawingSurface_GetHeight(ScriptDrawingSurface *sds)
   return height;
 }
 
-int DrawingSurface_GetWidth(ScriptDrawingSurface *sds) 
-{
+int DrawingSurface_GetWidth(ScriptDrawingSurface *sds) {
   sds->StartDrawing();
   int width = abuf->w;
   sds->FinishedDrawingReadOnly();
@@ -10387,8 +10364,7 @@ int DrawingSurface_GetWidth(ScriptDrawingSurface *sds)
   return width;
 }
 
-void DrawingSurface_Clear(ScriptDrawingSurface *sds, int colour) 
-{
+void DrawingSurface_Clear(ScriptDrawingSurface *sds, int colour) {
   sds->StartDrawing();
   int allegroColor;
   if ((colour == -SCR_NO_VALUE) || (colour == SCR_COLOR_TRANSPARENT))
@@ -10403,8 +10379,7 @@ void DrawingSurface_Clear(ScriptDrawingSurface *sds, int colour)
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawCircle(ScriptDrawingSurface *sds, int x, int y, int radius) 
-{
+void DrawingSurface_DrawCircle(ScriptDrawingSurface *sds, int x, int y, int radius) {
   sds->MultiplyCoordinates(&x, &y);
   sds->MultiplyThickness(&radius);
 
@@ -10413,8 +10388,7 @@ void DrawingSurface_DrawCircle(ScriptDrawingSurface *sds, int x, int y, int radi
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawRectangle(ScriptDrawingSurface *sds, int x1, int y1, int x2, int y2) 
-{
+void DrawingSurface_DrawRectangle(ScriptDrawingSurface *sds, int x1, int y1, int x2, int y2) {
   sds->MultiplyCoordinates(&x1, &y1);
   sds->MultiplyCoordinates(&x2, &y2);
 
@@ -10423,8 +10397,7 @@ void DrawingSurface_DrawRectangle(ScriptDrawingSurface *sds, int x1, int y1, int
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawTriangle(ScriptDrawingSurface *sds, int x1, int y1, int x2, int y2, int x3, int y3) 
-{
+void DrawingSurface_DrawTriangle(ScriptDrawingSurface *sds, int x1, int y1, int x2, int y2, int x3, int y3) {
   sds->MultiplyCoordinates(&x1, &y1);
   sds->MultiplyCoordinates(&x2, &y2);
   sds->MultiplyCoordinates(&x3, &y3);
@@ -10434,8 +10407,7 @@ void DrawingSurface_DrawTriangle(ScriptDrawingSurface *sds, int x1, int y1, int 
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawString(ScriptDrawingSurface *sds, int xx, int yy, int font, const char* texx, ...) 
-{
+void DrawingSurface_DrawString(ScriptDrawingSurface *sds, int xx, int yy, int font, const char* texx, ...) {
   char displbuf[STD_BUFFER_SIZE];
   va_list ap;
   va_start(ap,texx);
@@ -10485,8 +10457,7 @@ void DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds, int xx, int yy,
   sds->FinishedDrawing();
 }
 
-void DrawingSurface_DrawMessageWrapped(ScriptDrawingSurface *sds, int xx, int yy, int wid, int font, int msgm)
-{
+void DrawingSurface_DrawMessageWrapped(ScriptDrawingSurface *sds, int xx, int yy, int wid, int font, int msgm) {
   char displbuf[3000];
   get_message_text(msgm, displbuf);
   // it's probably too late but check anyway
@@ -10557,8 +10528,7 @@ int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
   return rawPixel;
 }
 
-BITMAP* ScriptDrawingSurface::GetBitmapSurface()
-{
+BITMAP* ScriptDrawingSurface::GetBitmapSurface() {
   if (roomBackgroundNumber >= 0)
     return thisroom.ebscene[roomBackgroundNumber];
   else if (dynamicSpriteNumber >= 0)
@@ -10573,19 +10543,16 @@ BITMAP* ScriptDrawingSurface::GetBitmapSurface()
   return NULL;
 }
 
-void ScriptDrawingSurface::StartDrawing()
-{
+void ScriptDrawingSurface::StartDrawing() {
   abufBackup = abuf;
   abuf = this->GetBitmapSurface();
 }
 
-void ScriptDrawingSurface::FinishedDrawingReadOnly()
-{
+void ScriptDrawingSurface::FinishedDrawingReadOnly() {
   abuf = abufBackup;
 }
 
-void ScriptDrawingSurface::FinishedDrawing()
-{
+void ScriptDrawingSurface::FinishedDrawing() {
   FinishedDrawingReadOnly();
   modified = 1;
 }
@@ -10652,94 +10619,76 @@ ScriptDrawingSurface::ScriptDrawingSurface() {
 
 // ** SCRIPT DIALOGOPTIONSRENDERING OBJECT
 
-int DialogOptionsRendering_GetX(ScriptDialogOptionsRendering *dlgOptRender)
-{
+int DialogOptionsRendering_GetX(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->x;
 }
 
-void DialogOptionsRendering_SetX(ScriptDialogOptionsRendering *dlgOptRender, int newX)
-{
+void DialogOptionsRendering_SetX(ScriptDialogOptionsRendering *dlgOptRender, int newX) {
   dlgOptRender->x = newX;
 }
 
-int DialogOptionsRendering_GetY(ScriptDialogOptionsRendering *dlgOptRender)
-{
+int DialogOptionsRendering_GetY(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->y;
 }
 
-void DialogOptionsRendering_SetY(ScriptDialogOptionsRendering *dlgOptRender, int newY)
-{
+void DialogOptionsRendering_SetY(ScriptDialogOptionsRendering *dlgOptRender, int newY) {
   dlgOptRender->y = newY;
 }
 
-int DialogOptionsRendering_GetWidth(ScriptDialogOptionsRendering *dlgOptRender)
-{
+int DialogOptionsRendering_GetWidth(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->width;
 }
 
-void DialogOptionsRendering_SetWidth(ScriptDialogOptionsRendering *dlgOptRender, int newWidth)
-{
+void DialogOptionsRendering_SetWidth(ScriptDialogOptionsRendering *dlgOptRender, int newWidth) {
   dlgOptRender->width = newWidth;
 }
 
-int DialogOptionsRendering_GetHeight(ScriptDialogOptionsRendering *dlgOptRender)
-{
+int DialogOptionsRendering_GetHeight(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->height;
 }
 
-void DialogOptionsRendering_SetHeight(ScriptDialogOptionsRendering *dlgOptRender, int newHeight)
-{
+void DialogOptionsRendering_SetHeight(ScriptDialogOptionsRendering *dlgOptRender, int newHeight) {
   dlgOptRender->height = newHeight;
 }
 
-int DialogOptionsRendering_GetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender)
-{
+int DialogOptionsRendering_GetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->parserTextboxX;
 }
 
-void DialogOptionsRendering_SetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender, int newX)
-{
+void DialogOptionsRendering_SetParserTextboxX(ScriptDialogOptionsRendering *dlgOptRender, int newX) {
   dlgOptRender->parserTextboxX = newX;
 }
 
-int DialogOptionsRendering_GetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender)
-{
+int DialogOptionsRendering_GetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->parserTextboxY;
 }
 
-void DialogOptionsRendering_SetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender, int newY)
-{
+void DialogOptionsRendering_SetParserTextboxY(ScriptDialogOptionsRendering *dlgOptRender, int newY) {
   dlgOptRender->parserTextboxY = newY;
 }
 
-int DialogOptionsRendering_GetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender)
-{
+int DialogOptionsRendering_GetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->parserTextboxWidth;
 }
 
-void DialogOptionsRendering_SetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender, int newWidth)
-{
+void DialogOptionsRendering_SetParserTextboxWidth(ScriptDialogOptionsRendering *dlgOptRender, int newWidth) {
   dlgOptRender->parserTextboxWidth = newWidth;
 }
 
-ScriptDialog* DialogOptionsRendering_GetDialogToRender(ScriptDialogOptionsRendering *dlgOptRender)
-{
+ScriptDialog* DialogOptionsRendering_GetDialogToRender(ScriptDialogOptionsRendering *dlgOptRender) {
   return &scrDialog[dlgOptRender->dialogID];
 }
 
-ScriptDrawingSurface* DialogOptionsRendering_GetSurface(ScriptDialogOptionsRendering *dlgOptRender)
-{
+ScriptDrawingSurface* DialogOptionsRendering_GetSurface(ScriptDialogOptionsRendering *dlgOptRender) {
   dlgOptRender->surfaceAccessed = true;
   return dlgOptRender->surfaceToRenderTo;
 }
 
-int DialogOptionsRendering_GetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender)
-{
+int DialogOptionsRendering_GetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender) {
   return dlgOptRender->activeOptionID + 1;
 }
 
-void DialogOptionsRendering_SetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender, int activeOptionID)
-{
+void DialogOptionsRendering_SetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender, int activeOptionID) {
   int optionCount = dialog[scrDialog[dlgOptRender->dialogID].id].numoptions;
   if ((activeOptionID < 0) || (activeOptionID > optionCount))
     quitprintf("DialogOptionsRenderingInfo.ActiveOptionID: invalid ID specified for this dialog (specified %d, valid range: 1..%d)", activeOptionID, optionCount);
@@ -10874,8 +10823,7 @@ void DynamicSprite_Delete(ScriptDynamicSprite *sds) {
   }
 }
 
-ScriptDrawingSurface* DynamicSprite_GetDrawingSurface(ScriptDynamicSprite *dss)
-{
+ScriptDrawingSurface* DynamicSprite_GetDrawingSurface(ScriptDynamicSprite *dss) {
   ScriptDrawingSurface *surface = new ScriptDrawingSurface();
   surface->dynamicSpriteNumber = dss->slot;
 
@@ -11030,8 +10978,7 @@ void DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds, int sourceSpri
   }
 }
 
-void DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds, int width, int height, int x, int y) 
-{
+void DynamicSprite_ChangeCanvasSize(ScriptDynamicSprite *sds, int width, int height, int x, int y) {
   if (sds->slot == 0)
     quit("!DynamicSprite.ChangeCanvasSize: sprite has been deleted");
   if ((width < 1) || (height < 1))
@@ -11116,8 +11063,7 @@ void DynamicSprite_Rotate(ScriptDynamicSprite *sds, int angle, int width, int he
   add_dynamic_sprite(sds->slot, newPic, (game.spriteflags[sds->slot] & SPF_ALPHACHANNEL) != 0);
 }
 
-void DynamicSprite_Tint(ScriptDynamicSprite *sds, int red, int green, int blue, int saturation, int luminance) 
-{
+void DynamicSprite_Tint(ScriptDynamicSprite *sds, int red, int green, int blue, int saturation, int luminance) {
   block source = spriteset[sds->slot];
   block newPic = create_bitmap_ex(bitmap_color_depth(source), source->w, source->h);
 
@@ -11236,8 +11182,7 @@ ScriptDynamicSprite* DynamicSprite_CreateFromExistingSprite(int slot, int preser
   return new ScriptDynamicSprite(gotSlot);
 }
 
-ScriptDynamicSprite* DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface *sds, int x, int y, int width, int height) 
-{
+ScriptDynamicSprite* DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface *sds, int x, int y, int width, int height) {
   int gotSlot = spriteset.findFreeSlot();
   if (gotSlot <= 0)
     return NULL;
@@ -11265,8 +11210,7 @@ ScriptDynamicSprite* DynamicSprite_CreateFromDrawingSurface(ScriptDrawingSurface
   return new ScriptDynamicSprite(gotSlot);
 }
 
-ScriptDynamicSprite* DynamicSprite_Create(int width, int height, int alphaChannel) 
-{
+ScriptDynamicSprite* DynamicSprite_Create(int width, int height, int alphaChannel) {
   multiply_up_coordinates(&width, &height);
 
   int gotSlot = spriteset.findFreeSlot();
@@ -11285,8 +11229,7 @@ ScriptDynamicSprite* DynamicSprite_Create(int width, int height, int alphaChanne
   return new ScriptDynamicSprite(gotSlot);
 }
 
-ScriptDynamicSprite* DynamicSprite_CreateFromExistingSprite_Old(int slot) 
-{
+ScriptDynamicSprite* DynamicSprite_CreateFromExistingSprite_Old(int slot) {
   return DynamicSprite_CreateFromExistingSprite(slot, 0);
 }
 
@@ -11330,8 +11273,7 @@ ScriptDynamicSprite* DynamicSprite_CreateFromBackground(int frame, int x1, int y
 
 // ** SCRIPT OVERLAY OBJECT
 
-int ScriptOverlay::Dispose(const char *address, bool force) 
-{
+int ScriptOverlay::Dispose(const char *address, bool force) {
   // since the managed object is being deleted, remove the
   // reference so it doesn't try and dispose something else
   // with that handle later
@@ -15583,8 +15525,7 @@ void StrSetCharAt (char *strin, int posn, int nchar) {
   strin[posn] = nchar;
 }
 
-ScriptDrawingSurface* Room_GetDrawingSurfaceForBackground(int backgroundNumber)
-{
+ScriptDrawingSurface* Room_GetDrawingSurfaceForBackground(int backgroundNumber) {
   if (displayed_room < 0)
     quit("!Room.GetDrawingSurfaceForBackground: no room is currently loaded");
 
@@ -16945,8 +16886,7 @@ int Game_GetViewCount() {
   return game.numviews;
 }
 
-int Game_GetUseNativeCoordinates()
-{
+int Game_GetUseNativeCoordinates() {
   if (game.options[OPT_NATIVECOORDINATES] != 0)
   {
     return 1;
@@ -17012,8 +16952,7 @@ ScriptViewFrame* Game_GetViewFrame(int viewNumber, int loopNumber, int frame) {
   return sdt;
 }
 
-int Game_DoOnceOnly(const char *token) 
-{
+int Game_DoOnceOnly(const char *token) {
   if (strlen(token) > 199)
     quit("!Game.DoOnceOnly: token length cannot be more than 200 chars");
 
@@ -17081,8 +17020,7 @@ void ViewFrame_SetGraphic(ScriptViewFrame *svf, int newPic) {
   views[svf->view].loops[svf->loop].frames[svf->frame].pic = newPic;
 }
 
-ScriptAudioClip* ViewFrame_GetLinkedAudio(ScriptViewFrame *svf) 
-{
+ScriptAudioClip* ViewFrame_GetLinkedAudio(ScriptViewFrame *svf) {
   int soundIndex = views[svf->view].loops[svf->loop].frames[svf->frame].sound;
   if (soundIndex < 0)
     return NULL;
@@ -17090,8 +17028,7 @@ ScriptAudioClip* ViewFrame_GetLinkedAudio(ScriptViewFrame *svf)
   return &game.audioClips[soundIndex];
 }
 
-void ViewFrame_SetLinkedAudio(ScriptViewFrame *svf, ScriptAudioClip* clip) 
-{
+void ViewFrame_SetLinkedAudio(ScriptViewFrame *svf, ScriptAudioClip* clip) {
   int newSoundIndex = -1;
   if (clip != NULL)
     newSoundIndex = clip->id;
@@ -17104,8 +17041,7 @@ int ViewFrame_GetSound(ScriptViewFrame *svf) {
   return get_old_style_number_for_sound(views[svf->view].loops[svf->loop].frames[svf->frame].sound);
 }
 
-void ViewFrame_SetSound(ScriptViewFrame *svf, int newSound) 
-{
+void ViewFrame_SetSound(ScriptViewFrame *svf, int newSound) {
   if (newSound < 1)
   {
     views[svf->view].loops[svf->loop].frames[svf->frame].sound = -1;
@@ -17231,28 +17167,23 @@ const char *System_GetVersion() {
   return CreateNewScriptString(ACI_VERSION_TEXT);
 }
 
-int System_GetHardwareAcceleration() 
-{
+int System_GetHardwareAcceleration() {
   return gfxDriver->HasAcceleratedStretchAndFlip() ? 1 : 0;
 }
 
-int System_GetNumLock()
-{
+int System_GetNumLock() {
   return (key_shifts & KB_NUMLOCK_FLAG) ? 1 : 0;
 }
 
-int System_GetCapsLock()
-{
+int System_GetCapsLock() {
   return (key_shifts & KB_CAPSLOCK_FLAG) ? 1 : 0;
 }
 
-int System_GetScrollLock()
-{
+int System_GetScrollLock() {
   return (key_shifts & KB_SCROLOCK_FLAG) ? 1 : 0;
 }
 
-void System_SetNumLock(int newValue)
-{
+void System_SetNumLock(int newValue) {
   // doesn't work ... maybe allegro doesn't implement this on windows
   int ledState = key_shifts & (KB_SCROLOCK_FLAG | KB_CAPSLOCK_FLAG);
   if (newValue)
@@ -17298,36 +17229,30 @@ void System_SetGamma(int newValue) {
   }
 }
 
-int Game_GetTextReadingSpeed()
-{
+int Game_GetTextReadingSpeed() {
   return play.text_speed;
 }
 
-void Game_SetTextReadingSpeed(int newTextSpeed)
-{
+void Game_SetTextReadingSpeed(int newTextSpeed) {
   if (newTextSpeed < 1)
     quitprintf("!Game.TextReadingSpeed: %d is an invalid speed", newTextSpeed);
 
   play.text_speed = newTextSpeed;
 }
 
-int Game_GetMinimumTextDisplayTimeMs()
-{
+int Game_GetMinimumTextDisplayTimeMs() {
   return play.text_min_display_time_ms;
 }
 
-void Game_SetMinimumTextDisplayTimeMs(int newTextMinTime)
-{
+void Game_SetMinimumTextDisplayTimeMs(int newTextMinTime) {
   play.text_min_display_time_ms = newTextMinTime;
 }
 
-int Game_GetIgnoreUserInputAfterTextTimeoutMs()
-{
+int Game_GetIgnoreUserInputAfterTextTimeoutMs() {
   return play.ignore_user_input_after_text_timeout_ms;
 }
 
-void Game_SetIgnoreUserInputAfterTextTimeoutMs(int newValueMs)
-{
+void Game_SetIgnoreUserInputAfterTextTimeoutMs(int newValueMs) {
   play.ignore_user_input_after_text_timeout_ms = newValueMs;
 }
 
@@ -17936,13 +17861,11 @@ void SetDigitalMasterVolume (int newvol) {
   set_volume ((newvol * 255) / 100, -1);
 }
 
-int System_GetVolume() 
-{
+int System_GetVolume() {
   return play.digital_master_volume;
 }
 
-void System_SetVolume(int newvol) 
-{
+void System_SetVolume(int newvol) {
   if ((newvol < 0) || (newvol > 100))
     quit("!System.Volume: invalid volume - must be from 0-100");
 
@@ -17965,7 +17888,7 @@ void System_SetVolume(int newvol)
 
 int GetCurrentMusic() {
   return play.cur_music_number;
-  }
+}
 
 void SetMusicRepeat(int loopflag) {
   play.music_repeat=loopflag;
@@ -18478,8 +18401,7 @@ void ParseText (char*text) {
   parse_sentence (text, &play.num_parsed_words, play.parsed_words, NULL, 0);
 }
 
-int Parser_FindWordID(const char *wordToFind)
-{
+int Parser_FindWordID(const char *wordToFind) {
   return find_word_in_dictionary((char*)wordToFind);
 }
 
@@ -18876,8 +18798,7 @@ int GUIControl_GetVisible(GUIObject *guio) {
   return guio->IsVisible();
 }
 
-void GUIControl_SetVisible(GUIObject *guio, int visible) 
-{
+void GUIControl_SetVisible(GUIObject *guio, int visible) {
   if (visible != guio->IsVisible()) 
   {
     if (visible)
@@ -19288,8 +19209,7 @@ int TextBox_GetTextColor(GUITextBox *guit) {
   return guit->textcol;
 }
 
-void TextBox_SetTextColor(GUITextBox *guit, int colr)
-{
+void TextBox_SetTextColor(GUITextBox *guit, int colr) {
   if (guit->textcol != colr) 
   {
     guit->textcol = colr;
@@ -19898,8 +19818,7 @@ int Slider_GetBackgroundGraphic(GUISlider *guisl) {
   return (guisl->bgimage > 0) ? guisl->bgimage : 0;
 }
 
-void Slider_SetBackgroundGraphic(GUISlider *guisl, int newImage) 
-{
+void Slider_SetBackgroundGraphic(GUISlider *guisl, int newImage) {
   if (newImage != guisl->bgimage)
   {
     guisl->bgimage = newImage;
@@ -19911,8 +19830,7 @@ int Slider_GetHandleGraphic(GUISlider *guisl) {
   return (guisl->handlepic > 0) ? guisl->handlepic : 0;
 }
 
-void Slider_SetHandleGraphic(GUISlider *guisl, int newImage) 
-{
+void Slider_SetHandleGraphic(GUISlider *guisl, int newImage) {
   if (newImage != guisl->handlepic)
   {
     guisl->handlepic = newImage;
@@ -19924,8 +19842,7 @@ int Slider_GetHandleOffset(GUISlider *guisl) {
   return guisl->handleoffset;
 }
 
-void Slider_SetHandleOffset(GUISlider *guisl, int newOffset) 
-{
+void Slider_SetHandleOffset(GUISlider *guisl, int newOffset) {
   if (newOffset != guisl->handleoffset)
   {
     guisl->handleoffset = newOffset;
@@ -20412,8 +20329,7 @@ int GetDialogOption (int dlg, int opt) {
   return 0;
 }
 
-int Game_GetDialogCount()
-{
+int Game_GetDialogCount() {
   return game.numdialog;
 }
 
@@ -20426,8 +20342,7 @@ void Dialog_Start(ScriptDialog *sd) {
 #define SAYCHOSEN_YES 2
 #define SAYCHOSEN_NO  3 
 
-int Dialog_DisplayOptions(ScriptDialog *sd, int sayChosenOption) 
-{
+int Dialog_DisplayOptions(ScriptDialog *sd, int sayChosenOption) {
   if ((sayChosenOption < 1) || (sayChosenOption > 3))
     quit("!Dialog.DisplayOptions: invalid parameter passed");
 
@@ -20447,8 +20362,7 @@ int Dialog_GetOptionState(ScriptDialog *sd, int option) {
   return GetDialogOption(sd->id, option);
 }
 
-int Dialog_HasOptionBeenChosen(ScriptDialog *sd, int option)
-{
+int Dialog_HasOptionBeenChosen(ScriptDialog *sd, int option) {
   if ((option < 1) || (option > dialog[sd->id].numoptions))
     quit("!Dialog.HasOptionBeenChosen: Invalid option number specified");
   option--;
@@ -20458,18 +20372,15 @@ int Dialog_HasOptionBeenChosen(ScriptDialog *sd, int option)
   return 0;
 }
 
-int Dialog_GetOptionCount(ScriptDialog *sd)
-{
+int Dialog_GetOptionCount(ScriptDialog *sd) {
   return dialog[sd->id].numoptions;
 }
 
-int Dialog_GetShowTextParser(ScriptDialog *sd)
-{
+int Dialog_GetShowTextParser(ScriptDialog *sd) {
   return (dialog[sd->id].topicFlags & DTFLG_SHOWPARSER) ? 1 : 0;
 }
 
-const char* Dialog_GetOptionText(ScriptDialog *sd, int option)
-{
+const char* Dialog_GetOptionText(ScriptDialog *sd, int option) {
   if ((option < 1) || (option > dialog[sd->id].numoptions))
     quit("!Dialog.GetOptionText: Invalid option number specified");
 
@@ -20628,8 +20539,7 @@ int GetMouseCursor() {
   return cur_cursor;
 }
 
-void GiveScore(int amnt) 
-{
+void GiveScore(int amnt) {
   guis_need_update = 1;
   play.score += amnt;
 
@@ -21277,7 +21187,7 @@ void SetBackgroundFrame(int frnum) {
 
 int GetBackgroundFrame() {
   return play.bg_frame;
-  }
+}
 
 void script_debug(int cmdd,int dataa) {
   if (play.debug_mode==0) return;
@@ -21383,14 +21293,12 @@ void script_debug(int cmdd,int dataa) {
 }
 
 
-int init_cd_player() 
-{
+int init_cd_player() {
   use_cdplayer=0;
   return platform->InitializeCDPlayer();
 }
 
-int cd_manager(int cmdd,int datt) 
-{
+int cd_manager(int cmdd,int datt) {
   if (!triedToUseCdAudioCommand)
   {
     triedToUseCdAudioCommand = true;
@@ -24515,8 +24423,7 @@ int EndCutscene () {
   return retval;
 }
 
-int Game_GetSkippingCutscene()
-{
+int Game_GetSkippingCutscene() {
   if (play.fast_forward)
   {
     return 1;
@@ -24524,8 +24431,7 @@ int Game_GetSkippingCutscene()
   return 0;
 }
 
-int Game_GetInSkippableCutscene()
-{
+int Game_GetInSkippableCutscene() {
   if (play.in_cutscene)
   {
     return 1;
@@ -24535,138 +24441,98 @@ int Game_GetInSkippableCutscene()
 
 
 // Stubs for plugin functions.
-void ScriptStub_ShellExecute()
-{
+void ScriptStub_ShellExecute() {
 }
-void srSetSnowDriftRange(int min_value, int max_value)
-{
+void srSetSnowDriftRange(int min_value, int max_value) {
 }
-void srSetSnowDriftSpeed(int min_value, int max_value)
-{
+void srSetSnowDriftSpeed(int min_value, int max_value) {
 }
-void srSetSnowFallSpeed(int min_value, int max_value)
-{
+void srSetSnowFallSpeed(int min_value, int max_value) {
 }
-void srChangeSnowAmount(int amount)
-{
+void srChangeSnowAmount(int amount) {
 }
-void srSetSnowBaseline(int top, int bottom)
-{
+void srSetSnowBaseline(int top, int bottom) {
 }
-void srSetSnowTransparency(int min_value, int max_value)
-{
+void srSetSnowTransparency(int min_value, int max_value) {
 }
-void srSetSnowDefaultView(int view, int loop)
-{
+void srSetSnowDefaultView(int view, int loop) {
 }
-void srSetSnowWindSpeed(int value)
-{
+void srSetSnowWindSpeed(int value) {
 }
-void srSetSnowAmount(int amount)
-{
+void srSetSnowAmount(int amount) {
 }
-void srSetSnowView(int kind_id, int event, int view, int loop)
-{
+void srSetSnowView(int kind_id, int event, int view, int loop) {
 }
-void srChangeRainAmount(int amount)
-{
+void srChangeRainAmount(int amount) {
 }
-void srSetRainView(int kind_id, int event, int view, int loop)
-{
+void srSetRainView(int kind_id, int event, int view, int loop) {
 }
-void srSetRainDefaultView(int view, int loop)
-{
+void srSetRainDefaultView(int view, int loop) {
 }
-void srSetRainTransparency(int min_value, int max_value)
-{
+void srSetRainTransparency(int min_value, int max_value) {
 }
-void srSetRainWindSpeed(int value)
-{
+void srSetRainWindSpeed(int value) {
 }
-void srSetRainBaseline(int top, int bottom)
-{
+void srSetRainBaseline(int top, int bottom) {
 }
-void srSetRainAmount(int amount)
-{
+void srSetRainAmount(int amount) {
 }
-void srSetRainFallSpeed(int min_value, int max_value)
-{
+void srSetRainFallSpeed(int min_value, int max_value) {
 }
-void srSetWindSpeed(int value)
-{
+void srSetWindSpeed(int value) {
 }
-void srSetBaseline(int top, int bottom)
-{
+void srSetBaseline(int top, int bottom) {
 }
-int JoystickCount()
-{
+int JoystickCount() {
   return 0;
 }
-int Joystick_Open(int a)
-{
+int Joystick_Open(int a) {
   return 0;
 }
-int Joystick_IsButtonDown(int a)
-{
+int Joystick_IsButtonDown(int a) {
   return 0;
 }
-void Joystick_EnableEvents(int a)
-{
+void Joystick_EnableEvents(int a) {
 }
-void Joystick_DisableEvents()
-{
+void Joystick_DisableEvents() {
 }
-void Joystick_Click(int a)
-{
+void Joystick_Click(int a) {
 }
-int Joystick_Valid()
-{
+int Joystick_Valid() {
   return 0;
 }
-int Joystick_Unplugged()
-{
+int Joystick_Unplugged() {
   return 0;
 }
-int DrawAlpha(int destination, int sprite, int x, int y, int transparency)
-{
+int DrawAlpha(int destination, int sprite, int x, int y, int transparency) {
   return 0;
 }
-int GetAlpha(int sprite, int x, int y)
-{
+int GetAlpha(int sprite, int x, int y) {
   return 0;
 }
-int PutAlpha(int sprite, int x, int y, int alpha)
-{
+int PutAlpha(int sprite, int x, int y, int alpha) {
   return 0;
 }
-int Blur(int sprite, int radius)
-{
+int Blur(int sprite, int radius) {
   return 0;
 }
-int HighPass(int sprite, int threshold)
-{
+int HighPass(int sprite, int threshold) {
   return 0;
 }
-int DrawAdd(int destination, int sprite, int x, int y, float scale)
-{
+int DrawAdd(int destination, int sprite, int x, int y, float scale) {
   return 0;
 }
 
-int GetFlashlightInt()
-{
+int GetFlashlightInt() {
   return 0;
 }
-void SetFlashlightInt1(int Param1)
-{
+void SetFlashlightInt1(int Param1){
 }
-void SetFlashlightInt2(int Param1, int Param2)
-{
+void SetFlashlightInt2(int Param1, int Param2) {
 }
-void SetFlashlightInt3(int Param1, int Param2, int Param3)
-{
+void SetFlashlightInt3(int Param1, int Param2, int Param3) {
 }
-void SetFlashlightInt5(int Param1, int Param2, int Param3, int Param4, int Param5)
-{
+void SetFlashlightInt5(int Param1, int Param2, int Param3, int Param4, int Param5) {
 }
 
 #define scAdd_External_Symbol ccAddExternalSymbol

@@ -567,8 +567,7 @@ void Character_Animate(CharacterInfo *chaa, int loop, int delay, int repeat, int
     quit("!Character.Animate: Invalid BLOCKING parameter");
 }
 
-void Character_ChangeRoomAutoPosition(CharacterInfo *chaa, int room, int newPos) 
-{
+void Character_ChangeRoomAutoPosition(CharacterInfo *chaa, int room, int newPos) {
   if (chaa->index_id != game.playercharacter) 
   {
     quit("!Character.ChangeRoomAutoPosition can only be used with the player character.");
@@ -1030,8 +1029,7 @@ void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
     run_on_event (GE_LOSE_INV, inum);
 }
 
-void Character_PlaceOnWalkableArea(CharacterInfo *chap) 
-{
+void Character_PlaceOnWalkableArea(CharacterInfo *chap) {
   if (displayed_room < 0)
     quit("!Character.PlaceOnWalkableArea: no room is currently loaded");
 
@@ -1303,13 +1301,11 @@ void walk_or_move_character(CharacterInfo *chaa, int x, int y, int blocking, int
 
 }
 
-void Character_Walk(CharacterInfo *chaa, int x, int y, int blocking, int direct) 
-{
+void Character_Walk(CharacterInfo *chaa, int x, int y, int blocking, int direct) {
   walk_or_move_character(chaa, x, y, blocking, direct, true);
 }
 
-void Character_Move(CharacterInfo *chaa, int x, int y, int blocking, int direct) 
-{
+void Character_Move(CharacterInfo *chaa, int x, int y, int blocking, int direct) {
   walk_or_move_character(chaa, x, y, blocking, direct, false);
 }
 
@@ -1527,8 +1523,7 @@ int Character_GetIInventoryQuantity(CharacterInfo *chaa, int index) {
   return chaa->inv[index];
 }
 
-int Character_HasInventory(CharacterInfo *chaa, ScriptInvItem *invi)
-{
+int Character_HasInventory(CharacterInfo *chaa, ScriptInvItem *invi) {
   if (invi == NULL)
     quit("!Character.HasInventory: NULL inventory item supplied");
 
@@ -1732,8 +1727,7 @@ void Character_SetSpeechColor(CharacterInfo *chaa, int ncol) {
   chaa->talkcolor = ncol;
 }
 
-int GetCharacterSpeechAnimationDelay(CharacterInfo *cha)
-{
+int GetCharacterSpeechAnimationDelay(CharacterInfo *cha) {
   if (game.options[OPT_OLDTALKANIMSPD])
   {
     // The talkanim property only applies to Lucasarts style speech.
@@ -1747,8 +1741,7 @@ int GetCharacterSpeechAnimationDelay(CharacterInfo *cha)
     return cha->speech_anim_speed;
 }
 
-void Character_SetSpeechAnimationDelay(CharacterInfo *chaa, int newDelay) 
-{
+void Character_SetSpeechAnimationDelay(CharacterInfo *chaa, int newDelay) {
   if (game.options[OPT_OLDTALKANIMSPD])
     quit("!Character.SpeechAnimationDelay cannot be set when legacy speech animation speed is enabled");
   

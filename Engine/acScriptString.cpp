@@ -208,8 +208,7 @@ int String_EndsWith(const char *thisString, const char *checkForString, bool cas
 	return mystreq(thisString + checkAtOffset, checkForString, caseSensitive);
 }
 
-const char* String_Replace(const char *thisString, const char *lookForText, 
-			   const char *replaceWithText, bool caseSensitive) {
+const char* String_Replace(const char *thisString, const char *lookForText, const char *replaceWithText, bool caseSensitive) {
 	char resultBuffer[STD_BUFFER_SIZE] = "";
 	size_t i, thisStringLen = strlen(thisString), 
 	       l = strlen(lookForText), r = strlen(replaceWithText),
