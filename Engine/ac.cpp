@@ -24871,6 +24871,14 @@ void SetFlashlightInt5(int Param1, int Param2, int Param3, int Param4, int Param
 
 #define scAdd_External_Symbol ccAddExternalSymbol
 void setup_script_exports() {
+	/* these are variable pointers */
+	scAdd_External_Symbol("game",&play);
+	scAdd_External_Symbol("gs_globals",&play.globalvars[0]);
+	scAdd_External_Symbol("mouse",&scmouse);
+	scAdd_External_Symbol("palette",&palette[0]);
+	scAdd_External_Symbol("system",&scsystem);
+	scAdd_External_Symbol("savegameindex",&play.filenumbers[0]);
+	
   // the ^5 after the function name is the number of params
   // this is to allow an extra parameter to be added in a later
   // version without screwing up the stack in previous versions
@@ -25870,13 +25878,6 @@ void setup_script_exports() {
   scAdd_External_Symbol("Wait",(void *)scrWait);
   scAdd_External_Symbol("WaitKey",(void *)WaitKey);
   scAdd_External_Symbol("WaitMouseKey",(void *)WaitMouseKey);
-  scAdd_External_Symbol("game",&play);
-  scAdd_External_Symbol("gs_globals",&play.globalvars[0]);
-  scAdd_External_Symbol("mouse",&scmouse);
-  scAdd_External_Symbol("palette",&palette[0]);
-  scAdd_External_Symbol("system",&scsystem);
-  scAdd_External_Symbol("savegameindex",&play.filenumbers[0]);
-
 
   // Stubs for plugin functions.
 
