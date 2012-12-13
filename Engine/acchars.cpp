@@ -29,12 +29,12 @@ int turnlooporder[8] = {0, 6, 1, 7, 3, 5, 2, 4};
 void fix_player_sprite(MoveList*cmls,CharacterInfo*chinf);
 
 
-void StopMoving(int chaa) {
+long StopMoving(long chaa) {
 
   Character_StopMoving(&game.chars[chaa]);
 }
 
-void ReleaseCharacterView(int chat) {
+long ReleaseCharacterView(long chat) {
   if (!is_valid_character(chat))
     quit("!ReleaseCahracterView: invalid character supplied");
 
@@ -447,21 +447,21 @@ void find_nearest_walkable_area (int *xx, int *yy) {
 
 }
 
-void MoveToWalkableArea(int charid) {
+long MoveToWalkableArea(long charid) {
   if (!is_valid_character(charid))
     quit("!MoveToWalkableArea: invalid character specified");
   
   Character_PlaceOnWalkableArea(&game.chars[charid]);
 }
 
-void FaceLocation(int cha, int xx, int yy) {
+long FaceLocation(long cha,long xx,long yy) {
   if (!is_valid_character(cha))
     quit("!FaceLocation: Invalid character specified");
 
   Character_FaceLocation(&game.chars[cha], xx, yy, BLOCKING);
 }
 
-void FaceCharacter(int cha,int toface) {
+long FaceCharacter(long cha,long toface) {
   if (!is_valid_character(cha))
     quit("!FaceCharacter: Invalid character specified");
   if (!is_valid_character(toface)) 

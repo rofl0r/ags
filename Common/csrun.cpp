@@ -1190,30 +1190,30 @@ long call_variadic_function_long(long addr, int numparm, long *parms, int offset
 // parm list is backwards (last arg is parms[0])
 void call_variadic_function_void_rawprint(long addr, int numparm, long *parms, int offset) {
 	parms += offset;
-	void (*fparam) (int, int, char*, ...);
-	fparam = (void (*)(int, int, char*, ...))addr;
+	long (*fparam) (long, long, char*, ...);
+	fparam = (long (*)(long, long, char*, ...))addr;
 	
 	switch(numparm) {
 		case 3:
-			fparam((int)parms[2], (int)parms[1], (char*)parms[0]);
+			fparam((long)parms[2], (long)parms[1], (char*)parms[0]);
 			return;
 		case 4:
-			fparam((int)parms[3], (int)parms[2], (char*)parms[1], parms[0]);
+			fparam((long)parms[3], (long)parms[2], (char*)parms[1], parms[0]);
 			return;
 		case 5:
-			fparam((int)parms[4], (int)parms[3], (char*)parms[2], parms[1], parms[0]);
+			fparam((long)parms[4], (long)parms[3], (char*)parms[2], parms[1], parms[0]);
 			return;
 		case 6:
-			fparam((int)parms[5], (int)parms[4], (char*)parms[3], parms[2], parms[1], parms[0]);
+			fparam((long)parms[5], (long)parms[4], (char*)parms[3], parms[2], parms[1], parms[0]);
 			return;
 		case 7:
-			fparam((int)parms[6], (int)parms[5], (char*)parms[4], parms[3], parms[2], parms[1], parms[0]);
+			fparam((long)parms[6], (long)parms[5], (char*)parms[4], parms[3], parms[2], parms[1], parms[0]);
 			return;
 		case 8:
-			fparam((int)parms[7], (int)parms[6], (char*)parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+			fparam((long)parms[7], (long)parms[6], (char*)parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 			return;
 		case 9:
-			fparam((int)parms[8], (int)parms[7], (char*)parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
+			fparam((long)parms[8], (long)parms[7], (char*)parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 			return;
 		default:
 			cc_error("too many or too few arguments in call to function RawPrint");
@@ -1224,8 +1224,8 @@ void call_variadic_function_void_rawprint(long addr, int numparm, long *parms, i
 // parm list is backwards (last arg is parms[0])
 void call_variadic_function_void_sayorthink(long addr, int numparm, long *parms, int offset) {
 	parms += offset;
-	void (*fparam) (void*, char*, ...);
-	fparam = (void (*)(void*, char*, ...))addr;
+	long (*fparam) (void*, char*, ...);
+	fparam = (long (*)(void*, char*, ...))addr;
 	
 	switch(numparm) {
 		case 2:
@@ -1259,53 +1259,53 @@ void call_variadic_function_void_sayorthink(long addr, int numparm, long *parms,
 }
 
 // parm list is backwards (last arg is parms[0])
-int call_function(long addr, int numparm, long *parms, int offset) {
+long call_function(long addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	
 	switch(numparm) {
 		case 1: {
-			int (*fparam) (long);
-			fparam = (int (*)(long))addr;
+			long (*fparam) (long);
+			fparam = (long (*)(long))addr;
 			return fparam(parms[0]);
 		}
 		case 2: {
-			int (*fparam) (long, long);
-			fparam = (int (*)(long, long))addr;
+			long (*fparam) (long, long);
+			fparam = (long (*)(long, long))addr;
 			return fparam(parms[1], parms[0]);
 		}
 		case 3: {
-			int (*fparam) (long, long, long);
-			fparam = (int (*)(long, long, long))addr;
+			long (*fparam) (long, long, long);
+			fparam = (long (*)(long, long, long))addr;
 			return fparam(parms[2], parms[1], parms[0]);
 		}
 		case 4: {
-			int (*fparam) (long, long, long, long);
-			fparam = (int (*)(long, long, long, long))addr;
+			long (*fparam) (long, long, long, long);
+			fparam = (long (*)(long, long, long, long))addr;
 			return fparam(parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 5: {
-			int (*fparam) (long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long))addr;
+			long (*fparam) (long, long, long, long, long);
+			fparam = (long (*)(long, long, long, long, long))addr;
 			return fparam(parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 6: {
-			int (*fparam) (long, long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long, long))addr;
+			long (*fparam) (long, long, long, long, long, long);
+			fparam = (long (*)(long, long, long, long, long, long))addr;
 			return fparam(parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 7: {
-			int (*fparam) (long, long, long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long, long, long))addr;
+			long (*fparam) (long, long, long, long, long, long, long);
+			fparam = (long (*)(long, long, long, long, long, long, long))addr;
 			return fparam(parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 8: {
-			int (*fparam) (long, long, long, long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long, long, long, long))addr;
+			long (*fparam) (long, long, long, long, long, long, long, long);
+			fparam = (long (*)(long, long, long, long, long, long, long, long))addr;
 			return fparam(parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		case 9: {
-			int (*fparam) (long, long, long, long, long, long, long, long, long);
-			fparam = (int (*)(long, long, long, long, long, long, long, long, long))addr;
+			long (*fparam) (long, long, long, long, long, long, long, long, long);
+			fparam = (long (*)(long, long, long, long, long, long, long, long, long))addr;
 			return fparam(parms[8], parms[7], parms[6], parms[5], parms[4], parms[3], parms[2], parms[1], parms[0]);
 		}
 		default:

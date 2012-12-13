@@ -1775,16 +1775,16 @@ void stop_and_destroy_channel_ex(int chid, bool resetLegacyMusicSettings) {
   }
 }
 
-void stop_and_destroy_channel (int chid) {
+long stop_and_destroy_channel (long chid) {
 	stop_and_destroy_channel_ex(chid, true);
 }
 
-void PlayMusicResetQueue(int newmus) {
+long PlayMusicResetQueue(long newmus) {
   play.music_queue_size = 0;
   newmusic(newmus);
 }
 
-void StopAmbientSound (int channel) {
+long StopAmbientSound (long channel) {
   if ((channel < 0) || (channel >= MAX_SOUND_CHANNELS))
     quit("!StopAmbientSound: invalid channel");
 
@@ -1807,7 +1807,7 @@ SOUNDCLIP *load_sound_from_path(int soundNumber, int volume, bool repeat)
   return soundfx;
 }
 
-void PlayAmbientSound (int channel, int sndnum, int vol, int x, int y) {
+long PlayAmbientSound (long channel,long sndnum,long vol,long x,long y) {
   // the channel parameter is to allow multiple ambient sounds in future
   if ((channel < 1) || (channel == SCHAN_SPEECH) || (channel >= MAX_SOUND_CHANNELS))
     quit("!PlayAmbientSound: invalid channel number");
@@ -1899,7 +1899,7 @@ const char *load_game_errors[9] =
   "Saved under a different game", "Resolution mismatch",
   "Colour depth mismatch", ""};
 
-void restart_game() {
+long restart_game() {
   can_run_delayed_command();
   if (inside_script) {
     curscript->queue_action(ePSARestartGame, 0, "RestartGame");
@@ -2266,7 +2266,7 @@ char *get_translation (const char *text) {
   return (char*)text;
 }
 
-int IsTranslationAvailable () {
+long IsTranslationAvailable () {
   if (transtree != NULL)
     return 1;
   return 0;
@@ -2838,7 +2838,7 @@ inline int is_valid_object(int obtest) {
   return 1;
 }
 
-void SetAmbientTint (int red, int green, int blue, int opacity, int luminance) {
+long SetAmbientTint (long red,long green,long blue,long opacity,long luminance) {
   if ((red < 0) || (green < 0) || (blue < 0) ||
       (red > 255) || (green > 255) || (blue > 255) ||
       (opacity < 0) || (opacity > 100) ||
@@ -2854,7 +2854,7 @@ void SetAmbientTint (int red, int green, int blue, int opacity, int luminance) {
   play.rtint_light = (luminance * 25) / 10;
 }
 
-void SetObjectTint(int obj, int red, int green, int blue, int opacity, int luminance) {
+long SetObjectTint(long obj,long red,long green,long blue,long opacity,long luminance) {
   if ((red < 0) || (green < 0) || (blue < 0) ||
       (red > 255) || (green > 255) || (blue > 255) ||
       (opacity < 0) || (opacity > 100) ||
@@ -2878,7 +2878,7 @@ void Object_Tint(ScriptObject *objj, int red, int green, int blue, int saturatio
   SetObjectTint(objj->id, red, green, blue, saturation, luminance);
 }
 
-void RemoveObjectTint(int obj) {
+long RemoveObjectTint(long obj) {
   if (!is_valid_object(obj))
     quit("!RemoveObjectTint: invalid object");
   
@@ -2895,7 +2895,7 @@ void Object_RemoveTint(ScriptObject *objj) {
   RemoveObjectTint(objj->id);
 }
 
-void TintScreen(int red, int grn, int blu) {
+long TintScreen(long red,long grn,long blu) {
   if ((red < 0) || (grn < 0) || (blu < 0) || (red > 100) || (grn > 100) || (blu > 100))
     quit("!TintScreen: RGB values must be 0-100");
 
@@ -3055,7 +3055,7 @@ void restore_after_dialog() {
   construct_virtual_screen(true);
 }
 
-void RestoreGameSlot(int slnum) {
+long RestoreGameSlot(long slnum) {
   if (displayed_room < 0)
     quit("!RestoreGameSlot: a game cannot be restored from within game_start");
 
@@ -3073,7 +3073,7 @@ void get_save_game_path(int slotNum, char *buffer) {
   strcat(buffer, saveGameSuffix);
 }
 
-void DeleteSaveSlot (int slnum) {
+long DeleteSaveSlot (long slnum) {
   char nametouse[260];
   get_save_game_path(slnum, nametouse);
   unlink (nametouse);
@@ -3160,7 +3160,7 @@ const char* Game_GetSaveSlotDescription(int slnum) {
   return NULL;
 }
 
-int LoadSaveSlotScreenshot(int slnum, int width, int height) {
+long LoadSaveSlotScreenshot(long slnum,long width,long height) {
   int gotSlot;
   multiply_up_coordinates(&width, &height);
 
@@ -3233,7 +3233,7 @@ int load_game_and_print_error(int toload) {
   return ecret;
 }
 
-void restore_game_dialog() {
+long restore_game_dialog() {
   can_run_delayed_command();
   if (thisroom.options[ST_SAVELOAD] == 1) {
     DisplayMessage (983);
@@ -3251,7 +3251,7 @@ void restore_game_dialog() {
   }
 }
 
-void save_game_dialog() {
+long save_game_dialog() {
   if (thisroom.options[ST_SAVELOAD] == 1) {
     DisplayMessage (983);
     return;
@@ -3708,7 +3708,7 @@ int add_screen_overlay(int x,int y,int type,block piccy, bool alphaChannel = fal
   return numscreenover-1;
   }
 
-void my_fade_out(int spdd) {
+long my_fade_out(long spdd) {
   EndSkippingUntilCharStops();
 
   if (play.fast_forward)
@@ -3969,7 +3969,7 @@ void generate_light_table() {
     }
   }
 
-void SetAreaLightLevel(int area, int brightness) {
+long SetAreaLightLevel(long area,long brightness) {
   if ((area < 0) || (area > MAX_REGIONS))
     quit("!SetAreaLightLevel: invalid region");
   if (brightness < -100) brightness = -100;
@@ -3989,7 +3989,7 @@ int Region_GetLightLevel(ScriptRegion *ssr) {
   return thisroom.regionLightLevel[ssr->id];
 }
 
-void SetRegionTint (int area, int red, int green, int blue, int amount) {
+long SetRegionTint (long area,long red,long green,long blue,long amount) {
   if ((area < 0) || (area > MAX_REGIONS))
     quit("!SetRegionTint: invalid region");
 
@@ -4071,31 +4071,31 @@ int GetBaseWidth () {
   return BASEWIDTH;
 }
 
-void HideMouseCursor () {
+long HideMouseCursor () {
   play.mouse_cursor_hidden = 1;
 }
 
-void ShowMouseCursor () {
+long ShowMouseCursor () {
   play.mouse_cursor_hidden = 0;
 }
 
 // The Mouse:: functions are static so the script doesn't pass
 // in an object parameter
-void Mouse_SetVisible(int isOn) {
+long Mouse_SetVisible(long isOn) {
   if (isOn)
     ShowMouseCursor();
   else
     HideMouseCursor();
 }
 
-int Mouse_GetVisible() {
+long Mouse_GetVisible() {
   if (play.mouse_cursor_hidden)
     return 0;
   return 1;
 }
 
 #define MOUSE_MAX_Y divide_down_coordinate(vesa_yres)
-void SetMouseBounds (int x1, int y1, int x2, int y2) {
+long SetMouseBounds (long x1,long y1,long x2,long y2) {
   if ((x1 == 0) && (y1 == 0) && (x2 == 0) && (y2 == 0)) {
     x2 = BASEWIDTH-1;
     y2 = MOUSE_MAX_Y - 1;
@@ -5246,11 +5246,11 @@ void update_events() {
 // end event list functions
 
 
-void PauseGame() {
+long PauseGame() {
   game_paused++;
   DEBUG_CONSOLE("Game paused");
 }
-void UnPauseGame() {
+long UnPauseGame() {
   if (game_paused > 0)
     game_paused--;
   DEBUG_CONSOLE("Game UnPaused, pause level now %d", game_paused);
@@ -5333,7 +5333,7 @@ void draw_sprite_support_alpha(int xpos, int ypos, block image, int slot) {
 
 // mouse cursor functions:
 // set_mouse_cursor: changes visual appearance to specified cursor
-void set_mouse_cursor(int newcurs) {
+long set_mouse_cursor(long newcurs) {
   int hotspotx = game.mcurs[newcurs].hotx, hotspoty = game.mcurs[newcurs].hoty;
 
   set_new_cursor_graphic(game.mcurs[newcurs].pic);
@@ -5400,12 +5400,12 @@ void precache_view(int view)
 }
 
 // set_default_cursor: resets visual appearance to current mode (walk, look, etc)
-void set_default_cursor() {
+long set_default_cursor() {
   set_mouse_cursor(cur_mode);
   }
 
 // permanently change cursor graphic
-void ChangeCursorGraphic (int curs, int newslot) {
+long ChangeCursorGraphic (long curs,long newslot) {
   if ((curs < 0) || (curs >= game.numcursors))
     quit("!ChangeCursorGraphic: invalid mouse cursor");
 
@@ -5418,14 +5418,14 @@ void ChangeCursorGraphic (int curs, int newslot) {
     set_mouse_cursor (curs);
 }
 
-int Mouse_GetModeGraphic(int curs) {
+long Mouse_GetModeGraphic(long curs) {
   if ((curs < 0) || (curs >= game.numcursors))
     quit("!Mouse.GetModeGraphic: invalid mouse cursor");
 
   return game.mcurs[curs].pic;
 }
 
-void ChangeCursorHotspot (int curs, int x, int y) {
+long ChangeCursorHotspot (long curs,long x,long y) {
   if ((curs < 0) || (curs >= game.numcursors))
     quit("!ChangeCursorHotspot: invalid mouse cursor");
   game.mcurs[curs].hotx = multiply_up_coordinate(x);
@@ -5434,7 +5434,7 @@ void ChangeCursorHotspot (int curs, int x, int y) {
     set_mouse_cursor (cur_cursor);
 }
 
-void Mouse_ChangeModeView(int curs, int newview) {
+long Mouse_ChangeModeView(long curs,long newview) {
   if ((curs < 0) || (curs >= game.numcursors))
     quit("!Mouse.ChangeModeView: invalid mouse cursor");
 
@@ -5478,12 +5478,12 @@ int find_next_enabled_cursor(int startwith) {
   return testing;
 }
 
-void SetNextCursor () {
+long SetNextCursor () {
   set_cursor_mode (find_next_enabled_cursor(cur_mode + 1));
 }
 
 // set_cursor_mode: changes mode and appearance
-void set_cursor_mode(int newmode) {
+long set_cursor_mode(long newmode) {
   if ((newmode < 0) || (newmode >= game.numcursors))
     quit("!SetCursorMode: invalid cursor mode specified");
 
@@ -5522,7 +5522,7 @@ int InventoryItem_GetCursorGraphic(ScriptInvItem *iitem) {
   return game.invinfo[iitem->id].cursorPic;
 }
 
-void set_inv_item_pic(int invi, int piccy) {
+long set_inv_item_pic(long invi,long piccy) {
   if ((invi < 1) || (invi > game.numinvitems))
     quit("!SetInvItemPic: invalid inventory item specified");
 
@@ -5564,7 +5564,7 @@ int InventoryItem_GetID(ScriptInvItem *scii) {
   return scii->id;
 }
 
-void enable_cursor_mode(int modd) {
+long enable_cursor_mode(long modd) {
   game.mcurs[modd].flags&=~MCF_DISABLED;
   // now search the interfaces for related buttons to re-enable
   int uu,ww;
@@ -5581,7 +5581,7 @@ void enable_cursor_mode(int modd) {
   guis_need_update = 1;
   }
 
-void disable_cursor_mode(int modd) {
+long disable_cursor_mode(long modd) {
   game.mcurs[modd].flags|=MCF_DISABLED;
   // now search the interfaces for related buttons to kill
   int uu,ww;
@@ -5684,7 +5684,7 @@ void run_event_block_inv(int invNum, int aaa) {
 
 }
 
-void SetActiveInventory(int iit) {
+long SetActiveInventory(long iit) {
 
   ScriptInvItem *tosend = NULL;
   if ((iit > 0) && (iit < game.numinvitems))
@@ -5695,12 +5695,12 @@ void SetActiveInventory(int iit) {
   Character_SetActiveInventory(playerchar, tosend);
 }
 
-int IsGamePaused() {
+long IsGamePaused() {
   if (game_paused>0) return 1;
   return 0;
   }
 
-int IsButtonDown(int which) {
+long IsButtonDown(long which) {
   if ((which < 1) || (which > 3))
     quit("!IsButtonDown: only works with eMouseLeft, eMouseRight, eMouseMiddle");
   if (misbuttondown(which-1))
@@ -5708,14 +5708,14 @@ int IsButtonDown(int which) {
   return 0;
 }
 
-void SetCharacterIdle(int who, int iview, int itime) {
+long SetCharacterIdle(long who,long iview,long itime) {
   if (!is_valid_character(who))
     quit("!SetCharacterIdle: Invalid character specified");
 
   Character_SetIdleView(&game.chars[who], iview, itime);
 }
 
-int IsKeyPressed (int keycode) {
+long IsKeyPressed (long keycode) {
 #ifdef ALLEGRO_KEYBOARD_HANDLER
   if (keyboard_needs_poll())
     poll_keyboard();
@@ -5876,7 +5876,7 @@ void check_skip_cutscene_keypress (int kgn) {
 
 }
 
-void RunInventoryInteraction (int iit, int modd) {
+long RunInventoryInteraction (long iit,long modd) {
   if ((iit < 0) || (iit >= game.numinvitems))
     quit("!RunInventoryInteraction: invalid inventory number");
 
@@ -6230,7 +6230,7 @@ void check_controls() {
 }  // end check_controls
 
 
-int IsChannelPlaying(int chan) {
+long IsChannelPlaying(long chan) {
   if (play.fast_forward)
     return 0;
 
@@ -6243,7 +6243,7 @@ int IsChannelPlaying(int chan) {
   return 0;
 }
 
-int IsSoundPlaying() {
+long IsSoundPlaying() {
   if (play.fast_forward)
     return 0;
 
@@ -6256,7 +6256,7 @@ int IsSoundPlaying() {
   return 0;
 }
 
-void SetFrameSound (int vii, int loop, int frame, int sound) {
+long SetFrameSound (long vii,long loop,long frame,long sound) {
   if ((vii < 1) || (vii > game.numviews))
     quit("!SetFrameSound: invalid view number");
   vii--;
@@ -7442,7 +7442,7 @@ void replace_macro_tokens(char*statusbarformat,char*cur_stb_text) {
   }
 }
 
-void update_invorder() {
+long update_invorder() {
   for (int cc = 0; cc < game.numcharacters; cc++) {
     charextra[cc].invorder_count = 0;
     int ff, howmany;
@@ -7911,7 +7911,7 @@ block recycle_bitmap(block bimp, int coldep, int wid, int hit) {
   return bimp;
 }
 
-int GetRegionAt (int xxx, int yyy) {
+long GetRegionAt (long xxx,long yyy) {
   // if the co-ordinates are off the edge of the screen,
   // correct them to be just within
   // this fixes walk-off-screen problems
@@ -8402,7 +8402,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
   return 0;
 }
 
-int GetScalingAt (int x, int y) {
+long GetScalingAt (long x,long y) {
   int onarea = get_walkable_area_pixel(x, y);
   if (onarea < 0)
     return 100;
@@ -8410,7 +8410,7 @@ int GetScalingAt (int x, int y) {
   return get_area_scaling (onarea, x, y);
 }
 
-void SetAreaScaling(int area, int min, int max) {
+long SetAreaScaling(long area,long min,long max) {
   if ((area < 0) || (area > MAX_WALK_AREAS))
     quit("!SetAreaScaling: invalid walkalbe area");
 
@@ -9218,7 +9218,7 @@ void GfxDriverOnInitCallback(void *data)
   platform->RunPluginInitGfxHooks(gfxDriver->GetDriverID(), data);
 }
 
-void SeekMIDIPosition (int position) {
+long SeekMIDIPosition (long position) {
   if (play.silent_midi)
     midi_seek (position);
   if (current_music_type == MUS_MIDI) {
@@ -9227,7 +9227,7 @@ void SeekMIDIPosition (int position) {
   }
 }
 
-int GetMIDIPosition () {
+long GetMIDIPosition () {
   if (play.silent_midi)
     return midi_pos;
   if (current_music_type != MUS_MIDI)
@@ -9422,7 +9422,7 @@ void start_replay_record () {
   play.recording = 1;
 }
 
-void scStartRecording (int keyToStop) {
+long scStartRecording (long keyToStop) {
   quit("!StartRecording: not et suppotreD");
 }
 
@@ -10304,7 +10304,7 @@ void DrawingSurface_DrawImage(ScriptDrawingSurface* sds, int xx, int yy, int slo
     destroy_bitmap(sourcePic);
 }
 
-int Game_GetColorFromRGB(int red, int grn, int blu) {
+long Game_GetColorFromRGB(long red,long grn,long blu) {
   if ((red < 0) || (red > 255) || (grn < 0) || (grn > 255) ||
       (blu < 0) || (blu > 255))
     quit("!GetColorFromRGB: colour values must be 0-255");
@@ -12525,7 +12525,7 @@ void unload_game_file() {
 
 // **** text script exported functions
 
-int IsMusicPlaying() {
+long IsMusicPlaying() {
   // in case they have a "while (IsMusicPlaying())" loop
   if ((play.fast_forward) && (play.skip_until_char_stops < 0))
     return 0;
@@ -12556,7 +12556,7 @@ void clear_music_cache() {
 
 }
 
-int PlayMusicQueued(int musnum) {
+long PlayMusicQueued(long musnum) {
 
   // Just get the queue size
   if (musnum < 0)
@@ -12739,7 +12739,7 @@ int get_but_pic(GUIMain*guo,int indx) {
   return guibuts[guo->objrefptr[indx] & 0x000ffff].pic;
   }
 
-void ClaimEvent() {
+long ClaimEvent() {
   if (eventClaimed == EVENT_NONE)
     quit("!ClaimEvent: no event to claim");
 
@@ -13436,7 +13436,7 @@ void _display_at(int xx,int yy,int wii,char*todis,int blocking,int asspch, int i
     stop_speech();
 }
 
-void SetTextWindowGUI (int guinum) {
+long SetTextWindowGUI (long guinum) {
   if ((guinum < -1) | (guinum >= game.numgui))
     quit("!SetTextWindowGUI: invalid GUI number");
 
@@ -13453,7 +13453,7 @@ void SetTextWindowGUI (int guinum) {
 
 
 
-void RemoveOverlay(int ovrid) {
+long RemoveOverlay(long ovrid) {
   if (find_overlay_of_type(ovrid) < 0) quit("!RemoveOverlay: invalid overlay id passed");
   remove_screen_overlay(ovrid);
 }
@@ -13462,7 +13462,7 @@ void Overlay_Remove(ScriptOverlay *sco) {
   sco->Remove();
 }
 
-int CreateGraphicOverlay(int xx,int yy,int slott,int trans) {
+long CreateGraphicOverlay(long xx,long yy,long slott,long trans) {
   multiply_up_coordinates(&xx, &yy);
 
   block screeno=create_bitmap_ex(final_col_dep, spritewidth[slott],spriteheight[slott]);
@@ -13576,7 +13576,7 @@ void Overlay_SetY(ScriptOverlay *scover, int newy) {
   screenover[ovri].y = multiply_up_coordinate(newy);
 }
 
-void MoveOverlay(int ovrid, int newx,int newy) {
+long MoveOverlay(long ovrid,long newx,long newy) {
   multiply_up_coordinates(&newx, &newy);
   
   int ovri=find_overlay_of_type(ovrid);
@@ -13585,7 +13585,7 @@ void MoveOverlay(int ovrid, int newx,int newy) {
   screenover[ovri].y=newy;
 }
 
-int IsOverlayValid(int ovrid) {
+long IsOverlayValid(long ovrid) {
   if (find_overlay_of_type(ovrid) < 0)
     return 0;
 
@@ -13790,7 +13790,7 @@ void stop_speech() {
     }
   }
 }
-void SetSpeechVolume(int newvol) {
+long SetSpeechVolume(long newvol) {
   if ((newvol<0) | (newvol>255))
     quit("!SetSpeechVolume: invalid volume - must be from 0-255");
 
@@ -13800,30 +13800,30 @@ void SetSpeechVolume(int newvol) {
   play.speech_volume = newvol;
   }
 
-void SetSpeechFont (int fontnum) {
+long SetSpeechFont (long fontnum) {
   if ((fontnum < 0) || (fontnum >= game.numfonts))
     quit("!SetSpeechFont: invalid font number.");
   play.speech_font = fontnum;
   }
-void SetNormalFont (int fontnum) {
+long SetNormalFont (long fontnum) {
   if ((fontnum < 0) || (fontnum >= game.numfonts))
     quit("!SetNormalFont: invalid font number.");
   play.normal_font = fontnum;
   }
-int Game_GetSpeechFont() {
+long Game_GetSpeechFont() {
   return play.speech_font;
 }
-int Game_GetNormalFont() {
+long Game_GetNormalFont() {
   return play.normal_font;
 }
 
-void SetSpeechStyle (int newstyle) {
+long SetSpeechStyle (long newstyle) {
   if ((newstyle < 0) || (newstyle > 3))
     quit("!SetSpeechStyle: must use a SPEECH_* constant as parameter");
   game.options[OPT_SPEECHTYPE] = newstyle;
 }
 
-void __scr_play_speech(int who, int which) {
+long __scr_play_speech(long who,long which) {
   // *** implement this - needs to call stop_speech as well
   // to reset the volume
   quit("PlaySpeech not yet implemented");
@@ -13832,7 +13832,7 @@ void __scr_play_speech(int who, int which) {
 // 0 = text only
 // 1 = voice & text
 // 2 = voice only
-void SetVoiceMode (int newmod) {
+long SetVoiceMode (long newmod) {
   if ((newmod < 0) | (newmod > 2))
     quit("!SetVoiceMode: invalid mode number (must be 0,1,2)");
   // If speech is turned off, store the mode anyway in case the
@@ -13843,13 +13843,13 @@ void SetVoiceMode (int newmod) {
     play.want_speech = newmod;
 }
 
-int IsVoxAvailable() {
+long IsVoxAvailable() {
   if (play.want_speech < 0)
     return 0;
   return 1;
 }
 
-int IsMusicVoxAvailable () {
+long IsMusicVoxAvailable () {
   return play.seperate_music_lib;
 }
 
@@ -14319,7 +14319,7 @@ void DisplaySpeechAt (int xx, int yy, int wii, int aschar, char*spch) {
   _displayspeech (get_translation(spch), aschar, xx, yy, wii, 0);
 }
 
-void SetGlobalInt(int index,int valu) {
+long SetGlobalInt(long index,long valu) {
   if ((index<0) | (index>=MAXGSVALUES))
     quit("!SetGlobalInt: invalid index");
 
@@ -14329,7 +14329,7 @@ void SetGlobalInt(int index,int valu) {
 
   play.globalscriptvars[index]=valu;
 }
-int GetGlobalInt(int index) {
+long GetGlobalInt(long index) {
   if ((index<0) | (index>=MAXGSVALUES))
     quit("!GetGlobalInt: invalid index");
   return play.globalscriptvars[index];
@@ -14358,7 +14358,7 @@ const char* Game_GetGlobalStrings(int index) {
 }
 
 
-void SetScreenTransition(int newtrans) {
+long SetScreenTransition(long newtrans) {
   if ((newtrans < 0) || (newtrans > FADE_LAST))
     quit("!SetScreenTransition: invalid transition type");
 
@@ -14367,7 +14367,7 @@ void SetScreenTransition(int newtrans) {
   DEBUG_CONSOLE("Screen transition changed");
 }
 
-void SetNextScreenTransition(int newtrans) {
+long SetNextScreenTransition(long newtrans) {
   if ((newtrans < 0) || (newtrans > FADE_LAST))
     quit("!SetNextScreenTransition: invalid transition type");
 
@@ -14376,7 +14376,7 @@ void SetNextScreenTransition(int newtrans) {
   DEBUG_CONSOLE("SetNextScreenTransition engaged");
 }
 
-void SetFadeColor(int red, int green, int blue) {
+long SetFadeColor(long red,long green,long blue) {
   if ((red < 0) || (red > 255) || (green < 0) || (green > 255) ||
       (blue < 0) || (blue > 255))
     quit("!SetFadeColor: Red, Green and Blue must be 0-255");
@@ -14391,7 +14391,7 @@ void SetFadeColor(int red, int green, int blue) {
 // 2 = can't skip at all
 // 3 = only on keypress, no auto timer
 // 4 = mouseclick only
-void SetSkipSpeech (int newval) {
+long SetSkipSpeech (long newval) {
   if ((newval < 0) || (newval > 4))
     quit("!SetSkipSpeech: invalid skip mode specified (0-4)");
 
@@ -14645,7 +14645,7 @@ const char* Game_GetGlobalMessages(int index) {
   return CreateNewScriptString(buffer);
 }
 
-void DisplayMessageAtY(int msnum, int ypos) {
+long DisplayMessageAtY(long msnum,long ypos) {
   char msgbufr[3001];
   if (msnum>=500) { //quit("global message requseted, nto yet supported");
     get_message_text (msnum, msgbufr);
@@ -14691,7 +14691,7 @@ void DisplayMessageAtY(int msnum, int ypos) {
 
 }
 
-void DisplayMessage(int msnum) {
+long DisplayMessage(long msnum) {
   DisplayMessageAtY (msnum, -1);
 }
 
@@ -14699,7 +14699,7 @@ void DisplayMessage(int msnum) {
 #define RAW_START() block oldabuf=abuf; abuf=thisroom.ebscene[play.bg_frame]; play.raw_modified[play.bg_frame] = 1
 #define RAW_END() abuf = oldabuf
 // RawSaveScreen: copy the current screen to a backup bitmap
-void RawSaveScreen () {
+long RawSaveScreen () {
   if (raw_saved_screen != NULL)
     wfreeblock(raw_saved_screen);
   block source = thisroom.ebscene[play.bg_frame];
@@ -14709,7 +14709,7 @@ void RawSaveScreen () {
 // RawRestoreScreen: copy backup bitmap back to screen; we
 // deliberately don't free the block cos they can multiple restore
 // and it gets freed on room exit anyway
-void RawRestoreScreen() {
+long RawRestoreScreen() {
   if (raw_saved_screen == NULL) {
     debug_log("RawRestoreScreen: unable to restore, since the screen hasn't been saved previously.");
     return;
@@ -14720,7 +14720,7 @@ void RawRestoreScreen() {
   mark_current_background_dirty();
 }
 // Restores the backup bitmap, but tints it to the specified level
-void RawRestoreScreenTinted(int red, int green, int blue, int opacity) {
+long RawRestoreScreenTinted(long red,long green,long blue,long opacity) {
   if (raw_saved_screen == NULL) {
     debug_log("RawRestoreScreenTinted: unable to restore, since the screen hasn't been saved previously.");
     return;
@@ -14738,7 +14738,7 @@ void RawRestoreScreenTinted(int red, int green, int blue, int opacity) {
   mark_current_background_dirty();
 }
 
-void RawDrawFrameTransparent (int frame, int translev) {
+long RawDrawFrameTransparent (long frame,long translev) {
   if ((frame < 0) || (frame >= thisroom.num_bscenes) ||
       (translev < 0) || (translev > 99))
     quit("!RawDrawFrameTransparent: invalid parameter (transparency must be 0-99, frame a valid BG frame)");
@@ -14764,21 +14764,21 @@ void RawDrawFrameTransparent (int frame, int translev) {
   RAW_END();
 }
 
-void RawClear (int clr) {
+long RawClear (long clr) {
   play.raw_modified[play.bg_frame] = 1;
   clr = get_col8_lookup(clr);
   clear_to_color (thisroom.ebscene[play.bg_frame], clr);
   invalidate_screen();
   mark_current_background_dirty();
 }
-void RawSetColor (int clr) {
+long RawSetColor (long clr) {
   push_screen();
   wsetscreen(thisroom.ebscene[play.bg_frame]);
   // set the colour at the appropriate depth for the background
   play.raw_color = get_col8_lookup(clr);
   pop_screen();
 }
-void RawSetColorRGB(int red, int grn, int blu) {
+long RawSetColorRGB(long red,long grn,long blu) {
   if ((red < 0) || (red > 255) || (grn < 0) || (grn > 255) ||
       (blu < 0) || (blu > 255))
     quit("!RawSetColorRGB: colour values must be 0-255");
@@ -14807,7 +14807,7 @@ void RawPrint (int xx, int yy, char*texx, ...) {
   mark_current_background_dirty();
   RAW_END();
 }
-void RawPrintMessageWrapped (int xx, int yy, int wid, int font, int msgm) {
+long RawPrintMessageWrapped (long xx,long yy,long wid,long font,long msgm) {
   char displbuf[3000];
   int texthit = wgetfontheight(font);
   multiply_up_coordinates(&xx, &yy);
@@ -14844,12 +14844,12 @@ void RawDrawImageCore(int xx, int yy, int slot) {
   RAW_END();
 }
 
-void RawDrawImage(int xx, int yy, int slot) {
+long RawDrawImage(long xx,long yy,long slot) {
   multiply_up_coordinates(&xx, &yy);
   RawDrawImageCore(xx, yy, slot);
 }
 
-void RawDrawImageOffset(int xx, int yy, int slot) {
+long RawDrawImageOffset(long xx,long yy,long slot) {
 
   if ((current_screen_resolution_multiplier == 1) && (game.default_resolution >= 3)) {
     // running a 640x400 game at 320x200, adjust
@@ -14865,7 +14865,7 @@ void RawDrawImageOffset(int xx, int yy, int slot) {
   RawDrawImageCore(xx, yy, slot);
 }
 
-void RawDrawImageTransparent(int xx, int yy, int slot, int trans) {
+long RawDrawImageTransparent(long xx,long yy,long slot,long trans) {
   if ((trans < 0) || (trans > 100))
     quit("!RawDrawImageTransparent: invalid transparency setting");
 
@@ -14876,7 +14876,7 @@ void RawDrawImageTransparent(int xx, int yy, int slot, int trans) {
 
   update_polled_stuff();  // this operation can be slow so stop music skipping
 }
-void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
+long RawDrawImageResized(long xx,long yy,long gotSlot,long width,long height) {
   if ((gotSlot < 0) || (gotSlot >= MAX_SPRITES) || (spriteset[gotSlot] == NULL))
     quit("!RawDrawImageResized: invalid sprite slot number specified");
   // very small, don't draw it
@@ -14904,7 +14904,7 @@ void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
   update_polled_stuff();  // this operation can be slow so stop music skipping
   RAW_END();
 }
-void RawDrawLine (int fromx, int fromy, int tox, int toy) {
+long RawDrawLine (long fromx,long fromy,long tox,long toy) {
   multiply_up_coordinates(&fromx, &fromy);
   multiply_up_coordinates(&tox, &toy);
 
@@ -14918,7 +14918,7 @@ void RawDrawLine (int fromx, int fromy, int tox, int toy) {
   invalidate_screen();
   mark_current_background_dirty();
 }
-void RawDrawCircle (int xx, int yy, int rad) {
+long RawDrawCircle (long xx,long yy,long rad) {
   multiply_up_coordinates(&xx, &yy);
   rad = multiply_up_coordinate(rad);
 
@@ -14927,7 +14927,7 @@ void RawDrawCircle (int xx, int yy, int rad) {
   invalidate_screen();
   mark_current_background_dirty();
 }
-void RawDrawRectangle(int x1, int y1, int x2, int y2) {
+long RawDrawRectangle(long x1,long y1,long x2,long y2) {
   play.raw_modified[play.bg_frame] = 1;
   multiply_up_coordinates(&x1, &y1);
   multiply_up_coordinates_round_up(&x2, &y2);
@@ -14936,7 +14936,7 @@ void RawDrawRectangle(int x1, int y1, int x2, int y2) {
   invalidate_screen();
   mark_current_background_dirty();
 }
-void RawDrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
+long RawDrawTriangle(long x1,long y1,long x2,long y2,long x3,long y3) {
   play.raw_modified[play.bg_frame] = 1;
   multiply_up_coordinates(&x1, &y1);
   multiply_up_coordinates(&x2, &y2);
@@ -14973,7 +14973,7 @@ int SaveScreenShot(char*namm) {
   return 1;  // successful
 }
 
-void SetObjectView(int obn,int vii) {
+long SetObjectView(long obn,long vii) {
   if (!is_valid_object(obn)) quit("!SetObjectView: invalid object number specified");
   DEBUG_CONSOLE("Object %d set to view %d", obn, vii);
   if ((vii < 1) || (vii > game.numviews)) {
@@ -14991,7 +14991,7 @@ void SetObjectView(int obn,int vii) {
   objs[obn].num = views[vii].loops[0].frames[0].pic;
   }
 
-void SetObjectFrame(int obn,int viw,int lop,int fra) {
+long SetObjectFrame(long obn,long viw,long lop,long fra) {
   if (!is_valid_object(obn)) quit("!SetObjectFrame: invalid object number specified");
   viw--;
   if (viw>=game.numviews) quit("!SetObjectFrame: invalid view number used");
@@ -15023,7 +15023,7 @@ void Object_SetView(ScriptObject *objj, int view, int loop, int frame) {
 }
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
-void SetObjectTransparency(int obn,int trans) {
+long SetObjectTransparency(long obn,long trans) {
   if (!is_valid_object(obn)) quit("!SetObjectTransparent: invalid object number specified");
   if ((trans < 0) || (trans > 100)) quit("!SetObjectTransparent: transparency value must be between 0 and 100");
   if (trans == 0)
@@ -15051,7 +15051,7 @@ int Object_GetTransparency(ScriptObject *objj) {
 
 }
 
-void SetObjectBaseline (int obn, int basel) {
+long SetObjectBaseline (long obn,long basel) {
   if (!is_valid_object(obn)) quit("!SetObjectBaseline: invalid object number specified");
   // baseline has changed, invalidate the cache
   if (objs[obn].baseline != basel) {
@@ -15064,7 +15064,7 @@ void Object_SetBaseline(ScriptObject *objj, int basel) {
   SetObjectBaseline(objj->id, basel);
 }
 
-int GetObjectBaseline(int obn) {
+long GetObjectBaseline(long obn) {
   if (!is_valid_object(obn)) quit("!GetObjectBaseline: invalid object number specified");
 
   if (objs[obn].baseline < 1)
@@ -15077,28 +15077,28 @@ int Object_GetBaseline(ScriptObject *objj) {
   return GetObjectBaseline(objj->id);
 }
 
-void SetCharacterBaseline (int obn, int basel) {
+long SetCharacterBaseline (long obn,long basel) {
   if (!is_valid_character(obn)) quit("!SetCharacterBaseline: invalid object number specified");
   
   Character_SetBaseline(&game.chars[obn], basel);
 }
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
-void SetCharacterTransparency(int obn,int trans) {
+long SetCharacterTransparency(long obn,long trans) {
   if (!is_valid_character(obn))
     quit("!SetCharTransparent: invalid character number specified");
   
   Character_SetTransparency(&game.chars[obn], trans);
 }
 
-void scAnimateCharacter (int chh, int loopn, int sppd, int rept) {
+long scAnimateCharacter (long chh,long loopn,long sppd,long rept) {
   if (!is_valid_character(chh))
     quit("AnimateCharacter: invalid character");
 
   animate_character(&game.chars[chh], loopn, sppd, rept);
 }
 
-void AnimateCharacterEx(int chh, int loopn, int sppd, int rept, int direction, int blocking) {
+long AnimateCharacterEx(long chh,long loopn,long sppd,long rept,long direction,long blocking) {
   if ((direction < 0) || (direction > 1))
     quit("!AnimateCharacterEx: invalid direction");
   if (!is_valid_character(chh))
@@ -15151,7 +15151,7 @@ void animate_character(CharacterInfo *chap, int loopn,int sppd,int rept, int noi
   CheckViewFrameForCharacter(chap);
 }
 
-void AnimateObjectEx(int obn,int loopn,int spdd,int rept, int direction, int blocking) {
+long AnimateObjectEx(long obn,long loopn,long spdd,long rept,long direction,long blocking) {
   if (obn>=MANOBJNUM) {
     scAnimateCharacter(obn - 100,loopn,spdd,rept);
     return;
@@ -15216,11 +15216,11 @@ void Object_StopAnimating(ScriptObject *objj) {
   }
 }
 
-void AnimateObject(int obn,int loopn,int spdd,int rept) {
+long AnimateObject(long obn,long loopn,long spdd,long rept) {
   AnimateObjectEx (obn, loopn, spdd, rept, 0, 0);
 }
 
-void MergeObject(int obn) {
+long MergeObject(long obn) {
   if (!is_valid_object(obn)) quit("!MergeObject: invalid object specified");
   int theHeight;
 
@@ -15248,7 +15248,7 @@ void Object_MergeIntoBackground(ScriptObject *objj) {
   MergeObject(objj->id);
 }
 
-void StopObjectMoving(int objj) {
+long StopObjectMoving(long objj) {
   if (!is_valid_object(objj))
     quit("!StopObjectMoving: invalid object number");
   objs[objj].moving = 0;
@@ -15260,7 +15260,7 @@ void Object_StopMoving(ScriptObject *objj) {
   StopObjectMoving(objj->id);
 }
 
-void ObjectOff(int obn) {
+long ObjectOff(long obn) {
   if (!is_valid_object(obn)) quit("!ObjectOff: invalid object specified");
   // don't change it if on == 2 (merged)
   if (objs[obn].on == 1) {
@@ -15270,7 +15270,7 @@ void ObjectOff(int obn) {
   }
 }
 
-void ObjectOn(int obn) {
+long ObjectOn(long obn) {
   if (!is_valid_object(obn)) quit("!ObjectOn: invalid object specified");
   if (objs[obn].on == 0) {
     objs[obn].on = 1;
@@ -15285,7 +15285,7 @@ void Object_SetVisible(ScriptObject *objj, int onoroff) {
     ObjectOff(objj->id);
 }
 
-int IsObjectOn (int objj) {
+long IsObjectOn (long objj) {
   if (!is_valid_object(objj)) quit("!IsObjectOn: invalid object number");
   
   // ==1 is on, ==2 is merged into background
@@ -15317,7 +15317,7 @@ int Object_GetVisible(ScriptObject *objj) {
   return IsObjectOn(objj->id);
 }
 
-void SetObjectGraphic(long obn,long slott) {
+long SetObjectGraphic(long obn,long slott) {
   if (!is_valid_object(obn)) quit("!SetObjectGraphic: invalid object specified");
 
   if (objs[obn].num != slott) {
@@ -15334,7 +15334,7 @@ void Object_SetGraphic(ScriptObject *objj, int slott) {
   SetObjectGraphic(objj->id, slott);
 }
 
-int GetObjectGraphic(int obn) {
+long GetObjectGraphic(long obn) {
   if (!is_valid_object(obn)) quit("!GetObjectGraphic: invalid object specified");
   return objs[obn].num;
 }
@@ -15374,7 +15374,7 @@ int GetThingRect(int thing, Rect *rect) {
   return 1;
 }
 
-int AreThingsOverlapping(int thing1, int thing2) {
+long AreThingsOverlapping(long thing1,long thing2) {
   Rect r1, r2;
   // get the bounding rectangles, and return 0 if the object/char
   // is currently turned off
@@ -15404,7 +15404,7 @@ int AreThingsOverlapping(int thing1, int thing2) {
   return 0;
 }
 
-int AreObjectsColliding(int obj1,int obj2) {
+long AreObjectsColliding(long obj1,long obj2) {
   if ((!is_valid_object(obj1)) | (!is_valid_object(obj2)))
     quit("!AreObjectsColliding: invalid object specified");
 
@@ -15455,7 +15455,7 @@ block GetObjectImage(int obj, int *isFlipped)
   return spriteset[objs[obj].num];
 }
 
-int AreCharObjColliding(int charid,int objid) {
+long AreCharObjColliding(long charid,long objid) {
   if (!is_valid_character(charid))
     quit("!AreCharObjColliding: invalid character");
   if (!is_valid_object(objid))
@@ -15464,7 +15464,7 @@ int AreCharObjColliding(int charid,int objid) {
   return Character_IsCollidingWithObject(&game.chars[charid], &scrObj[objid]);
 }
 
-int AreCharactersColliding(int cchar1,int cchar2) {
+long AreCharactersColliding(long cchar1,long cchar2) {
   if (!is_valid_character(cchar1))
     quit("!AreCharactersColliding: invalid char1");
   if (!is_valid_character(cchar2))
@@ -15473,7 +15473,7 @@ int AreCharactersColliding(int cchar1,int cchar2) {
   return Character_IsCollidingWithChar(&game.chars[cchar1], &game.chars[cchar2]);
 }
 
-void scrWait(int nloops) {
+long scrWait(long nloops) {
   if (nloops < 1)
     quit("!Wait: must wait at least 1 loop");
 
@@ -15482,7 +15482,7 @@ void scrWait(int nloops) {
   do_main_cycle(UNTIL_MOVEEND,(long)&play.wait_counter);
   }
 
-int WaitKey(int nloops) {
+long WaitKey(long nloops) {
   if (nloops < 1)
     quit("!WaitKey: must wait at least 1 loop");
 
@@ -15494,7 +15494,7 @@ int WaitKey(int nloops) {
   return 0;
 }
 
-int WaitMouseKey(int nloops) {
+long WaitMouseKey(long nloops) {
   if (nloops < 1)
     quit("!WaitMouseKey: must wait at least 1 loop");
 
@@ -15587,7 +15587,7 @@ int DateTime_GetRawTime(ScriptDateTime *sdt) {
   return sdt->rawUnixTime;
 }
 
-int sc_GetTime(int whatti) {
+long sc_GetTime(long whatti) {
   ScriptDateTime *sdt = DateTime_Now_Core();
   int returnVal;
 
@@ -15604,7 +15604,7 @@ int sc_GetTime(int whatti) {
   return returnVal;
 }
 
-int GetRawTime () {
+long GetRawTime () {
   return time(NULL);
 }
 
@@ -15725,7 +15725,7 @@ static void display_switch_in() {
   platform->DisplaySwitchIn();
 }
 
-void SetMultitasking (int mode) {
+long SetMultitasking (long mode) {
   if ((mode < 0) | (mode > 1))
     quit("!SetMultitasking: invalid mode parameter");
 
@@ -15797,7 +15797,7 @@ int fli_callback(...) {
   return check_if_user_input_should_cancel_video();
 }
 
-void play_flc_file(int numb,int playflags) {
+long play_flc_file(long numb,long playflags) {
   color oldpal[256];
 
   // AGS 2.x: If the screen is faded out, fade in again when playing a movie.
@@ -16082,7 +16082,7 @@ void scrPlayVideo(const char* name, int skip, int flags) {
 }
 
 // returns -1 on failure, channel number on success
-int PlaySoundEx(int val1, int channel) {
+long PlaySoundEx(long val1,long channel) {
 
   if (debug_flags & DBG_NOSFX)
     return -1;
@@ -16132,7 +16132,7 @@ int PlaySoundEx(int val1, int channel) {
   return channel;
 }
 
-void StopAllSounds(int evenAmbient) {
+long StopAllSounds(long evenAmbient) {
   // backwards-compatible hack -- stop Type 3 (default Sound Type)
   Game_StopAudio(3);
 
@@ -16178,11 +16178,11 @@ int play_sound_priority (int val1, int priority) {
   return -1;
 }
 
-int play_sound(int val1) {
+long play_sound(long val1) {
   return play_sound_priority(val1, 10);
 }
 
-void add_inventory(int inum) {
+long add_inventory(long inum) {
   if ((inum < 0) || (inum >= MAX_INV))
     quit("!AddInventory: invalid inventory number");
 
@@ -16191,7 +16191,7 @@ void add_inventory(int inum) {
   play.obsolete_inv_numorder = charextra[game.playercharacter].invorder_count;
 }
 
-void lose_inventory(int inum) {
+long lose_inventory(long inum) {
   if ((inum < 0) || (inum >= MAX_INV))
     quit("!LoseInventory: invalid inventory number");
 
@@ -16200,7 +16200,7 @@ void lose_inventory(int inum) {
   play.obsolete_inv_numorder = charextra[game.playercharacter].invorder_count;
 }
 
-void AddInventoryToCharacter(int charid, int inum) {
+long AddInventoryToCharacter(long charid,long inum) {
   if (!is_valid_character(charid))
     quit("!AddInventoryToCharacter: invalid character specified");
   if ((inum < 1) || (inum >= game.numinvitems))
@@ -16209,7 +16209,7 @@ void AddInventoryToCharacter(int charid, int inum) {
   Character_AddInventory(&game.chars[charid], &scrInv[inum], SCR_NO_VALUE);
 }
 
-void LoseInventoryFromCharacter(int charid, int inum) {
+long LoseInventoryFromCharacter(long charid,long inum) {
   if (!is_valid_character(charid))
     quit("!LoseInventoryFromCharacter: invalid character specified");
   if ((inum < 1) || (inum >= game.numinvitems))
@@ -16218,7 +16218,7 @@ void LoseInventoryFromCharacter(int charid, int inum) {
   Character_LoseInventory(&game.chars[charid], &scrInv[inum]);
 }
 
-void RunDialog(int tum) {
+long RunDialog(long tum) {
   if ((tum<0) | (tum>=game.numdialog))
     quit("!RunDialog: invalid topic number specified");
 
@@ -16238,7 +16238,7 @@ void RunDialog(int tum) {
     do_conversation(tum);
 }
 
-int GetGUIAt (int xx,int yy) {
+long GetGUIAt (long xx,long yy) {
   multiply_up_coordinates(&xx, &yy);
   
   int aa, ll;
@@ -16279,7 +16279,7 @@ GUIObject *GetGUIControlAtLocation(int xx, int yy) {
   return guis[guinum].objs[toret];
 }
 
-int GetGUIObjectAt (int xx, int yy) {
+long GetGUIObjectAt (long xx,long yy) {
   GUIObject *toret = GetGUIControlAtLocation(xx, yy);
   if (toret == NULL)
     return -1;
@@ -16288,7 +16288,7 @@ int GetGUIObjectAt (int xx, int yy) {
 }
 
 
-int IsGUIOn (int guinum) {
+long IsGUIOn (long guinum) {
   if ((guinum < 0) || (guinum >= game.numgui))
     quit("!IsGUIOn: invalid GUI number specified");
   return (guis[guinum].on >= 1) ? 1 : 0;
@@ -16354,7 +16354,7 @@ int is_pos_in_sprite(int xx,int yy,int arx,int ary, block sprit, int spww,int sp
 // Used for deciding whether a char or obj was closer
 int char_lowest_yp, obj_lowest_yp;
 
-int GetObjectAt(int xx,int yy) {
+long GetObjectAt(long xx,long yy) {
   int aa,bestshotyp=-1,bestshotwas=-1;
   // translate screen co-ordinates to room co-ordinates
   xx += divide_down_coordinate(offsetx);
@@ -16394,7 +16394,7 @@ ScriptObject *GetObjectAtLocation(int xx, int yy) {
   return &scrObj[hsnum];
 }
 
-void RunObjectInteraction (int aa, int mood) {
+long RunObjectInteraction (long aa,long mood) {
   if (!is_valid_object(aa))
     quit("!RunObjectInteraction: invalid object number for current room");
   int passon=-1,cdata=-1;
@@ -16481,7 +16481,7 @@ int is_pos_on_character(int xx,int yy) {
   return lowestwas;
 }
 
-int GetCharacterAt (int xx, int yy) {
+long GetCharacterAt (long xx,long yy) {
   xx += divide_down_coordinate(offsetx);
   yy += divide_down_coordinate(offsety);
   return is_pos_on_character(xx,yy);
@@ -16494,7 +16494,7 @@ CharacterInfo *GetCharacterAtLocation(int xx, int yy) {
   return &game.chars[hsnum];
 }
 
-void RunCharacterInteraction (int cc, int mood) {
+long RunCharacterInteraction (long cc,long mood) {
   if (!is_valid_character(cc))
     quit("!RunCharacterInteraction: invalid character");
 
@@ -16541,7 +16541,7 @@ int check_click_on_character(int xx,int yy,int mood) {
 }
 
 
-int GetObjectX (int objj) {
+long GetObjectX (long objj) {
   if (!is_valid_object(objj)) quit("!GetObjectX: invalid object number");
   return objs[objj].x;
 }
@@ -16550,7 +16550,7 @@ int Object_GetX(ScriptObject *objj) {
   return GetObjectX(objj->id);
 }
 
-int GetObjectY (int objj) {
+long GetObjectY (long objj) {
   if (!is_valid_object(objj)) quit("!GetObjectY: invalid object number");
   return objs[objj].y;
 }
@@ -16559,7 +16559,7 @@ int Object_GetY(ScriptObject *objj) {
   return GetObjectY(objj->id);
 }
 
-int IsObjectAnimating(int objj) {
+long IsObjectAnimating(long objj) {
   if (!is_valid_object(objj)) quit("!IsObjectAnimating: invalid object number");
   return (objs[objj].cycling != 0) ? 1 : 0;
 }
@@ -16568,7 +16568,7 @@ int Object_GetAnimating(ScriptObject *objj) {
   return IsObjectAnimating(objj->id);
 }
 
-int IsObjectMoving(int objj) {
+long IsObjectMoving(long objj) {
   if (!is_valid_object(objj)) quit("!IsObjectMoving: invalid object number");
   return (objs[objj].moving > 0) ? 1 : 0;
 }
@@ -16655,7 +16655,7 @@ block prepare_walkable_areas (int sourceChar) {
   return walkable_areas_temp;
 }
 
-void SetObjectPosition(int objj, int tox, int toy) {
+long SetObjectPosition(long objj,long tox,long toy) {
   if (!is_valid_object(objj))
     quit("!SetObjectPosition: invalid object number");
 
@@ -16734,7 +16734,7 @@ void move_object(int objj,int tox,int toy,int spee,int ignwal) {
 
 
 
-void RunRegionInteraction (int regnum, int mood) {
+long RunRegionInteraction (long regnum,long mood) {
   if ((regnum < 0) || (regnum >= MAX_REGIONS))
     quit("!RunRegionInteraction: invalid region speicfied");
   if ((mood < 0) || (mood > 2))
@@ -16767,7 +16767,7 @@ void Region_RunInteraction(ScriptRegion *ssr, int mood) {
   RunRegionInteraction(ssr->id, mood);
 }
 
-void RunHotspotInteraction (int hotspothere, int mood) {
+long RunHotspotInteraction (long hotspothere,long mood) {
 
   int passon=-1,cdata=-1;
   if (mood==MODE_TALK) passon=4;
@@ -16822,7 +16822,7 @@ void Hotspot_RunInteraction (ScriptHotspot *hss, int mood) {
   RunHotspotInteraction(hss->id, mood);
 }
 
-void ProcessClick(int xx,int yy,int mood) {
+long ProcessClick(long xx,long yy,long mood) {
   getloctype_throughgui = 1;
   int loctype = GetLocationType (xx, yy);
   xx += divide_down_coordinate(offsetx); 
@@ -16861,32 +16861,32 @@ void ProcessClick(int xx,int yy,int mood) {
 
 // ** GetGameParameter replacement functions
 
-int Game_GetInventoryItemCount() {
+long Game_GetInventoryItemCount() {
   // because of the dummy item 0, this is always one higher than it should be
   return game.numinvitems - 1;
 }
 
-int Game_GetFontCount() {
+long Game_GetFontCount() {
   return game.numfonts;
 }
 
-int Game_GetMouseCursorCount() {
+long Game_GetMouseCursorCount() {
   return game.numcursors;
 }
 
-int Game_GetCharacterCount() {
+long Game_GetCharacterCount() {
   return game.numcharacters;
 }
 
-int Game_GetGUICount() {
+long Game_GetGUICount() {
   return game.numgui;
 }
 
-int Game_GetViewCount() {
+long Game_GetViewCount() {
   return game.numviews;
 }
 
-int Game_GetUseNativeCoordinates() {
+long Game_GetUseNativeCoordinates() {
   if (game.options[OPT_NATIVECOORDINATES] != 0)
   {
     return 1;
@@ -16894,7 +16894,7 @@ int Game_GetUseNativeCoordinates() {
   return 0;
 }
 
-int Game_GetSpriteWidth(int spriteNum) {
+long Game_GetSpriteWidth(long spriteNum) {
   if ((spriteNum < 0) || (spriteNum >= MAX_SPRITES))
     return 0;
 
@@ -16904,7 +16904,7 @@ int Game_GetSpriteWidth(int spriteNum) {
   return divide_down_coordinate(spritewidth[spriteNum]);
 }
 
-int Game_GetSpriteHeight(int spriteNum) {
+long Game_GetSpriteHeight(long spriteNum) {
   if ((spriteNum < 0) || (spriteNum >= MAX_SPRITES))
     return 0;
 
@@ -16914,14 +16914,14 @@ int Game_GetSpriteHeight(int spriteNum) {
   return divide_down_coordinate(spriteheight[spriteNum]);
 }
 
-int Game_GetLoopCountForView(int viewNumber) {
+long Game_GetLoopCountForView(long viewNumber) {
   if ((viewNumber < 1) || (viewNumber > game.numviews))
     quit("!GetGameParameter: invalid view specified");
 
   return views[viewNumber - 1].numLoops;
 }
 
-int Game_GetRunNextSettingForLoop(int viewNumber, int loopNumber) {
+long Game_GetRunNextSettingForLoop(long viewNumber,long loopNumber) {
   if ((viewNumber < 1) || (viewNumber > game.numviews))
     quit("!GetGameParameter: invalid view specified");
   if ((loopNumber < 0) || (loopNumber >= views[viewNumber - 1].numLoops))
@@ -16930,7 +16930,7 @@ int Game_GetRunNextSettingForLoop(int viewNumber, int loopNumber) {
   return (views[viewNumber - 1].loops[loopNumber].RunNextLoop()) ? 1 : 0;
 }
 
-int Game_GetFrameCountForLoop(int viewNumber, int loopNumber) {
+long Game_GetFrameCountForLoop(long viewNumber,long loopNumber) {
   if ((viewNumber < 1) || (viewNumber > game.numviews))
     quit("!GetGameParameter: invalid view specified");
   if ((loopNumber < 0) || (loopNumber >= views[viewNumber - 1].numLoops))
@@ -16970,39 +16970,39 @@ int Game_DoOnceOnly(const char *token) {
   return 1;
 }
 
-int Room_GetObjectCount() {
+long Room_GetObjectCount() {
   return croom->numobj;
 }
 
-int Room_GetWidth() {
+long Room_GetWidth() {
   return thisroom.width;
 }
 
-int Room_GetHeight() {
+long Room_GetHeight() {
   return thisroom.height;
 }
 
-int Room_GetColorDepth() {
+long Room_GetColorDepth() {
   return bitmap_color_depth(thisroom.ebscene[0]);
 }
 
-int Room_GetLeftEdge() {
+long Room_GetLeftEdge() {
   return thisroom.left;
 }
 
-int Room_GetRightEdge() {
+long Room_GetRightEdge() {
   return thisroom.right;
 }
 
-int Room_GetTopEdge() {
+long Room_GetTopEdge() {
   return thisroom.top;
 }
 
-int Room_GetBottomEdge() {
+long Room_GetBottomEdge() {
   return thisroom.bottom;
 }
 
-int Room_GetMusicOnLoad() {
+long Room_GetMusicOnLoad() {
   return thisroom.options[ST_TUNE];
 }
 
@@ -17087,7 +17087,7 @@ int ViewFrame_GetFrame(ScriptViewFrame *svf) {
 #define GP_NUMINVITEMS   12
 #define GP_ISFRAMEFLIPPED 13
 
-int GetGameParameter (int parm, int data1, int data2, int data3) {
+long GetGameParameter (long parm,long data1,long data2,long data3) {
   switch (parm) {
    case GP_SPRITEWIDTH:
      return Game_GetSpriteWidth(data1);
@@ -17139,27 +17139,27 @@ int GetGameParameter (int parm, int data1, int data2, int data3) {
 }
 
 
-int System_GetColorDepth() {
+long System_GetColorDepth() {
   return final_col_dep;
 }
 
-int System_GetOS() {
+long System_GetOS() {
   return scsystem.os;
 }
 
-int System_GetScreenWidth() {
+long System_GetScreenWidth() {
   return final_scrn_wid;
 }
 
-int System_GetScreenHeight() {
+long System_GetScreenHeight() {
   return final_scrn_hit;
 }
 
-int System_GetViewportHeight() {
+long System_GetViewportHeight() {
   return divide_down_coordinate(scrnhit);
 }
 
-int System_GetViewportWidth() {
+long System_GetViewportWidth() {
   return divide_down_coordinate(scrnwid);
 }
 
@@ -17167,23 +17167,23 @@ const char *System_GetVersion() {
   return CreateNewScriptString(ACI_VERSION_TEXT);
 }
 
-int System_GetHardwareAcceleration() {
+long System_GetHardwareAcceleration() {
   return gfxDriver->HasAcceleratedStretchAndFlip() ? 1 : 0;
 }
 
-int System_GetNumLock() {
+long System_GetNumLock() {
   return (key_shifts & KB_NUMLOCK_FLAG) ? 1 : 0;
 }
 
-int System_GetCapsLock() {
+long System_GetCapsLock() {
   return (key_shifts & KB_CAPSLOCK_FLAG) ? 1 : 0;
 }
 
-int System_GetScrollLock() {
+long System_GetScrollLock() {
   return (key_shifts & KB_SCROLOCK_FLAG) ? 1 : 0;
 }
 
-void System_SetNumLock(int newValue) {
+long System_SetNumLock(long newValue) {
   // doesn't work ... maybe allegro doesn't implement this on windows
   int ledState = key_shifts & (KB_SCROLOCK_FLAG | KB_CAPSLOCK_FLAG);
   if (newValue)
@@ -17193,30 +17193,30 @@ void System_SetNumLock(int newValue) {
   set_leds(ledState);
 }
 
-int System_GetVsync() {
+long System_GetVsync() {
   return scsystem.vsync;
 }
 
-void System_SetVsync(int newValue) {
+long System_SetVsync(long newValue) {
   scsystem.vsync = newValue;
 }
 
-int System_GetWindowed() {
+long System_GetWindowed() {
   if (usetup.windowed)
     return 1;
   return 0;
 }
 
 
-int System_GetSupportsGammaControl() {
+long System_GetSupportsGammaControl() {
   return gfxDriver->SupportsGammaControl();
 }
 
-int System_GetGamma() {
+long System_GetGamma() {
   return play.gamma_adjustment;
 }
 
-void System_SetGamma(int newValue) {
+long System_SetGamma(long newValue) {
   if ((newValue < 0) || (newValue > 200))
     quitprintf("!System.Gamma: value must be between 0-200 (not %d)", newValue);
 
@@ -17229,30 +17229,30 @@ void System_SetGamma(int newValue) {
   }
 }
 
-int Game_GetTextReadingSpeed() {
+long Game_GetTextReadingSpeed() {
   return play.text_speed;
 }
 
-void Game_SetTextReadingSpeed(int newTextSpeed) {
+long Game_SetTextReadingSpeed(long newTextSpeed) {
   if (newTextSpeed < 1)
     quitprintf("!Game.TextReadingSpeed: %d is an invalid speed", newTextSpeed);
 
   play.text_speed = newTextSpeed;
 }
 
-int Game_GetMinimumTextDisplayTimeMs() {
+long Game_GetMinimumTextDisplayTimeMs() {
   return play.text_min_display_time_ms;
 }
 
-void Game_SetMinimumTextDisplayTimeMs(int newTextMinTime) {
+long Game_SetMinimumTextDisplayTimeMs(long newTextMinTime) {
   play.text_min_display_time_ms = newTextMinTime;
 }
 
-int Game_GetIgnoreUserInputAfterTextTimeoutMs() {
+long Game_GetIgnoreUserInputAfterTextTimeoutMs() {
   return play.ignore_user_input_after_text_timeout_ms;
 }
 
-void Game_SetIgnoreUserInputAfterTextTimeoutMs(int newValueMs) {
+long Game_SetIgnoreUserInputAfterTextTimeoutMs(long newValueMs) {
   play.ignore_user_input_after_text_timeout_ms = newValueMs;
 }
 
@@ -17408,7 +17408,7 @@ const char* Room_GetTextProperty(const char *property) {
 
 // end custom property functions
 
-int IsInventoryInteractionAvailable (int item, int mood) {
+long IsInventoryInteractionAvailable (long item,long mood) {
   if ((item < 0) || (item >= MAX_INV))
     quit("!IsInventoryInteractionAvailable: invalid inventory number");
 
@@ -17429,7 +17429,7 @@ int InventoryItem_CheckInteractionAvailable(ScriptInvItem *iitem, int mood) {
   return IsInventoryInteractionAvailable(iitem->id, mood);
 }
 
-int IsInteractionAvailable (int xx,int yy,int mood) {
+long IsInteractionAvailable (long xx,long yy,long mood) {
   getloctype_throughgui = 1;
   int loctype = GetLocationType (xx, yy);
   xx += divide_down_coordinate(offsetx); 
@@ -17578,7 +17578,7 @@ int do_movelist_move(short*mlnum,int*xx,int*yy) {
   return need_to_fix_sprite;
   }
 
-void RemoveWalkableArea(int areanum) {
+long RemoveWalkableArea(long areanum) {
   if ((areanum<1) | (areanum>15))
     quit("!RemoveWalkableArea: invalid area number specified (1-15).");
   play.walkable_areas_on[areanum]=0;
@@ -17586,7 +17586,7 @@ void RemoveWalkableArea(int areanum) {
   DEBUG_CONSOLE("Walkable area %d removed", areanum);
 }
 
-void RestoreWalkableArea(int areanum) {
+long RestoreWalkableArea(long areanum) {
   if ((areanum<1) | (areanum>15))
     quit("!RestoreWalkableArea: invalid area number specified (1-15).");
   play.walkable_areas_on[areanum]=1;
@@ -17594,14 +17594,14 @@ void RestoreWalkableArea(int areanum) {
   DEBUG_CONSOLE("Walkable area %d restored", areanum);
 }
 
-void DisableHotspot(int hsnum) {
+long DisableHotspot(long hsnum) {
   if ((hsnum<1) | (hsnum>=MAX_HOTSPOTS))
     quit("!DisableHotspot: invalid hotspot specified");
   croom->hotspot_enabled[hsnum]=0;
   DEBUG_CONSOLE("Hotspot %d disabled", hsnum);
 }
 
-void EnableHotspot(int hsnum) {
+long EnableHotspot(long hsnum) {
   if ((hsnum<1) | (hsnum>=MAX_HOTSPOTS))
     quit("!EnableHotspot: invalid hotspot specified");
   croom->hotspot_enabled[hsnum]=1;
@@ -17623,7 +17623,7 @@ int Hotspot_GetID(ScriptHotspot *hss) {
   return hss->id;
 }
 
-void DisableRegion(int hsnum) {
+long DisableRegion(long hsnum) {
   if ((hsnum < 0) || (hsnum >= MAX_REGIONS))
     quit("!DisableRegion: invalid region specified");
 
@@ -17631,7 +17631,7 @@ void DisableRegion(int hsnum) {
   DEBUG_CONSOLE("Region %d disabled", hsnum);
 }
 
-void EnableRegion(int hsnum) {
+long EnableRegion(long hsnum) {
   if ((hsnum < 0) || (hsnum >= MAX_REGIONS))
     quit("!EnableRegion: invalid region specified");
 
@@ -17654,7 +17654,7 @@ int Region_GetID(ScriptRegion *ssr) {
   return ssr->id;
 }
 
-void DisableGroundLevelAreas(int alsoEffects) {
+long DisableGroundLevelAreas(long alsoEffects) {
   if ((alsoEffects < 0) || (alsoEffects > 1))
     quit("!DisableGroundLevelAreas: invalid parameter: must be 0 or 1");
 
@@ -17666,13 +17666,13 @@ void DisableGroundLevelAreas(int alsoEffects) {
   DEBUG_CONSOLE("Ground-level areas disabled");
 }
 
-void EnableGroundLevelAreas() {
+long EnableGroundLevelAreas() {
   play.ground_level_areas_disabled = 0;
 
   DEBUG_CONSOLE("Ground-level areas re-enabled");
 }
 
-void SetWalkBehindBase(int wa,int bl) {
+long SetWalkBehindBase(long wa,long bl) {
   if ((wa < 1) || (wa >= MAX_OBJ))
     quit("!SetWalkBehindBase: invalid walk-behind area specified");
 
@@ -17684,7 +17684,7 @@ void SetWalkBehindBase(int wa,int bl) {
   }
 }
 
-void FlipScreen(int amount) {
+long FlipScreen(long amount) {
   if ((amount<0) | (amount>3)) quit("!FlipScreen: invalid argument (0-3)");
   play.screen_flipped=amount;
 }
@@ -17726,26 +17726,26 @@ void stopmusic() {
   current_music_type = 0;
 }
 
-void scr_StopMusic() {
+long scr_StopMusic() {
   play.music_queue_size = 0;
   stopmusic();
 }
 
-void SeekMODPattern(int patnum) {
+long SeekMODPattern(long patnum) {
   if (current_music_type == MUS_MOD) {
     channels[SCHAN_MUSIC]->seek (patnum);
     DEBUG_CONSOLE("Seek MOD/XM to pattern %d", patnum);
   }
 }
 
-int Game_GetMODPattern() {
+long Game_GetMODPattern() {
   if (current_music_type == MUS_MOD) {
     return channels[SCHAN_MUSIC]->get_pos();
   }
   return -1;
 }
 
-void SeekMP3PosMillis (int posn) {
+long SeekMP3PosMillis (long posn) {
   if (current_music_type) {
     DEBUG_CONSOLE("Seek MP3/OGG to %d ms", posn);
     if (crossFading)
@@ -17755,7 +17755,7 @@ void SeekMP3PosMillis (int posn) {
   }
 }
 
-int GetMP3PosMillis () {
+long GetMP3PosMillis () {
   // in case they have "while (GetMP3PosMillis() < 5000) "
   if (play.fast_forward)
     return 999999;
@@ -17815,21 +17815,21 @@ void update_music_volume() {
   }
 }
 
-void SetMusicVolume(int newvol) {
+long SetMusicVolume(long newvol) {
   if ((newvol < -3) || (newvol > 5))
     quit("!SetMusicVolume: invalid volume number. Must be from -3 to 5.");
   thisroom.options[ST_VOLUME]=newvol;
   update_music_volume();
   }
 
-void SetMusicMasterVolume(int newvol) {
+long SetMusicMasterVolume(long newvol) {
   if ((newvol<0) | (newvol>100))
     quit("!SetMusicMasterVolume: invalid volume - must be from 0-100");
   play.music_master_volume=newvol+60;
   update_music_volume();
   }
 
-void SetSoundVolume(int newvol) {
+long SetSoundVolume(long newvol) {
   if ((newvol<0) | (newvol>255))
     quit("!SetSoundVolume: invalid volume - must be from 0-255");
   play.sound_volume = newvol;
@@ -17838,7 +17838,7 @@ void SetSoundVolume(int newvol) {
   update_ambient_sound_vol ();
 }
 
-void SetChannelVolume(int chan, int newvol) {
+long SetChannelVolume(long chan,long newvol) {
   if ((newvol<0) || (newvol>255))
     quit("!SetChannelVolume: invalid volume - must be from 0-255");
   if ((chan < 0) || (chan >= MAX_SOUND_CHANNELS))
@@ -17854,18 +17854,18 @@ void SetChannelVolume(int chan, int newvol) {
   }
 }
 
-void SetDigitalMasterVolume (int newvol) {
+long SetDigitalMasterVolume (long newvol) {
   if ((newvol<0) | (newvol>100))
     quit("!SetDigitalMasterVolume: invalid volume - must be from 0-100");
   play.digital_master_volume = newvol;
   set_volume ((newvol * 255) / 100, -1);
 }
 
-int System_GetVolume() {
+long System_GetVolume() {
   return play.digital_master_volume;
 }
 
-void System_SetVolume(int newvol) {
+long System_SetVolume(long newvol) {
   if ((newvol < 0) || (newvol > 100))
     quit("!System.Volume: invalid volume - must be from 0-100");
 
@@ -17886,11 +17886,11 @@ void System_SetVolume(int newvol) {
   }
 }
 
-int GetCurrentMusic() {
+long GetCurrentMusic() {
   return play.cur_music_number;
 }
 
-void SetMusicRepeat(int loopflag) {
+long SetMusicRepeat(long loopflag) {
   play.music_repeat=loopflag;
 }
 
@@ -17990,7 +17990,7 @@ void PlayMP3File (char *filename) {
   update_music_volume();
 }
 
-void PlaySilentMIDI (int mnum) {
+long PlaySilentMIDI (long mnum) {
   if (current_music_type == MUS_MIDI)
     quit("!PlaySilentMIDI: proper midi music is in progress");
 
@@ -18087,14 +18087,14 @@ void newmusic(int mnum) {
   play_new_music(mnum, NULL);
 }
 
-void SetPlayerCharacter(int newchar) {
+long SetPlayerCharacter(long newchar) {
   if (!is_valid_character(newchar))
     quit("!SetPlayerCharacter: Invalid character specified");
 
   Character_SetAsPlayer(&game.chars[newchar]);
 }
 
-void FollowCharacterEx(int who, int tofollow, int distaway, int eagerness) {
+long FollowCharacterEx(long who,long tofollow,long distaway,long eagerness) {
   if (!is_valid_character(who))
     quit("!FollowCharacter: Invalid character specified");
   CharacterInfo *chtofollow;
@@ -18108,25 +18108,25 @@ void FollowCharacterEx(int who, int tofollow, int distaway, int eagerness) {
   Character_FollowCharacter(&game.chars[who], chtofollow, distaway, eagerness);
 }
 
-void FollowCharacter(int who, int tofollow) {
+long FollowCharacter(long who,long tofollow) {
   FollowCharacterEx(who,tofollow,10,97);
   }
 
-void SetCharacterIgnoreLight (int who, int yesorno) {
+long SetCharacterIgnoreLight (long who,long yesorno) {
   if (!is_valid_character(who))
     quit("!SetCharacterIgnoreLight: Invalid character specified");
 
   Character_SetIgnoreLighting(&game.chars[who], yesorno);
 }
 
-void SetCharacterProperty (int who, int flag, int yesorno) {
+long SetCharacterProperty (long who,long flag,long yesorno) {
   if (!is_valid_character(who))
     quit("!SetCharacterProperty: Invalid character specified");
 
   Character_SetOption(&game.chars[who], flag, yesorno);
 }
 
-void QuitGame(int dialog) {
+long QuitGame(long dialog) {
   if (dialog) {
     int rcode;
     setup_for_dialog();
@@ -18737,7 +18737,7 @@ int File_GetError(sc_File *fil) {
 }
 
 
-void InterfaceOn(int ifn) {
+long InterfaceOn(long ifn) {
   if ((ifn<0) | (ifn>=game.numgui))
     quit("!GUIOn: invalid GUI specified");
 
@@ -18758,7 +18758,7 @@ void InterfaceOn(int ifn) {
   guis[ifn].poll();
 }
 
-void InterfaceOff(int ifn) {
+long InterfaceOff(long ifn) {
   if ((ifn<0) | (ifn>=game.numgui)) quit("!GUIOff: invalid GUI specified");
   if ((guis[ifn].on==0) && (guis[ifn].popup!=POPUP_MOUSEY)) {
     DEBUG_CONSOLE("GUIOff(%d) ignored (already off)", ifn);
@@ -18843,7 +18843,7 @@ void GUIControl_SetEnabled(GUIObject *guio, int enabled) {
   guis_need_update = 1;
 }
 
-void SetGUIObjectEnabled(int guin, int objn, int enabled) {
+long SetGUIObjectEnabled(long guin,long objn,long enabled) {
   if ((guin<0) || (guin>=game.numgui))
     quit("!SetGUIObjectEnabled: invalid GUI number");
   if ((objn<0) || (objn>=guis[guin].numobjs))
@@ -18927,7 +18927,7 @@ void GUIControl_SetPosition(GUIObject *guio, int xx, int yy) {
   GUIControl_SetY(guio, yy);
 }
 
-void SetGUIObjectPosition(int guin, int objn, int xx, int yy) {
+long SetGUIObjectPosition(long guin,long objn,long xx,long yy) {
   if ((guin<0) || (guin>=game.numgui))
     quit("!SetGUIObjectPosition: invalid GUI number");
   if ((objn<0) || (objn>=guis[guin].numobjs))
@@ -18963,7 +18963,7 @@ void GUI_SetPosition(ScriptGUI *tehgui, int xx, int yy) {
   GUI_SetY(tehgui, yy);
 }
 
-void SetGUIPosition(int ifn,int xx,int yy) {
+long SetGUIPosition(long ifn,long xx,long yy) {
   if ((ifn<0) || (ifn>=game.numgui))
     quit("!SetGUIPosition: invalid GUI number");
   
@@ -19011,7 +19011,7 @@ void GUIControl_BringToFront(GUIObject *guio) {
     guis_need_update = 1;
 }
 
-void SetGUIObjectSize(int ifn, int objn, int newwid, int newhit) {
+long SetGUIObjectSize(long ifn,long objn,long newwid,long newhit) {
   if ((ifn<0) || (ifn>=game.numgui))
     quit("!SetGUIObjectSize: invalid GUI number");
 
@@ -19071,7 +19071,7 @@ void GUI_SetHeight(ScriptGUI *sgui, int newhit) {
   GUI_SetSize(sgui, GUI_GetWidth(sgui), newhit);
 }
 
-void SetGUISize (int ifn, int widd, int hitt) {
+long SetGUISize (long ifn,long widd,long hitt) {
   if ((ifn<0) || (ifn>=game.numgui))
     quit("!SetGUISize: invalid GUI number");
 
@@ -19087,7 +19087,7 @@ int GUI_GetZOrder(ScriptGUI *tehgui) {
   return guis[tehgui->id].zorder;
 }
 
-void SetGUIZOrder(int guin, int z) {
+long SetGUIZOrder(long guin,long z) {
   if ((guin<0) || (guin>=game.numgui))
     quit("!SetGUIZOrder: invalid GUI number");
 
@@ -19106,7 +19106,7 @@ int GUI_GetClickable(ScriptGUI *tehgui) {
   return 1;
 }
 
-void SetGUIClickable(int guin, int clickable) {
+long SetGUIClickable(long guin,long clickable) {
   if ((guin<0) || (guin>=game.numgui))
     quit("!SetGUIClickable: invalid GUI number");
 
@@ -19144,7 +19144,7 @@ int GUI_GetTransparency(ScriptGUI *tehgui) {
 }
 
 // pass trans=0 for fully solid, trans=100 for fully transparent
-void SetGUITransparency(int ifn, int trans) {
+long SetGUITransparency(long ifn,long trans) {
   if ((ifn < 0) | (ifn >= game.numgui))
     quit("!SetGUITransparency: invalid GUI number");
 
@@ -19157,7 +19157,7 @@ void GUI_Centre(ScriptGUI *sgui) {
   tehgui->y = scrnhit / 2 - tehgui->hit / 2;
 }
 
-void CentreGUI (int ifn) {
+long CentreGUI (long ifn) {
   if ((ifn<0) | (ifn>=game.numgui))
     quit("!CentreGUI: invalid GUI number");
 
@@ -19232,7 +19232,7 @@ void TextBox_SetFont(GUITextBox *guit, int fontnum) {
 }
 
 
-void SetTextBoxFont(int guin,int objn, int fontnum) {
+long SetTextBoxFont(long guin,long objn,long fontnum) {
 
   if ((guin<0) | (guin>=game.numgui)) quit("!SetTextBoxFont: invalid GUI number");
   if ((objn<0) | (objn>=guis[guin].numobjs)) quit("!SetTextBoxFont: invalid object number");
@@ -19530,7 +19530,7 @@ GUIListBox* is_valid_listbox (int guin, int objn) {
   return (GUIListBox*)guis[guin].objs[objn];
 }
 
-void ListBoxClear(int guin, int objn) {
+long ListBoxClear(long guin,long objn) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   ListBox_Clear(guisl);
 }
@@ -19538,15 +19538,15 @@ void ListBoxAdd(int guin, int objn, const char*newitem) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   ListBox_AddItem(guisl, newitem);
 }
-void ListBoxRemove(int guin, int objn, int itemIndex) {
+long ListBoxRemove(long guin,long objn,long itemIndex) {
   GUIListBox*guisl = is_valid_listbox(guin,objn);
   ListBox_RemoveItem(guisl, itemIndex);
 }
-int ListBoxGetSelected(int guin, int objn) {
+long ListBoxGetSelected(long guin,long objn) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   return ListBox_GetSelectedIndex(guisl);
 }
-int ListBoxGetNumItems(int guin, int objn) {
+long ListBoxGetNumItems(long guin,long objn) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   return ListBox_GetItemCount(guisl);
 }
@@ -19555,16 +19555,16 @@ char* ListBoxGetItemText(int guin, int objn, int item, char*buffer) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   return ListBox_GetItemText(guisl, item, buffer);
 }
-void ListBoxSetSelected(int guin, int objn, int newsel) {
+long ListBoxSetSelected(long guin,long objn,long newsel) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   ListBox_SetSelectedIndex(guisl, newsel);
 }
-void ListBoxSetTopItem (int guin, int objn, int item) {
+long ListBoxSetTopItem (long guin,long objn,long item) {
   GUIListBox*guisl = is_valid_listbox(guin,objn);
   ListBox_SetTopItem(guisl, item);
 }
 
-int ListBoxSaveGameList (int guin, int objn) {
+long ListBoxSaveGameList (long guin,long objn) {
   GUIListBox*guisl=is_valid_listbox(guin,objn);
   return ListBox_FillSaveGameList(guisl);
 }
@@ -19621,7 +19621,7 @@ void Label_SetFont(GUILabel *guil, int fontnum) {
 }
 
 
-void SetLabelColor(int guin,int objn, int colr) {
+long SetLabelColor(long guin,long objn,long colr) {
   if ((guin<0) | (guin>=game.numgui))
     quit("!SetLabelColor: invalid GUI number");
   if ((objn<0) | (objn>=guis[guin].numobjs))
@@ -19644,7 +19644,7 @@ void SetLabelText(int guin,int objn,char*newtx) {
   Label_SetText(guil, newtx);
 }
 
-void SetLabelFont(int guin,int objn, int fontnum) {
+long SetLabelFont(long guin,long objn,long fontnum) {
 
   if ((guin<0) | (guin>=game.numgui)) quit("!SetLabelFont: invalid GUI number");
   if ((objn<0) | (objn>=guis[guin].numobjs)) quit("!SetLabelFont: invalid object number");
@@ -19796,7 +19796,7 @@ int Slider_GetValue(GUISlider *guisl) {
   return guisl->value;
 }
 
-void SetSliderValue(int guin,int objn, int valn) {
+long SetSliderValue(long guin,long objn,long valn) {
   if ((guin<0) | (guin>=game.numgui)) quit("!SetSliderValue: invalid GUI number");
   if (guis[guin].get_control_type(objn)!=GOBJ_SLIDER)
     quit("!SetSliderValue: specified control is not a slider");
@@ -19805,7 +19805,7 @@ void SetSliderValue(int guin,int objn, int valn) {
   Slider_SetValue(guisl, valn);
 }
 
-int GetSliderValue(int guin,int objn) {
+long GetSliderValue(long guin,long objn) {
   if ((guin<0) | (guin>=game.numgui)) quit("!GetSliderValue: invalid GUI number");
   if (guis[guin].get_control_type(objn)!=GOBJ_SLIDER)
     quit("!GetSliderValue: specified control is not a slider");
@@ -19863,7 +19863,7 @@ int GUI_GetBackgroundGraphic(ScriptGUI *tehgui) {
   return guis[tehgui->id].bgpic;
 }
 
-void SetGUIBackgroundPic (int guin, int slotn) {
+long SetGUIBackgroundPic (long guin,long slotn) {
   if ((guin<0) | (guin>=game.numgui))
     quit("!SetGUIBackgroundPic: invalid GUI number");
 
@@ -20037,7 +20037,7 @@ void SetButtonText(int guin,int objn,char*newtx) {
 }
 
 
-void AnimateButton(int guin, int objn, int view, int loop, int speed, int repeat) {
+long AnimateButton(long guin,long objn,long view,long loop,long speed,long repeat) {
   if ((guin<0) | (guin>=game.numgui)) quit("!AnimateButton: invalid GUI number");
   if ((objn<0) | (objn>=guis[guin].numobjs)) quit("!AnimateButton: invalid object number");
   if (guis[guin].get_control_type(objn)!=GOBJ_BUTTON)
@@ -20047,7 +20047,7 @@ void AnimateButton(int guin, int objn, int view, int loop, int speed, int repeat
 }
 
 
-int GetButtonPic(int guin, int objn, int ptype) {
+long GetButtonPic(long guin,long objn,long ptype) {
   if ((guin<0) | (guin>=game.numgui)) quit("!GetButtonPic: invalid GUI number");
   if ((objn<0) | (objn>=guis[guin].numobjs)) quit("!GetButtonPic: invalid object number");
   if (guis[guin].get_control_type(objn)!=GOBJ_BUTTON)
@@ -20077,7 +20077,7 @@ int GetButtonPic(int guin, int objn, int ptype) {
   quit("internal error in getbuttonpic");
 }
 
-void SetButtonPic(int guin,int objn,int ptype,int slotn) {
+long SetButtonPic(long guin,long objn,long ptype,long slotn) {
   if ((guin<0) | (guin>=game.numgui)) quit("!SetButtonPic: invalid GUI number");
   if ((objn<0) | (objn>=guis[guin].numobjs)) quit("!SetButtonPic: invalid object number");
   if (guis[guin].get_control_type(objn)!=GOBJ_BUTTON)
@@ -20097,12 +20097,12 @@ void SetButtonPic(int guin,int objn,int ptype,int slotn) {
   }
 }
 
-void DisableInterface() {
+long DisableInterface() {
   play.disabled_user_interface++;
   guis_need_update = 1;
   set_mouse_cursor(CURS_WAIT);
   }
-void EnableInterface() {
+long EnableInterface() {
   guis_need_update = 1;
   play.disabled_user_interface--;
   if (play.disabled_user_interface<1) {
@@ -20111,11 +20111,11 @@ void EnableInterface() {
     }
   }
 // Returns 1 if user interface is enabled, 0 if disabled
-int IsInterfaceEnabled() {
+long IsInterfaceEnabled() {
   return (play.disabled_user_interface > 0) ? 0 : 1;
 }
 
-void NewRoom(int nrnum) {
+long NewRoom(long nrnum) {
   if (nrnum < 0)
     quitprintf("!NewRoom: room change requested to invalid room number %d.", nrnum);
 
@@ -20171,13 +20171,13 @@ void NewRoom(int nrnum) {
     gs_to_newroom = nrnum;
 }
 
-void NewRoomEx(int nrnum,int newx,int newy) {
+long NewRoomEx(long nrnum,long newx,long newy) {
 
   Character_ChangeRoom(playerchar, nrnum, newx, newy);
 
 }
 
-void NewRoomNPC(int charid, int nrnum, int newx, int newy) {
+long NewRoomNPC(long charid,long nrnum,long newx,long newy) {
   if (!is_valid_character(charid))
     quit("!NewRoomNPC: invalid character");
   if (charid == game.playercharacter)
@@ -20186,7 +20186,7 @@ void NewRoomNPC(int charid, int nrnum, int newx, int newy) {
   Character_ChangeRoom(&game.chars[charid], nrnum, newx, newy);
 }
 
-void ResetRoom(int nrnum) {
+long ResetRoom(long nrnum) {
   if (nrnum == displayed_room)
     quit("!ResetRoom: cannot reset current room");
   if ((nrnum<0) | (nrnum>=MAX_ROOMS))
@@ -20208,7 +20208,7 @@ void ResetRoom(int nrnum) {
   DEBUG_CONSOLE("Room %d reset to original state", nrnum);
 }
 
-int HasPlayerBeenInRoom(int roomnum) {
+long HasPlayerBeenInRoom(long roomnum) {
   if ((roomnum < 0) || (roomnum >= MAX_ROOMS))
     return 0;
 
@@ -20218,11 +20218,11 @@ int HasPlayerBeenInRoom(int roomnum) {
     return 0;
 }
 
-void SetRestartPoint() {
+long SetRestartPoint() {
   save_game(RESTART_POINT_SAVE_GAME_NUMBER, "Restart Game Auto-Save");
 }
 
-void CallRoomScript (int value) {
+long CallRoomScript (long value) {
   can_run_delayed_command();
 
   if (!inside_script)
@@ -20232,7 +20232,7 @@ void CallRoomScript (int value) {
   curscript->run_another("$on_call", value, 0);
 }
 
-void SetGameSpeed(int newspd) {
+long SetGameSpeed(long newspd) {
   // if Ctrl+E has been used to max out frame rate, lock it there
   if ((frames_per_second == 1000) && (display_fps == 2))
     return;
@@ -20244,11 +20244,11 @@ void SetGameSpeed(int newspd) {
   DEBUG_CONSOLE("Game speed set to %d", newspd);
 }
 
-int GetGameSpeed() {
+long GetGameSpeed() {
   return frames_per_second - play.game_speed_modifier;
 }
 
-int SetGameOption (int opt, int setting) {
+long SetGameOption (long opt,long setting) {
   if (((opt < 1) || (opt > OPT_HIGHESTOPTION)) && (opt != OPT_LIPSYNCTEXT))
     quit("!SetGameOption: invalid option specified");
 
@@ -20285,14 +20285,14 @@ int SetGameOption (int opt, int setting) {
   return oldval;
 }
 
-int GetGameOption (int opt) {
+long GetGameOption (long opt) {
   if (((opt < 1) || (opt > OPT_HIGHESTOPTION)) && (opt != OPT_LIPSYNCTEXT))
     quit("!GetGameOption: invalid option specified");
 
   return game.options[opt];
 }
 
-void StopDialog() {
+long StopDialog() {
   if (play.stop_dialog_at_end == DIALOG_NONE) {
     debug_log("StopDialog called, but was not in a dialog");
     DEBUG_CONSOLE("StopDialog called but no dialog");
@@ -20301,7 +20301,7 @@ void StopDialog() {
   play.stop_dialog_at_end = DIALOG_STOP;
 }
 
-void SetDialogOption(int dlg,int opt,int onoroff) {
+long SetDialogOption(long dlg,long opt,long onoroff) {
   if ((dlg<0) | (dlg>=game.numdialog))
     quit("!SetDialogOption: Invalid topic number specified");
   if ((opt<1) | (opt>dialog[dlg].numoptions))
@@ -20315,7 +20315,7 @@ void SetDialogOption(int dlg,int opt,int onoroff) {
     dialog[dlg].optionflags[opt]|=DFLG_OFFPERM;
 }
 
-int GetDialogOption (int dlg, int opt) {
+long GetDialogOption (long dlg,long opt) {
   if ((dlg<0) | (dlg>=game.numdialog))
     quit("!GetDialogOption: Invalid topic number specified");
   if ((opt<1) | (opt>dialog[dlg].numoptions))
@@ -20329,7 +20329,7 @@ int GetDialogOption (int dlg, int opt) {
   return 0;
 }
 
-int Game_GetDialogCount() {
+long Game_GetDialogCount() {
   return game.numdialog;
 }
 
@@ -20393,7 +20393,7 @@ int Dialog_GetID(ScriptDialog *sd) {
   return sd->id;
 }
 
-void ShakeScreen(int severe) {
+long ShakeScreen(long severe) {
   EndSkippingUntilCharStops();
 
   if (play.fast_forward)
@@ -20445,7 +20445,7 @@ void ShakeScreen(int severe) {
   abuf=oldsc;
 }
 
-void ShakeScreenBackground (int delay, int amount, int length) {
+long ShakeScreenBackground (long delay,long amount,long length) {
   if (delay < 2) 
     quit("!ShakeScreenBackground: invalid delay parameter");
 
@@ -20460,7 +20460,7 @@ void ShakeScreenBackground (int delay, int amount, int length) {
   play.shakesc_length = length;
 }
 
-void CyclePalette(int strt,int eend) {
+long CyclePalette(long strt,long eend) {
   // hi-color game must invalidate screen since the palette changes
   // the effect of the drawing operations
   if (game.color_depth > 1)
@@ -20481,7 +20481,7 @@ void CyclePalette(int strt,int eend) {
   }
   
 }
-void SetPalRGB(int inndx,int rr,int gg,int bb) {
+long SetPalRGB(long inndx,long rr,long gg,long bb) {
   if (game.color_depth > 1)
     invalidate_screen();
 
@@ -20494,7 +20494,7 @@ void SetPalRGB(int inndx,int rr,int gg,int bb) {
 void scGetPal(color*pptr) {
   get_palette(pptr);
   }*/
-void FadeIn(int sppd) {
+long FadeIn(long sppd) {
   EndSkippingUntilCharStops();
 
   if (play.fast_forward)
@@ -20503,20 +20503,20 @@ void FadeIn(int sppd) {
   my_fade_in(palette,sppd);
 }
 
-int __Rand(int upto) {
+long __Rand(long upto) {
   upto++;
   if (upto < 1)
     quit("!Random: invalid parameter passed -- must be at least 0.");
   return rand()%upto;
   }
 
-void RefreshMouse() {
+long RefreshMouse() {
   domouse(DOMOUSE_NOCURSOR);
   scmouse.x = divide_down_coordinate(mousex);
   scmouse.y = divide_down_coordinate(mousey);
 }
 
-void SetMousePosition (int newx, int newy) {
+long SetMousePosition (long newx,long newy) {
   if (newx < 0)
     newx = 0;
   if (newy < 0)
@@ -20531,7 +20531,7 @@ void SetMousePosition (int newx, int newy) {
   RefreshMouse();
 }
 
-int GetCursorMode() {
+long GetCursorMode() {
   return cur_mode;
 }
 
@@ -20539,7 +20539,7 @@ int GetMouseCursor() {
   return cur_cursor;
 }
 
-void GiveScore(int amnt) {
+long GiveScore(long amnt) {
   guis_need_update = 1;
   play.score += amnt;
 
@@ -20549,7 +20549,7 @@ void GiveScore(int amnt) {
   run_on_event (GE_GOT_SCORE, amnt);
 }
 
-int GetHotspotPointX (int hotspot) {
+long GetHotspotPointX (long hotspot) {
   if ((hotspot < 0) || (hotspot >= MAX_HOTSPOTS))
     quit("!GetHotspotPointX: invalid hotspot");
 
@@ -20563,7 +20563,7 @@ int Hotspot_GetWalkToX(ScriptHotspot *hss) {
   return GetHotspotPointX(hss->id);
 }
 
-int GetHotspotPointY (int hotspot) {
+long GetHotspotPointY (long hotspot) {
   if ((hotspot < 0) || (hotspot >= MAX_HOTSPOTS))
     quit("!GetHotspotPointY: invalid hotspot");
 
@@ -20577,7 +20577,7 @@ int Hotspot_GetWalkToY(ScriptHotspot *hss) {
   return GetHotspotPointY(hss->id);
 }
 
-int GetHotspotAt(int xxx,int yyy) {
+long GetHotspotAt(long xxx,long yyy) {
   xxx += divide_down_coordinate(offsetx);
   yyy += divide_down_coordinate(offsety);
   if ((xxx>=thisroom.width) | (xxx<0) | (yyy<0) | (yyy>=thisroom.height))
@@ -20592,7 +20592,7 @@ ScriptHotspot *GetHotspotAtLocation(int xx, int yy) {
   return &scrHotspot[hsnum];
 }
 
-int GetWalkableAreaAt(int xxx,int yyy) {
+long GetWalkableAreaAt(long xxx,long yyy) {
   xxx += divide_down_coordinate(offsetx);
   yyy += divide_down_coordinate(offsety);
   if ((xxx>=thisroom.width) | (xxx<0) | (yyy<0) | (yyy>=thisroom.height))
@@ -20679,11 +20679,11 @@ int __GetLocationType(int xxx,int yyy, int allowHotspot0) {
 
 // GetLocationType exported function - just call through
 // to the main function with default 0
-int GetLocationType(int xxx,int yyy) {
+long GetLocationType(long xxx,long yyy) {
   return __GetLocationType(xxx, yyy, 0);
 }
 
-int GetInvAt (int xxx, int yyy) {
+long GetInvAt (long xxx,long yyy) {
   int ongui = GetGUIAt (xxx, yyy);
   if (ongui >= 0) {
     int mxwas = mousex, mywas = mousey;
@@ -20709,7 +20709,7 @@ ScriptInvItem *GetInvAtLocation(int xx, int yy) {
   return &scrInv[hsnum];
 }
 
-void SaveCursorForLocationChange() {
+long SaveCursorForLocationChange() {
   // update the current location name
   char tempo[100];
   GetLocationName(divide_down_coordinate(mousex), divide_down_coordinate(mousey), tempo);
@@ -20840,7 +20840,7 @@ const char* InventoryItem_GetName_New(ScriptInvItem *invitem) {
   return CreateNewScriptString(get_translation(game.invinfo[invitem->id].name));
 }
 
-int GetInvGraphic(int indx) {
+long GetInvGraphic(long indx) {
   if ((indx<0) | (indx>=game.numinvitems)) quit("!GetInvGraphic: invalid inventory item specified");
 
   return game.invinfo[indx].pic;
@@ -20850,13 +20850,13 @@ int InventoryItem_GetGraphic(ScriptInvItem *iitem) {
   return game.invinfo[iitem->id].pic;
 }
 
-void MoveCharacter(int cc,int xx,int yy) {
+long MoveCharacter(long cc,long xx,long yy) {
   walk_character(cc,xx,yy,0, true);
 }
-void MoveCharacterDirect(int cc,int xx, int yy) {
+long MoveCharacterDirect(long cc,long xx,long yy) {
   walk_character(cc,xx,yy,1, true);
 }
-void MoveCharacterStraight(int cc,int xx, int yy) {
+long MoveCharacterStraight(long cc,long xx,long yy) {
   if (!is_valid_character(cc))
     quit("!MoveCharacterStraight: invalid character specified");
   
@@ -20864,7 +20864,7 @@ void MoveCharacterStraight(int cc,int xx, int yy) {
 }
 
 // Append to character path
-void MoveCharacterPath (int chac, int tox, int toy) {
+long MoveCharacterPath (long chac,long tox,long toy) {
   if (!is_valid_character(chac))
     quit("!MoveCharacterPath: invalid character specified");
 
@@ -20872,10 +20872,10 @@ void MoveCharacterPath (int chac, int tox, int toy) {
 }
 
 
-void MoveObject(int objj,int xx,int yy,int spp) {
+long MoveObject(long objj,long xx,long yy,long spp) {
   move_object(objj,xx,yy,spp,0);
   }
-void MoveObjectDirect(int objj,int xx,int yy,int spp) {
+long MoveObjectDirect(long objj,long xx,long yy,long spp) {
   move_object(objj,xx,yy,spp,1);
   }
 
@@ -20895,11 +20895,11 @@ void Object_Move(ScriptObject *objj, int x, int y, int speed, int blocking, int 
     quit("Object.Move: invalid BLOCKING paramter");
 }
 
-int GetPlayerCharacter() {
+long GetPlayerCharacter() {
   return game.playercharacter;
   }
 
-void SetCharacterSpeedEx(int chaa, int xspeed, int yspeed) {
+long SetCharacterSpeedEx(long chaa,long xspeed,long yspeed) {
   if (!is_valid_character(chaa))
     quit("!SetCharacterSpeedEx: invalid character");
 
@@ -20907,24 +20907,24 @@ void SetCharacterSpeedEx(int chaa, int xspeed, int yspeed) {
 
 }
 
-void SetCharacterSpeed(int chaa,int nspeed) {
+long SetCharacterSpeed(long chaa,long nspeed) {
   SetCharacterSpeedEx(chaa, nspeed, nspeed);
 }
 
-void SetTalkingColor(int chaa,int ncol) {
+long SetTalkingColor(long chaa,long ncol) {
   if (!is_valid_character(chaa)) quit("!SetTalkingColor: invalid character");
   
   Character_SetSpeechColor(&game.chars[chaa], ncol);
 }
 
-void SetCharacterSpeechView (int chaa, int vii) {
+long SetCharacterSpeechView (long chaa,long vii) {
   if (!is_valid_character(chaa))
     quit("!SetCharacterSpeechView: invalid character specified");
   
   Character_SetSpeechView(&game.chars[chaa], vii);
 }
 
-void SetCharacterBlinkView (int chaa, int vii, int intrv) {
+long SetCharacterBlinkView (long chaa,long vii,long intrv) {
   if (!is_valid_character(chaa))
     quit("!SetCharacterBlinkView: invalid character specified");
 
@@ -20932,38 +20932,38 @@ void SetCharacterBlinkView (int chaa, int vii, int intrv) {
   Character_SetBlinkInterval(&game.chars[chaa], intrv);
 }
 
-void SetCharacterView(int chaa,int vii) {
+long SetCharacterView(long chaa,long vii) {
   if (!is_valid_character(chaa))
     quit("!SetCharacterView: invalid character specified");
   
   Character_LockView(&game.chars[chaa], vii);
 }
 
-void SetCharacterFrame(int chaa, int view, int loop, int frame) {
+long SetCharacterFrame(long chaa,long view,long loop,long frame) {
 
   Character_LockViewFrame(&game.chars[chaa], view, loop, frame);
 }
 
 // similar to SetCharView, but aligns the frame to make it line up
-void SetCharacterViewEx (int chaa, int vii, int loop, int align) {
+long SetCharacterViewEx (long chaa,long vii,long loop,long align) {
   
   Character_LockViewAligned(&game.chars[chaa], vii, loop, align);
 }
 
-void SetCharacterViewOffset (int chaa, int vii, int xoffs, int yoffs) {
+long SetCharacterViewOffset (long chaa,long vii,long xoffs,long yoffs) {
 
   Character_LockViewOffset(&game.chars[chaa], vii, xoffs, yoffs);
 }
 
 
-void ChangeCharacterView(int chaa,int vii) {
+long ChangeCharacterView(long chaa,long vii) {
   if (!is_valid_character(chaa))
     quit("!ChangeCharacterView: invalid character specified");
   
   Character_ChangeView(&game.chars[chaa], vii);
 }
 
-void SetCharacterClickable (int cha, int clik) {
+long SetCharacterClickable (long cha,long clik) {
   if (!is_valid_character(cha))
     quit("!SetCharacterClickable: Invalid character specified");
   // make the character clicklabe (reset "No interaction" bit)
@@ -20973,14 +20973,14 @@ void SetCharacterClickable (int cha, int clik) {
     game.chars[cha].flags|=CHF_NOINTERACT;
   }
 
-void SetCharacterIgnoreWalkbehinds (int cha, int clik) {
+long SetCharacterIgnoreWalkbehinds (long cha,long clik) {
   if (!is_valid_character(cha))
     quit("!SetCharacterIgnoreWalkbehinds: Invalid character specified");
 
   Character_SetIgnoreWalkbehinds(&game.chars[cha], clik);
 }
 
-void SetObjectClickable (int cha, int clik) {
+long SetObjectClickable (long cha,long clik) {
   if (!is_valid_object(cha))
     quit("!SetObjectClickable: Invalid object specified");
   objs[cha].flags&=~OBJF_NOINTERACT;
@@ -21050,7 +21050,7 @@ int Object_GetBlockingHeight(ScriptObject *objj) {
   return objs[objj->id].blocking_height;
 }
 
-void SetObjectIgnoreWalkbehinds (int cha, int clik) {
+long SetObjectIgnoreWalkbehinds (long cha,long clik) {
   if (!is_valid_object(cha))
     quit("!SetObjectIgnoreWalkbehinds: Invalid object specified");
   objs[cha].flags&=~OBJF_NOWALKBEHINDS;
@@ -21077,7 +21077,7 @@ int Object_GetIgnoreWalkbehinds(ScriptObject *chaa) {
   return 0;
 }
 
-void MoveCharacterToObject(int chaa,int obbj) {
+long MoveCharacterToObject(long chaa,long obbj) {
   // invalid object, do nothing
   // this allows MoveCharacterToObject(EGO, GetObjectAt(...));
   if (!is_valid_object(obbj))
@@ -21087,7 +21087,7 @@ void MoveCharacterToObject(int chaa,int obbj) {
   do_main_cycle(UNTIL_MOVEEND,(long)&game.chars[chaa].walking);
 }
 
-void MoveCharacterToHotspot(int chaa,int hotsp) {
+long MoveCharacterToHotspot(long chaa,long hotsp) {
   if ((hotsp<0) || (hotsp>=MAX_HOTSPOTS))
     quit("!MovecharacterToHotspot: invalid hotspot");
   if (thisroom.hswalkto[hotsp].x<1) return;
@@ -21095,7 +21095,7 @@ void MoveCharacterToHotspot(int chaa,int hotsp) {
   do_main_cycle(UNTIL_MOVEEND,(long)&game.chars[chaa].walking);
   }
 
-void MoveCharacterBlocking(int chaa,int xx,int yy,int direct) {
+long MoveCharacterBlocking(long chaa,long xx,long yy,long direct) {
   if (!is_valid_character (chaa))
     quit("!MoveCharacterBlocking: invalid character");
 
@@ -21120,21 +21120,21 @@ void MoveCharacterBlocking(int chaa,int xx,int yy,int direct) {
   buffr[199]=0;
   }*/
 
-void SetViewport(int offsx,int offsy) {
+long SetViewport(long offsx,long offsy) {
   DEBUG_CONSOLE("Viewport locked to %d,%d", offsx, offsy);
   offsetx = multiply_up_coordinate(offsx);
   offsety = multiply_up_coordinate(offsy);
   check_viewport_coords();
   play.offsets_locked = 1;
 }
-void ReleaseViewport() {
+long ReleaseViewport() {
   play.offsets_locked = 0;
   DEBUG_CONSOLE("Viewport released back to engine control");
 }
-int GetViewportX () {
+long GetViewportX () {
   return divide_down_coordinate(offsetx);
   }
-int GetViewportY () {
+long GetViewportY () {
   return divide_down_coordinate(offsety);
   }
 
@@ -21165,7 +21165,7 @@ void on_background_frame_change () {
     bg_just_changed = 1;
 }
 
-void SetBackgroundFrame(int frnum) {
+long SetBackgroundFrame(long frnum) {
   if ((frnum<-1) | (frnum>=thisroom.num_bscenes))
     quit("!SetBackgrondFrame: invalid frame number specified");
   if (frnum<0) {
@@ -21185,11 +21185,11 @@ void SetBackgroundFrame(int frnum) {
   on_background_frame_change ();
 }
 
-int GetBackgroundFrame() {
+long GetBackgroundFrame() {
   return play.bg_frame;
 }
 
-void script_debug(int cmdd,int dataa) {
+long script_debug(long cmdd,long dataa) {
   if (play.debug_mode==0) return;
   int rr;
   if (cmdd==0) {
@@ -21298,7 +21298,7 @@ int init_cd_player() {
   return platform->InitializeCDPlayer();
 }
 
-int cd_manager(int cmdd,int datt) {
+long cd_manager(long cmdd,long datt) {
   if (!triedToUseCdAudioCommand)
   {
     triedToUseCdAudioCommand = true;
@@ -21310,13 +21310,13 @@ int cd_manager(int cmdd,int datt) {
   return platform->CDPlayerCommand(cmdd, datt);
 }
 
-void script_SetTimer(int tnum,int timeout) {
+long script_SetTimer(long tnum,long timeout) {
   if ((tnum < 1) || (tnum >= MAX_TIMERS))
     quit("!StartTimer: invalid timer number");
   play.script_timers[tnum] = timeout;
   }
 
-int IsTimerExpired(int tnum) {
+long IsTimerExpired(long tnum) {
   if ((tnum < 1) || (tnum >= MAX_TIMERS))
     quit("!IsTimerExpired: invalid timer number");
   if (play.script_timers[tnum] == 1) {
@@ -23917,7 +23917,7 @@ void add_dynamic_sprite(int gotSlot, block redin, bool hasAlpha) {
   spriteheight[gotSlot] = redin->h;
 }
 
-void free_dynamic_sprite (int gotSlot) {
+long free_dynamic_sprite (long gotSlot) {
   int tt;
 
   if ((gotSlot < 0) || (gotSlot >= spriteset.elements))
@@ -24307,11 +24307,11 @@ int invscreen() {
   return selt;
   }
 
-void sc_invscreen() {
+long sc_invscreen() {
   curscript->queue_action(ePSAInvScreen, 0, "InventoryScreen");
 }
 
-void SetInvDimensions(int ww,int hh) {
+long SetInvDimensions(long ww,long hh) {
   play.inv_item_wid = ww;
   play.inv_item_hit = hh;
   play.inv_numdisp = 0;
@@ -24324,7 +24324,7 @@ void SetInvDimensions(int ww,int hh) {
   guis_need_update = 1;
 }
 
-void UpdatePalette() {
+long UpdatePalette() {
   if (game.color_depth > 1)
     invalidate_screen();
 
@@ -24360,7 +24360,7 @@ void stop_fast_forwarding() {
   update_music_volume();
 }
 
-void SkipUntilCharacterStops(int cc) {
+long SkipUntilCharacterStops(long cc) {
   if (!is_valid_character(cc))
     quit("!SkipUntilCharacterStops: invalid character specified");
   if (game.chars[cc].room!=displayed_room)
@@ -24393,7 +24393,7 @@ void EndSkippingUntilCharStops() {
 // 3 = mouse button
 // 4 = mouse button or any key
 // 5 = right click or ESC only
-void StartCutscene (int skipwith) {
+long StartCutscene (long skipwith) {
   if (play.in_cutscene)
     quit("!StartCutscene: already in a cutscene");
 
@@ -24407,7 +24407,7 @@ void StartCutscene (int skipwith) {
   initialize_skippable_cutscene();
 }
 
-int EndCutscene () {
+long EndCutscene () {
   if (play.in_cutscene == 0)
     quit("!EndCutscene: not in a cutscene");
 
@@ -24423,7 +24423,7 @@ int EndCutscene () {
   return retval;
 }
 
-int Game_GetSkippingCutscene() {
+long Game_GetSkippingCutscene() {
   if (play.fast_forward)
   {
     return 1;
@@ -24431,7 +24431,7 @@ int Game_GetSkippingCutscene() {
   return 0;
 }
 
-int Game_GetInSkippableCutscene() {
+long Game_GetInSkippableCutscene() {
   if (play.in_cutscene)
   {
     return 1;
@@ -24441,98 +24441,98 @@ int Game_GetInSkippableCutscene() {
 
 
 // Stubs for plugin functions.
-void ScriptStub_ShellExecute() {
+long ScriptStub_ShellExecute() {
 }
-void srSetSnowDriftRange(int min_value, int max_value) {
+long srSetSnowDriftRange(long min_value,long max_value) {
 }
-void srSetSnowDriftSpeed(int min_value, int max_value) {
+long srSetSnowDriftSpeed(long min_value,long max_value) {
 }
-void srSetSnowFallSpeed(int min_value, int max_value) {
+long srSetSnowFallSpeed(long min_value,long max_value) {
 }
-void srChangeSnowAmount(int amount) {
+long srChangeSnowAmount(long amount) {
 }
-void srSetSnowBaseline(int top, int bottom) {
+long srSetSnowBaseline(long top,long bottom) {
 }
-void srSetSnowTransparency(int min_value, int max_value) {
+long srSetSnowTransparency(long min_value,long max_value) {
 }
-void srSetSnowDefaultView(int view, int loop) {
+long srSetSnowDefaultView(long view,long loop) {
 }
-void srSetSnowWindSpeed(int value) {
+long srSetSnowWindSpeed(long value) {
 }
-void srSetSnowAmount(int amount) {
+long srSetSnowAmount(long amount) {
 }
-void srSetSnowView(int kind_id, int event, int view, int loop) {
+long srSetSnowView(long kind_id,long event,long view,long loop) {
 }
-void srChangeRainAmount(int amount) {
+long srChangeRainAmount(long amount) {
 }
-void srSetRainView(int kind_id, int event, int view, int loop) {
+long srSetRainView(long kind_id,long event,long view,long loop) {
 }
-void srSetRainDefaultView(int view, int loop) {
+long srSetRainDefaultView(long view,long loop) {
 }
-void srSetRainTransparency(int min_value, int max_value) {
+long srSetRainTransparency(long min_value,long max_value) {
 }
-void srSetRainWindSpeed(int value) {
+long srSetRainWindSpeed(long value) {
 }
-void srSetRainBaseline(int top, int bottom) {
+long srSetRainBaseline(long top,long bottom) {
 }
-void srSetRainAmount(int amount) {
+long srSetRainAmount(long amount) {
 }
-void srSetRainFallSpeed(int min_value, int max_value) {
+long srSetRainFallSpeed(long min_value,long max_value) {
 }
-void srSetWindSpeed(int value) {
+long srSetWindSpeed(long value) {
 }
-void srSetBaseline(int top, int bottom) {
+long srSetBaseline(long top,long bottom) {
 }
-int JoystickCount() {
+long JoystickCount() {
   return 0;
 }
-int Joystick_Open(int a) {
+long Joystick_Open(long a) {
   return 0;
 }
-int Joystick_IsButtonDown(int a) {
+long Joystick_IsButtonDown(long a) {
   return 0;
 }
-void Joystick_EnableEvents(int a) {
+long Joystick_EnableEvents(long a) {
 }
-void Joystick_DisableEvents() {
+long Joystick_DisableEvents() {
 }
-void Joystick_Click(int a) {
+long Joystick_Click(long a) {
 }
-int Joystick_Valid() {
+long Joystick_Valid() {
   return 0;
 }
-int Joystick_Unplugged() {
+long Joystick_Unplugged() {
   return 0;
 }
-int DrawAlpha(int destination, int sprite, int x, int y, int transparency) {
+long DrawAlpha(long destination,long sprite,long x,long y,long transparency) {
   return 0;
 }
-int GetAlpha(int sprite, int x, int y) {
+long GetAlpha(long sprite,long x,long y) {
   return 0;
 }
-int PutAlpha(int sprite, int x, int y, int alpha) {
+long PutAlpha(long sprite,long x,long y,long alpha) {
   return 0;
 }
-int Blur(int sprite, int radius) {
+long Blur(long sprite,long radius) {
   return 0;
 }
-int HighPass(int sprite, int threshold) {
+long HighPass(long sprite,long threshold) {
   return 0;
 }
-int DrawAdd(int destination, int sprite, int x, int y, float scale) {
+long DrawAdd(long destination,long sprite,long x,long y,longfloat scale) {
   return 0;
 }
 
-int GetFlashlightInt() {
+long GetFlashlightInt() {
   return 0;
 }
-void SetFlashlightInt1(int Param1){
+long SetFlashlightInt1(long Param1){
 }
-void SetFlashlightInt2(int Param1, int Param2) {
+long SetFlashlightInt2(long Param1,long Param2) {
 }
-void SetFlashlightInt3(int Param1, int Param2, int Param3) {
+long SetFlashlightInt3(long Param1,long Param2,long Param3) {
 }
-void SetFlashlightInt5(int Param1, int Param2, int Param3, int Param4, int Param5) {
+long SetFlashlightInt5(long Param1,long Param2,long Param3,long Param4,long Param5) {
 }
 
 #define scAdd_External_Symbol ccAddExternalSymbol
