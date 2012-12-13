@@ -5,7 +5,7 @@ BASE = acaudio.o acchars.o acdebug.o acdialog.o acfonts.o acgfx.o acgui.o acplat
 
 COMMON = ../Common/csrun.o ../Common/Clib32.o ../Common/mousew32.o ../Common/sprcache.o \
 	 ../Common/cscommon.o ../Common/compress.o ../Common/lzw.o \
-	 ../Common/ByteArray.o ../Common/CCDynamicArray.o
+	 ../Common/ByteArray.o ../Common/CCDynamicArray.o ../Common/acfloat.o
 
 PLUGINS = ../Plugins/AGSflashlight/agsflashlight.o ../Plugins/agsblend/AGSBlend.o \
 	  ../Plugins/ags_snowrain/ags_snowrain.o
