@@ -4314,11 +4314,8 @@ void load_new_room(int newnum,CharacterInfo*forchar) {
   sprintf(rmfile,"room%d.crm",newnum);
   if (newnum == 0) {
     // support both room0.crm and intro.crm
-    FILE *inpu = clibfopen(rmfile, "rb");
-    if (inpu == NULL)
+    if((loaded_game_file_version < 31 /* < ver 2.70 */ && clib_fexists("intro.crm")) || !clib_fexists(rmfile))
       strcpy(rmfile, "intro.crm");
-    else
-      fclose(inpu);
   }
   // reset these back, because they might have been changed.
   if (thisroom.object!=NULL)
