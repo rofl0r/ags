@@ -1085,6 +1085,9 @@ long ccGetObjectHandleFromAddress(const char *address) {
 #endif
 
   if (handl == 0) {
+#ifdef DEBUG_MANAGED_OBJECTS
+	  __asm__("int3");
+#endif
     cc_error("Pointer cast failure: the object being pointed to is not in the managed object pool");
     return -1;
   }
