@@ -1,3 +1,4 @@
+#undef DISABLE_MPEG_AUDIO
 #define DISABLE_MPEG_AUDIO
 /* mpeg1dec.c, initialization, option processing                    */
 
