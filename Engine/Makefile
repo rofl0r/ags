@@ -10,7 +10,7 @@ COMMON = ../Common/csrun.o ../Common/Clib32.o ../Common/mousew32.o ../Common/spr
 PLUGINS = ../Plugins/AGSflashlight/agsflashlight.o ../Plugins/agsblend/AGSBlend.o \
 	  ../Plugins/ags_snowrain/ags_snowrain.o
 
-LINUX_SPECIFIC = acpllnx.o ../PSP/launcher/pe.o
+LINUX_SPECIFIC = acpllnx.o 
 
 HQ2X3X = libsrc/hq2x/hq2x3x.o
 
