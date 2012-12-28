@@ -959,8 +959,8 @@ int WordsDictionary::find_index (const char*wrem) {
 
 // {name, flags, numArgs, {argTypes}, {argNames}, description, textscript}
 ActionTypes actions[NUM_ACTION_TYPES] = {
-  {"Do nothing", 0, 0, {NULL}, {NULL}, "Does nothing.", ""},
-  {"Run script", AFLG_RUNSCRIPT, 0, {NULL}, {NULL}, "Runs a text script. Click the 'Edit Script' button to modify the script.", ""},
+  {"Do nothing", 0, 0, {0}, {0}, "Does nothing.", ""},
+  {"Run script", AFLG_RUNSCRIPT, 0, {0}, {0}, "Runs a text script. Click the 'Edit Script' button to modify the script.", ""},
   {"Game - Add score on first execution", 0, 1, {ARG_TYPE_INT}, {"Points to add"},
       "Gives the player $$1 extra points the first time this action is run.",
       ""},
@@ -973,7 +973,7 @@ ActionTypes actions[NUM_ACTION_TYPES] = {
   {"Game - Play music", 0, 1, {ARG_TYPE_INT}, {"Music number"},
       "Changes the current background music to MUSIC$$1.MP3, WAV, MID or MOD",
       "PlayMusic($$1);"},
-  {"Game - Stop music", 0, 0, {NULL}, {NULL},
+  {"Game - Stop music", 0, 0, {0}, {0},
       "Stops the currently playing background music.",
       "StopMusic();"},
   {"Game - Play sound effect", 0, 1, {ARG_TYPE_INT}, {"Sound number"},
@@ -1089,7 +1089,7 @@ ActionTypes actions[NUM_ACTION_TYPES] = {
   {"Game - Hide GUI", 0, 1, {ARG_TYPE_INT}, {"GUI number"},
       "Switches off GUI number $$1 so the player can no longer see it.",
       "gui[$$1].Visible = false;"},
-  {"Stop running more commands", 0, 0, {NULL}, {NULL},
+  {"Stop running more commands", 0, 0, {0}, {0},
       "Stops running the interaction list at this point. Useful at the end of a block of actions inside a conditional.",
       "return;"},
   {"Character - Face location", 0, 3, {ARG_TYPE_CHAR, ARG_TYPE_INT, ARG_TYPE_INT},
