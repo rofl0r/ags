@@ -9,6 +9,7 @@ extern "C" {
 
 int cliboffset(char*);
 FILE *clibfopen(char *, char *);
+int clib_fexists(char* fn);
 int cliboffset(char *);
 int clibfilesize(char *);
 char* clibgetdatafile(char*);

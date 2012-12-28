@@ -412,6 +412,10 @@ int clibfindindex(char *fill) {
 	return -1;
 }
 
+int clib_fexists(char* fn) {
+	return clibfindindex(fn) != -1;
+}
+
 int clibfilesize(char *fill) {
 	int idxx = clibfindindex(fill);
 	if (idxx >= 0) return mflib.length[idxx];
