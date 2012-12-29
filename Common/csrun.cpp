@@ -485,38 +485,55 @@ public:
 	const char* disableDisposeForObject;
 };
 
-struct SystemImports
-{
+enum ImportType {
+	IT_REGULAR,
+	IT_VARARGS1,
+	IT_VARARGS2,
+	IT_VARARGS3,
+	IT_VARARGS4,
+	IT_VARARGS5,
+	IT_VARARGS6,
+	IT_VARARGS7,
+	IT_DATA,
+	IT_INVALID = 0xdead
+};
+
+struct ImportInfo {
+	char* name;
+	void* addr;
+	ImportType type;
+};
+
+struct SystemImports {
 private:
-  char **name;
-  char **addr;
-  ccInstance **isScriptImp;
-  int numimports;
-  int bufferSize;
-  ccTreeMap btree;
+	struct ImportInfo** info;
+	ccInstance **isScriptImp;
+	size_t numimports;
+	size_t bufferSize;
+	ccTreeMap btree;
 
 public:
-  int  add(char *, char *, ccInstance*);
-  void remove(char *);
-  char *get_addr_of(char *);
-  int  get_index_of(char *);
-  ccInstance* is_script_import(char *);
-  void remove_range(char *, unsigned long);
-  char* get_name_for_addr(char* myaddr);
-  void clear() {
-    numimports = 0;
-    btree.clear();
-  }
-//  void remove_all_script_exports();
+	ssize_t add(char *, char *, ccInstance*);
+	void remove(char *);
+	struct ImportInfo* get_addr_of(char *);
+	ssize_t get_index_of(char *);
+	ccInstance* is_script_import(char *);
+	void remove_range(char *, unsigned long);
+	char* get_name_for_addr(char* myaddr);
+	void clear() {
+		for(size_t i = 0; i < numimports; i++)
+			free(info[i]);
+		numimports = 0;
+		btree.clear();
+	}
+	//  void remove_all_script_exports();
 
-  SystemImports()
-  {
-    numimports = 0;
-    bufferSize = 0;
-    name = NULL;
-    addr = NULL;
-    isScriptImp = NULL;
-  }
+	SystemImports() {
+		numimports = 0;
+		bufferSize = 0;
+		info = 0;
+		isScriptImp = NULL;
+	}
 };
 /*
 void SystemImports::remove_all_script_exports()
@@ -535,154 +552,208 @@ void SystemImports::remove_all_script_exports()
 
 }*/
 
-int SystemImports::add(char *namm, char *add, ccInstance *anotherscr = NULL)
-{
-  int ixof;
+#include "../../debugger/process_maps.h"
+sblist* processmap;
+static int is_in_executable_section(void* addr) {
+	if(!processmap) processmap = process_maps_get(getpid());
+	map_data* map = find_map_for_addr(processmap, addr);
+	if(!map) {
+		processmap = process_maps_get(getpid());
+		map = find_map_for_addr(processmap, addr);
+		if (!map) __asm__("int3");
+	}
+	if(map->perms & MDP_X) return 1;
+	return 0;
+}
 
-  if ((ixof = get_index_of(namm)) >= 0) {
-    // Only allow override if not a script-exported function
-    if (anotherscr == NULL) {
-      addr[ixof] = add;
-      isScriptImp[ixof] = anotherscr;
-    }
-    return 0;
-  }
+enum ImportType getImportType(char* funcname, void* addr) {
+	if(0) {
+		return IT_REGULAR;
+	} else if(!strcmp("game", funcname) || !strcmp("gs_globals", funcname) || !strcmp("mouse", funcname)
+		||!strcmp("palette", funcname) ||  !strcmp("system", funcname) || !strcmp("savegameindex", funcname)
+	) {
+		return IT_DATA;
+	} else if(!strcmp("String::Format^101", funcname)) {
+		return IT_VARARGS1;
+	} else if(!strcmp("Display", funcname)) {
+		return IT_VARARGS1;
+	} else if(!strcmp("AbortGame", funcname)) {
+		return IT_VARARGS1;
+	} else if(!strcmp("Character::Say^101", funcname) || !strcmp("Character::Think^101", funcname)) {
+		return IT_VARARGS2;
+	} else if(!strcmp("DisplaySpeech", funcname)) {
+		return IT_VARARGS2;
+	} else if(!strcmp("DisplayThought", funcname)) {
+		return IT_VARARGS2;
+	} else if(!strcmp("StrFormat", funcname)) {
+		return IT_VARARGS2;
+	} else if(!strcmp("RawPrint", funcname)) {
+		return IT_VARARGS3;
+	} else if(!strcmp("DisplayAt", funcname)) {
+		return IT_VARARGS4;
+	} else if(!strcmp("DisplayTopBar", funcname)) {
+		return IT_VARARGS5;
+	} else if(!strcmp("Overlay::SetText^104", funcname)) {
+		return IT_VARARGS5;
+	} else if(!strcmp("DrawingSurface::DrawString^104", funcname)) {
+		return IT_VARARGS5;
+	} else if(!strcmp("Overlay::CreateTextual^106", funcname)) {
+		return IT_VARARGS6;
+	} else if(!strcmp("CreateTextOverlay", funcname)) {
+		return IT_VARARGS6;
+	} else if(!strcmp("SetTextOverlay", funcname)) {
+		return IT_VARARGS7;
+	} else {
+		/* this crap engine uses the same mechanism for function calls and data
+		 * since we can't differ data references otherwise, we have to lookup
+		 * the permissions of the mapping it lives in */
+		if(is_in_executable_section(addr)) return IT_REGULAR;
+		return IT_DATA;
+	}
+}
 
-  ixof = numimports;
-  for (int ii = 0; ii < numimports; ii++) {
-    if (name[ii] == NULL) {
-      ixof = ii;
-      break;
-    }
-  }
+ssize_t SystemImports::add(char *namm, char *add, ccInstance *anotherscr = NULL) {
+	ssize_t ixof;
 
-  if (ixof >= this->bufferSize)
-  {
-    if (this->bufferSize > 50000)
-      return -1;  // something has gone badly wrong
-    this->bufferSize += 1000;
-    this->name = (char**)realloc(this->name, sizeof(char*) * this->bufferSize);
-    this->addr = (char**)realloc(this->addr, sizeof(char*) * this->bufferSize);
-    this->isScriptImp = (ccInstance**)realloc(this->isScriptImp, sizeof(ccInstance*) * this->bufferSize);
-  }
+	if ((ixof = get_index_of(namm)) >= 0) {
+		// Only allow override if not a script-exported function
+		if (anotherscr == NULL) {
+			info[ixof]->addr = add;
+			isScriptImp[ixof] = anotherscr;
+		}
+		return 0;
+	}
 
-  btree.addEntry(namm, ixof);
-  name[ixof] = namm;
-  addr[ixof] = add;
-  isScriptImp[ixof] = anotherscr;
+	ixof = numimports;
+	for (size_t ii = 0; ii < numimports; ii++) {
+		if (info[ii]->name == NULL) {
+			ixof = ii;
+			break;
+		}
+	}
 
-  if (ixof == numimports)
-    numimports++;
-  return 0;
+	if (ixof >= this->bufferSize) {
+		if (this->bufferSize > 50000)
+			return -1;  // something has gone badly wrong
+		this->bufferSize += 1000;
+		this->info = (struct ImportInfo**) realloc(this->info, sizeof(struct ImportInfo*) * this->bufferSize);
+		this->isScriptImp = (ccInstance**)realloc(this->isScriptImp, sizeof(ccInstance*) * this->bufferSize);
+	}
+
+	btree.addEntry(namm, ixof);
+	if(ixof == numimports)
+		info[ixof] = (struct ImportInfo *) malloc(sizeof(struct ImportInfo));
+	info[ixof]->name = namm;
+	info[ixof]->addr = add;
+	info[ixof]->type = getImportType(namm, add);
+	isScriptImp[ixof] = anotherscr;
+
+	if (ixof == numimports)
+		numimports++;
+	return 0;
 }
 
 void SystemImports::remove(char *nameToRemove) {
-  int idx = get_index_of(nameToRemove);
-  if (idx < 0)
-    return;
-  btree.removeEntry(name[idx]);
-  name[idx] = NULL;
-  addr[idx] = NULL;
-  isScriptImp[idx] = 0;
-  /*numimports--;
-  for (int ii = idx; ii < numimports; ii++) {
-    this->name[ii] = this->name[ii + 1];
-    addr[ii] = addr[ii + 1];
-    isScriptImp[ii] = isScriptImp[ii + 1];
-  }*/
+	ssize_t idx = get_index_of(nameToRemove);
+	if (idx < 0)
+		return;
+	btree.removeEntry(info[idx]->name);
+	info[idx]->name = 0;
+	info[idx]->addr = 0;
+	info[idx]->type = IT_INVALID;
+	isScriptImp[idx] = 0;
+	/*numimports--;
+	for (int ii = idx; ii < numimports; ii++) {
+	this->name[ii] = this->name[ii + 1];
+	addr[ii] = addr[ii + 1];
+	isScriptImp[ii] = isScriptImp[ii + 1];
+	}*/
 }
 
-char *SystemImports::get_addr_of(char *namw)
-{
-  int o = get_index_of(namw);
-  if (o < 0)
-    return NULL;
+struct ImportInfo* SystemImports::get_addr_of(char *namw) {
+	ssize_t i = get_index_of(namw);
+	if (i < 0)
+		return 0;
 
-  return addr[o];
+	return info[i];
 }
 
-int SystemImports::get_index_of(char *namw)
-{
-  int bestMatch = -1;
-  char altName[200];
-  sprintf(altName, "%s$", namw);
+ssize_t SystemImports::get_index_of(char *namw) {
+	ssize_t bestMatch = -1;
+	char altName[200];
 
-  int idx = btree.findValue((const char*)namw);
-  if (idx >= 0)
-    return idx;
+	ssize_t idx = btree.findValue((const char*)namw);
+	if (idx >= 0) return idx;
+	
+	sprintf(altName, "%s$", namw);
 
-  // if it's a function with a mangled name, allow it
-  idx = btree.findValue(altName, &ccCompareStringsPartial);
-  if (idx >= 0)
-    return idx;
-  
-/*
-  int o;
-  for (o = 0; o < numimports; o++) {
-    if (strcmp(name[o], namw) == 0)
-      return o;
-    // if it's a function with a mangled name, allow it
-    if (strncmp(name[o], altName, strlen(altName)) == 0)
-      return o;
-  }*/
+	// if it's a function with a mangled name, allow it
+	idx = btree.findValue(altName, &ccCompareStringsPartial);
+	if (idx >= 0) return idx;
+	
+	/*
+	int o;
+	for (o = 0; o < numimports; o++) {
+	if (strcmp(name[o], namw) == 0)
+	return o;
+	// if it's a function with a mangled name, allow it
+	if (strncmp(name[o], altName, strlen(altName)) == 0)
+	return o;
+	}*/
 
-  if ((strlen(namw) > 3) && 
-      ((namw[strlen(namw) - 2] == '^') || (namw[strlen(namw) - 3] == '^'))) {
-    // Function with number of prametrs on the end
-    // attempt to find it without the param count
-    strcpy(altName, namw);
-    strrchr(altName, '^')[0] = 0;
+	if ((strlen(namw) > 3) && 
+	((namw[strlen(namw) - 2] == '^') || (namw[strlen(namw) - 3] == '^'))) {
+		// Function with number of prametrs on the end
+		// attempt to find it without the param count
+		strcpy(altName, namw);
+		strrchr(altName, '^')[0] = 0;
 
-    return get_index_of(altName);
-  }
+		return get_index_of(altName);
+	}
 
-  return -1;
+	return -1;
 }
 
-ccInstance* SystemImports::is_script_import(char *namw)
-{
-  if (namw == NULL) {
-    quit("is_script_import: NULL pointer passed");
-  }
+ccInstance* SystemImports::is_script_import(char *namw) {
+	if (namw == NULL) {
+	quit("is_script_import: NULL pointer passed");
+	}
 
-  int idx = get_index_of(namw);
-  if (idx < 0)
-    return NULL;
+	ssize_t idx = get_index_of(namw);
+	if (idx < 0) return 0;
 
-  return isScriptImp[idx];
+	return isScriptImp[idx];
 }
 
 char* SystemImports::get_name_for_addr(char* myaddr) {
-  for (int o = 0; o < numimports; o++) {
-    if (addr[o] == myaddr)
-      return name[o];
-  }
-  return 0;
+	for (size_t o = 0; o < numimports; o++)
+		if (info[o]->addr == myaddr) return info[o]->name;
+
+	return 0;
 }
 
 // Remove all symbols whose addresses are in the supplied range
-void SystemImports::remove_range(char *from, unsigned long dist)
-{
-  unsigned long startaddr = (unsigned long)from;
-  for (int o = 0; o < numimports; o++) {
-    if (name[o] == NULL)
-      continue;
+void SystemImports::remove_range(char *from, unsigned long dist) {
+	unsigned long startaddr = (unsigned long)from;
+	for (size_t o = 0; o < numimports; o++) {
+		if (!info[o]->name) continue;
 
-    unsigned long thisaddr = (unsigned long)addr[o];
-    if ((thisaddr >= startaddr) && (thisaddr < startaddr + dist)) {
-      btree.removeEntry(name[o]);
-      name[o] = NULL;
-      addr[o] = NULL;
-      isScriptImp[o] = 0;
-      /*numimports--;
-      for (int p = o; p < numimports; p++) {
-        name[p] = name[p + 1];
-        addr[p] = addr[p + 1];
-        isScriptImp[p] = isScriptImp[p + 1];
-      }
-      o--;*/
-    }
-  }
+		unsigned long thisaddr = (unsigned long) info[o]->addr;
+		if ((thisaddr >= startaddr) && (thisaddr < startaddr + dist)) {
+			btree.removeEntry(info[o]->name);
+			info[o]->name = 0;
+			info[o]->addr = 0;
+			info[o]->type = IT_INVALID;
+			isScriptImp[o] = 0;
+			/*numimports--;
+			for (int p = o; p < numimports; p++) {
+				name[p] = name[p + 1];
+				addr[p] = addr[p + 1];
+				isScriptImp[p] = isScriptImp[p + 1];
+			}
+			o--;*/
+		}
+	}
 }
 
 void nullfree(void *data)
@@ -719,7 +790,8 @@ void ccRemoveAllSymbols()
 
 void *ccGetSymbolAddress(char *namof)
 {
-  return simp.get_addr_of(namof);
+	struct ImportInfo* imp = simp.get_addr_of(namof);
+	return imp->type == IT_DATA ? imp->addr : imp;
 }
 
 ccInstance *ccGetCurrentInstance()
@@ -820,7 +892,7 @@ ccInstance *ccCreateInstanceEx(ccScript * scri, ccInstance * joined)
       import_addrs[i] = 0;
       continue;
     }
-    import_addrs[i] = (long)simp.get_addr_of(scri->imports[i]);
+    import_addrs[i] = (long) ccGetSymbolAddress(scri->imports[i]);
     if (import_addrs[i] == 0) {
       nullfree(import_addrs);
       cc_error("unresolved import '%s'", scri->imports[i]);
@@ -1194,7 +1266,7 @@ void ccSetDebugHook(new_line_hook_type jibble)
   inst->line_number = inst->callStackLineNumber[inst->callStackSize];\
   currentline = inst->line_number
 //long SetTextOverlay(long ovrid,long xx,long yy,long wii,long fontid,long clr,char*texx,...)
-long call_variadic_function_7args(long addr, int numparm, long *parms, int offset) {
+long call_variadic_function_7args(void* addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	long (*fparam) (long, long, long, long, long, long, long, ...);
 	fparam = (long (*)(long, long, long, long, long, long, long, ...))addr;
@@ -1214,7 +1286,7 @@ long call_variadic_function_7args(long addr, int numparm, long *parms, int offse
 
 
 
-long call_variadic_function_6args(long addr, int numparm, long *parms, int offset) {
+long call_variadic_function_6args(void* addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	long (*fparam) (long, long, long, long, long, long, ...);
 	fparam = (long (*)(long, long, long, long, long, long, ...))addr;
@@ -1235,7 +1307,7 @@ long call_variadic_function_6args(long addr, int numparm, long *parms, int offse
 }
 //long DisplayAt(long xxp,long yyp,long widd,char*texx, ...)
 
-long call_variadic_function_4args(long addr, int numparm, long *parms, int offset) {
+long call_variadic_function_4args(void* addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	long (*fparam) (long, long, long, long, ...);
 	fparam = (long (*)(long, long, long, long, ...))addr;
@@ -1259,7 +1331,7 @@ long call_variadic_function_4args(long addr, int numparm, long *parms, int offse
 //long x, long y, long width, long font, long colour, const char* text, ...
 }
 
-long call_variadic_function_5args(long addr, int numparm, long *parms, int offset) {
+long call_variadic_function_5args(void* addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	long (*fparam) (long, long, long, long, long, ...);
 	fparam = (long (*)(long, long, long, long, long, ...))addr;
@@ -1282,7 +1354,7 @@ long call_variadic_function_5args(long addr, int numparm, long *parms, int offse
 }
 
 // parm list is backwards (last arg is parms[0])
-long call_variadic_function_1arg(long addr, int numparm, long *parms, int offset) {
+long call_variadic_function_1arg(void* addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	long (*fparam) (long, ...);
 	fparam = (long (*)(long, ...))addr;
@@ -1313,7 +1385,7 @@ long call_variadic_function_1arg(long addr, int numparm, long *parms, int offset
 }
 
 // parm list is backwards (last arg is parms[0])
-long call_variadic_function_3args(long addr, int numparm, long *parms, int offset) {
+long call_variadic_function_3args(void* addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	long (*fparam) (long, long, long, ...);
 	fparam = (long (*)(long, long, long, ...))addr;
@@ -1341,7 +1413,7 @@ long call_variadic_function_3args(long addr, int numparm, long *parms, int offse
 
 // parm list is backwards (last arg is parms[0])
 //long __sc_displayspeech(long chid,char*texx, ...)
-long call_variadic_function_2args(long addr, int numparm, long *parms, int offset) {
+long call_variadic_function_2args(void* addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	long (*fparam) (long, long, ...);
 	fparam = (long (*)(long, long, ...))addr;
@@ -1370,10 +1442,15 @@ long call_variadic_function_2args(long addr, int numparm, long *parms, int offse
 }
 
 // parm list is backwards (last arg is parms[0])
-long call_function(long addr, int numparm, long *parms, int offset) {
+long call_function(void* addr, int numparm, long *parms, int offset) {
 	parms += offset;
 	
 	switch(numparm) {
+		case 0: {
+			long (*fparam) (void);
+			fparam = (long (*)(void))addr;
+			return fparam();
+		}
 		case 1: {
 			long (*fparam) (long);
 			fparam = (long (*)(long))addr;
@@ -1422,6 +1499,29 @@ long call_function(long addr, int numparm, long *parms, int offset) {
 		default:
 			cc_error("too many arguments in call to function");
 			return -1;
+	}
+}
+
+long do_function_call(struct ImportInfo *imp, int num_args_to_func, long *callstack, int callstackcount) {
+	switch(imp->type) {
+		case IT_REGULAR:
+			return call_function(imp->addr, num_args_to_func, callstack, callstackcount);
+		case IT_VARARGS1:
+			return call_variadic_function_1arg (imp->addr, num_args_to_func, callstack, callstackcount);
+		case IT_VARARGS2:
+			return call_variadic_function_2args(imp->addr, num_args_to_func, callstack, callstackcount);
+		case IT_VARARGS3:
+			return call_variadic_function_3args(imp->addr, num_args_to_func, callstack, callstackcount);
+		case IT_VARARGS4:
+			return call_variadic_function_4args(imp->addr, num_args_to_func, callstack, callstackcount);
+		case IT_VARARGS5:
+			return call_variadic_function_5args(imp->addr, num_args_to_func, callstack, callstackcount);
+		case IT_VARARGS6:
+			return call_variadic_function_6args(imp->addr, num_args_to_func, callstack, callstackcount);
+		case IT_VARARGS7:
+			return call_variadic_function_7args(imp->addr, num_args_to_func, callstack, callstackcount);
+		default:
+			assert(0);
 	}
 }
 
@@ -1978,7 +2078,8 @@ int cc_run_code(ccInstance * inst, long curpc) {
       case SCMD_CALLEXT: {
         int call_uses_object = 0;
         // Call to a real 'C' code function
-	char* funcname = ccGetNameForFunc(inst->registers[arg1]);
+	//char* funcname = ccGetNameForFunc(inst->registers[arg1]);
+	struct ImportInfo * imp = (struct ImportInfo *) inst->registers[arg1];
         was_just_callas = -1;
         if (num_args_to_func < 0)
           num_args_to_func = callstacksize;
@@ -1993,97 +2094,19 @@ int cc_run_code(ccInstance * inst, long curpc) {
 #ifdef DEBUG_FUNCTION_CALLS
 	  dprintf(2, "calling obj func: %s with %d args\n", funcname, num_args_to_func+1);
 #endif
-		if(!strcmp("Character::Say^101", funcname) || !strcmp("Character::Think^101", funcname)) {
-			//dprintf(2, "sayorthink\n");
-			call_variadic_function_2args(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
-			inst->registers[SREG_AX] = 0;
-		} else if(!strcmp("String::Format^101", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("StrFormat", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("RawPrint", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_3args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("Overlay::CreateTextual^106", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_6args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("Overlay::SetText^104", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("DrawingSurface::DrawString^104", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("AbortGame", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("CreateTextOverlay", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_6args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("SetTextOverlay", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_7args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("Display", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("DisplayAt", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_4args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("DisplaySpeech", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("DisplayThought", funcname)) {
-			//inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else if(!strcmp("DisplayTopBar", funcname)) {		
-			//inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-			assert(0);
-		} else {
-			inst->registers[SREG_AX] = call_function(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
-		}
+	  inst->registers[SREG_AX] = do_function_call(imp, num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
         } else if (num_args_to_func == 0) {
 #ifdef DEBUG_FUNCTION_CALLS
 		dprintf(2, "calling no-arg func: %s\n", funcname);
 #endif
-		long (*realfunc) (void);
-		realfunc = (long (*)(void))inst->registers[arg1];
-		inst->registers[SREG_AX] = realfunc();
+		//long (*realfunc) (void);
+		//realfunc = (long (*)(void))inst->registers[arg1];
+		inst->registers[SREG_AX] = do_function_call(imp, 0, 0, 0); // realfunc();
         } else {
 #ifdef DEBUG_FUNCTION_CALLS
 		dprintf(2, "calling regular func: %s with %d args\n", funcname, num_args_to_func);
 #endif
-		if(!strcmp("String::Format^101", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("StrFormat", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("RawPrint", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_3args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("Overlay::CreateTextual^106", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_6args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("Overlay::SetText^104", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("DrawingSurface::DrawString^104", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("AbortGame", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("CreateTextOverlay", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_6args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("SetTextOverlay", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_7args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("Display", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("DisplayAt", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_4args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("DisplaySpeech", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("DisplayThought", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_2args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else if(!strcmp("DisplayTopBar", funcname)) {
-			inst->registers[SREG_AX] = call_variadic_function_5args(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		} else {
-			inst->registers[SREG_AX] = call_function(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
-		}
+		inst->registers[SREG_AX] = do_function_call(imp, num_args_to_func, callstack, callstacksize - num_args_to_func);
 	}
 
         if (ccError)

@@ -10,6 +10,8 @@ COMMON = ../Common/csrun.o ../Common/Clib32.o ../Common/mousew32.o ../Common/spr
 PLUGINS = ../Plugins/AGSflashlight/agsflashlight.o ../Plugins/agsblend/AGSBlend.o \
 	  ../Plugins/ags_snowrain/ags_snowrain.o
 
+LIBULZ = ../../debugger/process_maps.o ../../lib/src/sblist/sblist.o
+
 LINUX_SPECIFIC = acpllnx.o 
 
 HQ2X3X = libsrc/hq2x/hq2x3x.o
@@ -36,7 +38,8 @@ AASTR = libsrc/aastr-0.1.1/AAROT.o libsrc/aastr-0.1.1/aastr.o libsrc/aastr-0.1.1
 
 CDA = libsrc/libcda-0.5/linux.o
 
-OBJS = $(ALFONT) $(ALMP3) $(APEG) $(AASTR) $(HQ2X3X) $(CDA) $(PLUGINS) $(BASE) $(COMMON) $(LINUX_SPECIFIC)
+OBJS = $(ALFONT) $(ALMP3) $(APEG) $(AASTR) $(HQ2X3X) $(CDA) $(PLUGINS) $(BASE) $(COMMON) \
+       $(LINUX_SPECIFIC) $(LIBULZ)
 
 INCDIR = ../Engine ../Common ../Common/libinclude
 LIBDIR =
