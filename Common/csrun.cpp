@@ -193,7 +193,7 @@ struct ManagedObjectPool {
 
 			#ifdef DEBUG_MANAGED_OBJECTS
 			char bufff[200];
-			sprintf(bufff,"Allocated managed object handle=%d, type=%s", theHandle, theCallback->GetType());
+			sprintf(bufff,"Allocated managed object handle=%d, addr=%p, type=%s", theHandle, addr, theCallback->GetType());
 			write_log(bufff);
 			#endif
 		}
@@ -206,7 +206,7 @@ struct ManagedObjectPool {
 
 			#ifdef DEBUG_MANAGED_OBJECTS
 			char bufff[200];
-			sprintf(bufff,"Line %d Disposing managed object handle=%d", currentline, handle);
+			sprintf(bufff,"Line %d Disposing managed object handle=%d, addr %p", currentline, handle, addr);
 			write_log(bufff);
 			#endif
 
@@ -286,12 +286,30 @@ public:
 	long AddressToHandle(const char *addr) {
 		// this function is only called when a pointer is set
 		// SLOW LOOP ALERT, improve at some point
-		for (size_t kk = 1; kk < arrayAllocLimit; kk++) {
+		for (size_t kk = numObjects - 1; kk >= 1; kk--) {
 			if (objects[kk].addr == addr)
 				return objects[kk].handle;
 		}
 		return 0;
 	}
+
+#ifdef AGS_64BIT
+	long AddressToHandleTrunc(const char *addr) {
+		unsigned long caddr = (unsigned long)addr;
+		caddr &= 0xffffffff;
+		long result = -1;
+		for (size_t kk = numObjects - 1; kk >= 1; kk--) {
+			if (((unsigned long) objects[kk].addr & 0xffffffff) == caddr)
+				if(result == -1) {
+					result = objects[kk].handle;
+					return result;
+				}
+				else dprintf(2, "warning at least 2 pointers match for truncated pointer\n");
+		}
+		if(result != -1) return result;
+		return 0;
+	}
+#endif	
 
 	const char* HandleToAddress(long handle) {
 		// this function is called often (whenever a pointer is used)
@@ -328,7 +346,7 @@ public:
 		}
 	}
 
-	int AddObject(const char *address, ICCDynamicObject *callback, ptrdiff_t useSlot = -1) {
+	long AddObject(const char *address, ICCDynamicObject *callback, ptrdiff_t useSlot = -1) {
 		if (useSlot == -1)
 			useSlot = numObjects;
 
@@ -1032,13 +1050,21 @@ void ccSetStringClassImpl(ICCStringClass *theClass) {
   stringClassImpl = theClass;
 }
 
-long ccRegisterManagedObject(const void *object, ICCDynamicObject *callback) {
+long ccRegisterManagedObject_(const void *object, ICCDynamicObject *callback, char* file, int line) {
   long handl = pool.AddObject((const char*)object, callback);
 
 #ifdef DEBUG_MANAGED_OBJECTS
   char bufff[200];
-  sprintf(bufff,"Register managed object type '%s' handle=%d addr=%08X", ((callback == NULL) ? "(unknown)" : callback->GetType()), handl, object);
+  sprintf(bufff,"%s:%d -> sourceline: %d: Register managed object type '%s' handle=%d addr=%p",
+	  file, line, currentline,
+	  ((callback == NULL) ? "(unknown)" : callback->GetType()), handl, object);
   write_log(bufff);
+#if 0  
+  if((unsigned long) object > 0xFFFFFFFF && !strcmp(callback->GetType(), "String"))
+	  ccSetOption(SCOPT_DEBUGRUN, 1);
+  else
+	    ccSetOption(SCOPT_DEBUGRUN, 0);
+#endif
 #endif
 
   return handl;
@@ -1070,8 +1096,7 @@ int ccUnserializeAllObjects(FILE *input, ICCObjectReader *callback) {
   ccUnregisterAllObjects();
   return pool.ReadFromDisk(input, callback);
 }
-
-long ccGetObjectHandleFromAddress(const char *address) {
+long ccGetObjectHandleFromAddress_(const char *address, char* file, int line) {
   // set to null
   if (address == NULL)
     return 0;
@@ -1080,11 +1105,21 @@ long ccGetObjectHandleFromAddress(const char *address) {
 
 #ifdef DEBUG_MANAGED_OBJECTS
   char bufff[200];
-  sprintf(bufff,"Line %d WritePtr: %08X to %d", currentline, address, handl);
+  sprintf(bufff,"%s:%d -> script Line %d WritePtr: %p to %d", file, line, currentline, address, handl);
   write_log(bufff);
 #endif
 
   if (handl == 0) {
+#ifdef AGS_64BIT	  
+	  if((unsigned long) address > 0xffffFFFF) {
+		/* truncated pointer */
+#ifdef DEBUG_MANAGED_OBJECTS
+		dprintf(2, "XXXXXXXXXXXXXXX warning: truncated pointer\n");
+#endif
+		handl = pool.AddressToHandleTrunc(address);
+		if(handl) return handl;
+	  }
+#endif
 #ifdef DEBUG_MANAGED_OBJECTS
 	  __asm__("int3");
 #endif
@@ -1102,7 +1137,7 @@ const char *ccGetObjectAddressFromHandle(long handle) {
 
 #ifdef DEBUG_MANAGED_OBJECTS
   char bufff[200];
-  sprintf(bufff,"Line %d ReadPtr: %d to %08X", currentline, handle, addr);
+  sprintf(bufff,"Line %d ReadPtr: %d to %p", currentline, handle, addr);
   write_log(bufff);
 #endif
 
@@ -1404,7 +1439,17 @@ int cc_run_code(ccInstance * inst, long curpc) {
 	#define REGP(X) *((regtype *)(REG(X)))
 	#define REGPI(X) *((int*)(REG(X)))
 	//#define REGPI(X) REGP(X)
-
+#if 1
+#define POINTSTOSTACK ( \
+                        (REG(SREG_MAR) <= REG(SREG_SP) + 21 * sizeof(long)) \
+			&& (REG(SREG_MAR) >= REG(SREG_SP) - 21 * sizeof(long)) \
+			)
+#else
+#define POINTSTOSTACK ( \
+			( (unsigned long) REG(SREG_MAR) >= (unsigned long) callstack ) \
+			&& ( (unsigned long) REG(SREG_MAR) <= (unsigned long) callstack + sizeof(callstack) ) \
+			)
+#endif
   inst->pc = curpc;
   inst->returnValue = -1;
 
@@ -1439,10 +1484,11 @@ int cc_run_code(ccInstance * inst, long curpc) {
   current_instance = inst;
   float *freg1, *freg2;
   ccInstance *codeInst = inst->runningInst;
-  unsigned long thisInstruction = 0;
+  unsigned long thisInstruction = 0, prevInstruction;
   int write_debug_dump = ccGetOption(SCOPT_DEBUGRUN);
 
   while (1) {
+	  prevInstruction = thisInstruction;
     thisInstruction = codeInst->code[inst->pc] & INSTANCE_ID_REMOVEMASK;
     if (write_debug_dump)
       dump_instruction(&codeInst->code[inst->pc], inst->pc, inst->registers[SREG_SP]);
@@ -1547,11 +1593,26 @@ int cc_run_code(ccInstance * inst, long curpc) {
         inst->registers[arg1] = arg2;
         break;
       case SCMD_MEMREAD:
-	      REG(arg1) = 0; // bogus zero mem in case only a half word gets written...
-	      REG(arg1) = REGPI(SREG_MAR);
+#if 0 && defined(AGS_64BIT)
+		if(prevInstruction != SCMD_LOADSPOFFS || !POINTSTOSTACK || inst->stackSizes[inst->stackSizeIndex - 1] != -1
+			|| (unsigned long) REGP(SREG_MAR) < 0xFFFFffff
+		) {
+		//if(!POINTSTOSTACK || inst->stackSizes[inst->stackSizeIndex - 1] != -1) {
+#endif
+			REG(arg1) = 0; // bogus zero mem in case only a half word gets written...
+			REG(arg1) = REGPI(SREG_MAR);
+#if 0 && defined(AGS_64BIT)
+		} else {
+		      REG(arg1) = REGP(SREG_MAR);
+		}
+#endif
+	      // if next instruction = meminit.ptr we must read sizeof long
         break;
       case SCMD_MEMWRITE:
-	      REGPI(SREG_MAR) = REG(arg1);
+		//if(!POINTSTOSTACK) 
+			REGPI(SREG_MAR) = REG(arg1);
+		//else 
+		//	REGP(SREG_MAR) = REG(arg1);
         break;
       case SCMD_LOADSPOFFS:
 #if defined(AGS_64BIT)
@@ -1929,12 +1990,13 @@ int cc_run_code(ccInstance * inst, long curpc) {
           call_uses_object = 1;
           next_call_needs_object = 0;
           callstack[callstacksize] = inst->registers[SREG_OP];
+#ifdef DEBUG_FUNCTION_CALLS
 	  dprintf(2, "calling obj func: %s with %d args\n", funcname, num_args_to_func+1);
+#endif
 		if(!strcmp("Character::Say^101", funcname) || !strcmp("Character::Think^101", funcname)) {
-			dprintf(2, "sayorthink\n");
+			//dprintf(2, "sayorthink\n");
 			call_variadic_function_2args(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
 			inst->registers[SREG_AX] = 0;
-			
 		} else if(!strcmp("String::Format^101", funcname)) {
 			//inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
 			assert(0);
@@ -1981,12 +2043,16 @@ int cc_run_code(ccInstance * inst, long curpc) {
 			inst->registers[SREG_AX] = call_function(inst->registers[arg1], num_args_to_func + 1, callstack, callstacksize - num_args_to_func);
 		}
         } else if (num_args_to_func == 0) {
+#ifdef DEBUG_FUNCTION_CALLS
 		dprintf(2, "calling no-arg func: %s\n", funcname);
+#endif
 		long (*realfunc) (void);
 		realfunc = (long (*)(void))inst->registers[arg1];
 		inst->registers[SREG_AX] = realfunc();
         } else {
+#ifdef DEBUG_FUNCTION_CALLS
 		dprintf(2, "calling regular func: %s with %d args\n", funcname, num_args_to_func);
+#endif
 		if(!strcmp("String::Format^101", funcname)) {
 			inst->registers[SREG_AX] = call_variadic_function_1arg(inst->registers[arg1], num_args_to_func, callstack, callstacksize - num_args_to_func);
 		} else if(!strcmp("StrFormat", funcname)) {

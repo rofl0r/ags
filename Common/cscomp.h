@@ -29,6 +29,7 @@
 #endif
 #endif
 
+#define ccGetObjectHandleFromAddress(a) ccGetObjectHandleFromAddress_(a, __FILE__, __LINE__)
 
 struct ccScript;
 struct ccInstance;
@@ -112,7 +113,8 @@ struct ICCStringClass {
 extern void  ccSetStringClassImpl(ICCStringClass *theClass);
 // register a memory handle for the object and allow script
 // pointers to point to it
-extern long  ccRegisterManagedObject(const void *object, ICCDynamicObject *);
+#define ccRegisterManagedObject(A, B) ccRegisterManagedObject_(A, B, __FILE__, __LINE__)
+extern long  ccRegisterManagedObject_(const void *object, ICCDynamicObject *, char*, int);
 // register a de-serialized object
 extern long  ccRegisterUnserializedObject(ptrdiff_t index, const void *object, ICCDynamicObject *);
 // unregister a particular object
@@ -126,7 +128,7 @@ extern int   ccUnserializeAllObjects(FILE *input, ICCObjectReader *callback);
 // dispose the object if RefCount==0
 extern void  ccAttemptDisposeObject(long handle);
 // translate between object handles and memory addresses
-extern long  ccGetObjectHandleFromAddress(const char *address);
+extern long  ccGetObjectHandleFromAddress_(const char *address, char* file, int line);
 extern const char *ccGetObjectAddressFromHandle(long handle);
 
 // DEBUG HOOK
