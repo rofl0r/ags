@@ -10,7 +10,7 @@ COMMON = ../Common/csrun.o ../Common/Clib32.o ../Common/mousew32.o ../Common/spr
 PLUGINS = ../Plugins/AGSflashlight/agsflashlight.o ../Plugins/agsblend/AGSBlend.o \
 	  ../Plugins/ags_snowrain/ags_snowrain.o
 
-LIBULZ = ../../debugger/process_maps.o ../../lib/src/sblist/sblist.o
+LIBULZ = ../../cdev/cdev/debuglib/process_maps.o ../../cdev/cdev/lib/src/sblist/sblist.o
 
 LINUX_SPECIFIC = acpllnx.o 
 

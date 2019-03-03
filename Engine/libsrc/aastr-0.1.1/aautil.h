@@ -16,6 +16,7 @@
 #ifndef __bma_aautil_h
 #define __bma_aautil_h
 
+#define ALLEGRO_NO_FIX_ALIASES
 #include <allegro.h>
 
 /*

@@ -552,7 +552,8 @@ void SystemImports::remove_all_script_exports()
 
 }*/
 
-#include "../../debugger/process_maps.h"
+#if 1
+#include "../../cdev/cdev/debuglib/process_maps.h"
 sblist* processmap;
 static int is_in_executable_section(void* addr) {
 	if(!processmap) processmap = process_maps_get(getpid());
@@ -565,6 +566,7 @@ static int is_in_executable_section(void* addr) {
 	if(map->perms & MDP_X) return 1;
 	return 0;
 }
+#endif
 
 enum ImportType getImportType(char* funcname, void* addr) {
 	if(0) {

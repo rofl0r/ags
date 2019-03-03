@@ -16,6 +16,7 @@
 #ifndef __bma_aastr_h
 #define __bma_aastr_h
 
+#define ALLEGRO_NO_FIX_ALIASES
 #include <allegro.h>
 
 #ifdef __cplusplus
