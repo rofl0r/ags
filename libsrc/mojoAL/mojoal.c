@@ -3955,11 +3955,9 @@ static int source_get_offset(ALsource *src, ALenum param)
             offset = (proc_buf * item->buffer->len + src->offset);
         }
     } else {
-        if(src->buffer != NULL) {
-            framesize = (int) (src->buffer->channels * sizeof(float));
-            freq = (int) src->buffer->frequency;
-            offset = src->offset;
-        }
+        framesize = (int)(src->buffer->channels * sizeof(float));
+        freq = (int)src->buffer->frequency;
+        offset = src->offset;
     }
     switch(param) {
         case AL_SAMPLE_OFFSET: return offset / framesize; break;

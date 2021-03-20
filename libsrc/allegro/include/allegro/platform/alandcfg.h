@@ -50,9 +50,6 @@
    #define ALLEGRO_NO_ASM
 #endif
 
-#ifndef ALLEGRO_HAVE_STRICMP
-#define ALLEGRO_NO_STRICMP
-#endif
 
 
 #endif

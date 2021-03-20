@@ -101,9 +101,6 @@ struct AGSPlatformDriver
     virtual int  CDPlayerCommand(int cmdd, int datt) = 0;
     virtual void ShutdownCDPlayer() = 0;
 
-     // Allows adjusting parameters and other fixes before engine is initialized
-    virtual void MainInitAdjustments() { };
-
     static AGSPlatformDriver *GetDriver();
 
     // Set whether PrintMessage should output to stdout or stderr

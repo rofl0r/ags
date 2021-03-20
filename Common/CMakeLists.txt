@@ -1,7 +1,7 @@
 include(TestBigEndian)
 include(CheckFseeko)
 
-add_library(common STATIC)
+add_library(common)
 
 set_target_properties(common PROPERTIES
     CXX_STANDARD 11
@@ -9,7 +9,6 @@ set_target_properties(common PROPERTIES
     C_STANDARD 11
     C_EXTENSIONS YES
 )
-set_property(TARGET common PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(common PUBLIC .)
 
